@@ -1080,7 +1080,7 @@ window.runAI=async function(){
   try{
     const GEMINI_KEY = localStorage.getItem('tm_gemini_key');
     if(!GEMINI_KEY){ body.innerHTML='<span style="color:var(--red)">No Gemini API key found.\nGo to Settings (⚙️ on home screen) to add your key.</span>'; stat.textContent='Error'; btn.disabled=false; btn.textContent='✦ Try Again'; return; }
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${GEMINI_KEY}`;
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
     const geminiBody = {
       contents: [{ parts: [{ text: sys + '\n\nAnalyse my TraderMind data:\n\n' + txt }] }],
       generationConfig: { maxOutputTokens: 1500, temperature: 0.7 }
