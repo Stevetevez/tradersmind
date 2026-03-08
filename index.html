@@ -1050,13 +1050,18 @@ window.runAI=async function(){
   const sys=`You are an expert forex trading psychology coach. Analyse the trader's weekly journal and trade log. Be specific, honest, and actionable.\n\nFORMATTING: Section headers ALL CAPS + colon. Plain text. Numbered lists for actions. Reference their actual words where relevant.\n\nSTRUCTURE:\nOPENING INSIGHT:\nCORE BELIEF PATTERNS:\nEMOTIONAL TRIGGERS & RISK PROFILE:\n${trades.length>=3?'PSYCHOLOGY PROGRESS ANALYSIS:\n':''}IDENTITY & TRADING CEILING:\nGOALS VS REALITY GAP:\nYOUR THREE PRIORITY ACTIONS:\nCLOSING:\n\nLength: 700-1000 words.`;
   try{
     const GEMINI_KEY = 'AIzaSyAK72a5NiJVCAqxCCcfzEkqpccdzjYEV7E';
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
     const geminiBody = {
       contents: [{ parts: [{ text: sys + '\n\nAnalyse my TraderMind data:\n\n' + txt }] }],
       generationConfig: { maxOutputTokens: 1500, temperature: 0.7 }
     };
     const res = await fetch(geminiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(geminiBody) });
-    if(!res.ok){ const err=await res.text(); throw new Error('Gemini API error '+res.status+': '+err.substring(0,100)); }
+    if(!res.ok){
+      const errText=await res.text();
+      let errMsg='';
+      try{ const errJson=JSON.parse(errText); errMsg=errJson.error?.message||errText; }catch(e){ errMsg=errText; }
+      throw new Error('Gemini error '+res.status+': '+errMsg.substring(0,200));
+    }
     const data = await res.json();
     const full = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response received.';
     body.innerHTML=fmtAI(full); stat.textContent='Complete ✓'; btn.textContent='✦ Re-Analyse'; btn.disabled=false;
