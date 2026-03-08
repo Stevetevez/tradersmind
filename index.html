@@ -111,8 +111,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .remind-arrow{color:var(--gold);font-size:18px;}
 
 /* Quick actions */
-.quick-row{display:flex;gap:10px;padding:0 18px 10px;}
-.quick-btn{flex:1;padding:13px 10px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-align:center;cursor:pointer;box-shadow:var(--shadow);transition:all .15s;}
+.quick-row{display:flex;gap:10px;padding:0 18px 10px;flex-wrap:wrap;}
+.quick-btn{flex:1;min-width:80px;padding:13px 10px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-align:center;cursor:pointer;box-shadow:var(--shadow);transition:all .15s;}
 .quick-btn:active{transform:scale(.97);}
 .quick-btn .qico{font-size:20px;margin-bottom:4px;}
 .quick-btn .qtxt{font-size:12px;font-weight:700;color:#1a2332;}
@@ -317,10 +317,12 @@ canvas{display:block;}
 .creed-ticker-label{font-size:9px;font-weight:800;letter-spacing:2.5px;color:var(--gold-light);text-transform:uppercase;}
 .creed-ticker-tap{font-size:10px;color:rgba(26,158,110,0.7);font-weight:600;}
 .creed-ticker-body{overflow:hidden;padding:0 0 12px;}
-.creed-track{display:flex;gap:0;white-space:nowrap;animation:tickerScroll 28s linear infinite;}
-.creed-track:hover{animation-play-state:paused;}
-.creed-item{display:inline-block;padding:4px 28px;font-size:13px;font-weight:800;color:#ffffff;letter-spacing:1.5px;font-family:'IBM Plex Mono',monospace;}
-.creed-item span{color:var(--gold-light);}
+.creed-ticker-body{overflow:hidden;padding:4px 0 12px;position:relative;}
+.creed-track-outer{display:flex;width:max-content;animation:tickerScroll 35s linear infinite;}
+.creed-track-outer:hover{animation-play-state:paused;}
+.creed-track{display:flex;gap:0;white-space:nowrap;}
+.creed-item{display:inline-flex;align-items:center;padding:4px 20px;font-size:12px;font-weight:800;color:#e8f5ee;letter-spacing:1.5px;font-family:'IBM Plex Mono',monospace;white-space:nowrap;}
+.creed-item-dot{color:var(--gold-light);margin-right:8px;font-size:14px;}
 @keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 /* ── CREED SCREEN ── */
@@ -340,6 +342,28 @@ canvas{display:block;}
 .creed-ritual-btn{display:flex;align-items:center;justify-content:center;gap:8px;margin:4px 18px 14px;padding:16px;background:var(--gold);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;width:calc(100% - 36px);letter-spacing:1px;box-shadow:0 4px 16px rgba(26,158,110,0.4);}
 .creed-ritual-btn:active{transform:scale(.97);}
 .creed-del-btn{position:absolute;top:10px;right:10px;width:26px;height:26px;background:rgba(224,82,82,0.15);border:none;border-radius:6px;color:var(--red);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+
+/* ── CREED CHECK-IN ── */
+.checkin-card{margin:0 18px 12px;background:linear-gradient(135deg,#0f1e14,#162819);border:1px solid rgba(26,158,110,0.25);border-radius:14px;padding:18px;}
+.checkin-title{font-size:11px;font-weight:800;letter-spacing:2px;color:var(--gold-light);text-transform:uppercase;margin-bottom:14px;font-family:'IBM Plex Mono',monospace;}
+.checkin-moods{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.checkin-mood{padding:9px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;font-size:13px;cursor:pointer;color:#e8f5ee;transition:all .15s;font-weight:600;}
+.checkin-mood:active{transform:scale(.93);}
+.checkin-mood.sel{border-color:var(--gold-light);background:rgba(26,158,110,0.25);color:#ffffff;}
+.checkin-label{font-size:12px;color:rgba(255,255,255,0.6);font-weight:600;margin-bottom:8px;}
+.checkin-slider{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:rgba(255,255,255,0.1);outline:none;margin-bottom:6px;}
+.checkin-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--gold-light);cursor:pointer;border:2px solid #0f1e14;box-shadow:0 2px 8px rgba(26,158,110,0.5);}
+.checkin-slider-labels{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.4);font-weight:600;margin-bottom:14px;}
+.creed-notes-wrap{margin:0 18px 12px;background:linear-gradient(135deg,#0f1e14,#162819);border:1px solid rgba(26,158,110,0.25);border-radius:14px;padding:18px;}
+.creed-notes-title{font-size:11px;font-weight:800;letter-spacing:2px;color:var(--gold-light);text-transform:uppercase;margin-bottom:10px;font-family:'IBM Plex Mono',monospace;}
+.creed-notes-area{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#e8f5ee;font-family:'DM Sans',sans-serif;font-size:14px;padding:14px;line-height:1.8;min-height:120px;resize:none;transition:border-color .2s;}
+.creed-notes-area:focus{outline:none;border-color:rgba(26,158,110,0.6);}
+.creed-notes-area::placeholder{color:rgba(255,255,255,0.25);}
+.checkin-save-btn{width:100%;padding:12px;background:rgba(26,158,110,0.2);border:1px solid rgba(26,158,110,0.4);border-radius:10px;color:var(--gold-light);font-size:13px;font-weight:700;cursor:pointer;margin-top:10px;letter-spacing:1px;transition:all .2s;}
+.checkin-save-btn:active{transform:scale(.97);}
+.checkin-saved{font-size:11px;color:var(--gold-light);text-align:center;margin-top:6px;opacity:0;transition:opacity .3s;font-weight:600;}
+.checkin-saved.show{opacity:1;}
 
 /* ── TOAST ── */
 .toast{position:fixed;bottom:calc(var(--nav-h) + 14px);left:50%;transform:translateX(-50%) translateY(20px);background:#1a2332;color:#fff;padding:11px 22px;font-size:12px;font-weight:500;border-radius:20px;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none;box-shadow:0 4px 20px rgba(26,45,80,0.25);}
@@ -456,8 +480,9 @@ canvas{display:block;}
         <div class="creed-ticker-tap">Tap to open →</div>
       </div>
       <div class="creed-ticker-body">
-        <div class="creed-track" id="creedTrack">
-          <!-- filled by JS -->
+        <div class="creed-track-outer" id="creedTrackOuter">
+          <div class="creed-track" id="creedTrack"></div>
+          <div class="creed-track" id="creedTrackClone"></div>
         </div>
       </div>
     </div>
@@ -479,6 +504,11 @@ canvas{display:block;}
         <div class="qico">📊</div>
         <div class="qtxt">Progress</div>
         <div class="qsub">Charts & stats</div>
+      </div>
+      <div class="quick-btn" onclick="showScreen('creed')">
+        <div class="qico">🔥</div>
+        <div class="qtxt">My Creed</div>
+        <div class="qsub">Pre-trade ritual</div>
       </div>
     </div>
     <button class="cta-btn" onclick="showScreen('analysis')">✦ Get AI Analysis</button>
@@ -639,6 +669,40 @@ canvas{display:block;}
     <div style="padding:0 18px;">
       <button class="creed-add-btn" onclick="addCreedPrompt()">+ Add New Affirmation</button>
     </div>
+
+    <!-- Daily Check-In -->
+    <div class="checkin-card">
+      <div class="checkin-title">📍 Today's Check-In</div>
+      <div class="checkin-label">How am I feeling right now?</div>
+      <div class="checkin-moods">
+        <span class="checkin-mood" onclick="selCheckinMood(this)">😌 Calm</span>
+        <span class="checkin-mood" onclick="selCheckinMood(this)">💪 Confident</span>
+        <span class="checkin-mood" onclick="selCheckinMood(this)">😰 Anxious</span>
+        <span class="checkin-mood" onclick="selCheckinMood(this)">😤 Frustrated</span>
+        <span class="checkin-mood" onclick="selCheckinMood(this)">🤩 Excited</span>
+        <span class="checkin-mood" onclick="selCheckinMood(this)">😔 Low energy</span>
+        <span class="checkin-mood" onclick="selCheckinMood(this)">🧘 Neutral</span>
+        <span class="checkin-mood" onclick="selCheckinMood(this)">😨 Fearful</span>
+      </div>
+      <div class="checkin-label">Mental clarity right now (1 = foggy · 10 = crystal clear)</div>
+      <input type="range" class="checkin-slider" id="claritySlider" min="1" max="10" value="7" oninput="document.getElementById('clarityVal').textContent=this.value">
+      <div class="checkin-slider-labels"><span>1 — Foggy</span><span id="clarityVal" style="color:var(--gold-light);font-size:12px;font-weight:800;">7</span><span>10 — Clear</span></div>
+      <div class="checkin-label">Am I in the right mindset to trade today?</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <span class="checkin-mood" id="ciYes" onclick="selCheckinReady('yes')" style="flex:1;justify-content:center;display:flex;">✅ Yes — I am ready</span>
+        <span class="checkin-mood" id="ciNo" onclick="selCheckinReady('no')" style="flex:1;justify-content:center;display:flex;">⛔ Not today</span>
+      </div>
+      <button class="checkin-save-btn" onclick="saveCheckin()">Save Today's Check-In</button>
+      <div class="checkin-saved" id="checkinSaved">✓ Check-in saved</div>
+    </div>
+
+    <!-- Pre-trade notes -->
+    <div class="creed-notes-wrap">
+      <div class="creed-notes-title">✍️ My Thoughts Before Trading</div>
+      <textarea class="creed-notes-area" id="creedNotes" placeholder="What's on your mind today? Any concerns, plans, or intentions for this session...&#10;&#10;Write freely. This is your space." oninput="debounceSaveCreedNotes()"></textarea>
+      <div class="checkin-saved" id="notesSaved">✓ Notes saved</div>
+    </div>
+
     <button class="creed-ritual-btn" onclick="markRitualDone()">✦ I Am Ready To Trade</button>
   </div>
 
@@ -648,7 +712,7 @@ canvas{display:block;}
     <div class="bni" id="nav-journal" onclick="showScreen('journal')"><div class="ico">📓</div><div class="lbl">Journal</div></div>
     <div class="bni" id="nav-tradelog" onclick="showScreen('tradelog')"><div class="ico">📈</div><div class="lbl">Trades</div></div>
     <div class="bni" id="nav-creed" onclick="showScreen('creed')"><div class="ico">🔥</div><div class="lbl">Creed</div></div>
-    <div class="bni" id="nav-analysis" onclick="showScreen('analysis')"><div class="ico">✦</div><div class="lbl">Analysis</div></div>
+    <div class="bni" id="nav-analysis" onclick="showScreen('analysis')"><div class="ico">🤖</div><div class="lbl">Analysis</div></div>
   </div>
 </div>
 
@@ -1163,7 +1227,7 @@ window.toggleChip=function(el,type){
 window.setDeviate=function(val){ deviated=val; document.getElementById('deviateNo').classList.toggle('active',val===false); document.getElementById('deviateYes').classList.toggle('active',val===true); };
 
 // ── JOURNAL NAV ──
-window.showScreen=function(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.bni').forEach(n=>n.classList.remove('active')); document.getElementById('screen-'+name).classList.add('active'); const ni=document.getElementById('nav-'+name); if(ni) ni.classList.add('active'); document.getElementById('screen-'+name).scrollTop=0; if(name==='progress') renderCharts(); if(name==='home') updateHomeHighlights(); if(name==='creed'){ renderCreedScreen(); renderCreedTicker(); } };
+window.showScreen=function(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.bni').forEach(n=>n.classList.remove('active')); document.getElementById('screen-'+name).classList.add('active'); const ni=document.getElementById('nav-'+name); if(ni) ni.classList.add('active'); document.getElementById('screen-'+name).scrollTop=0; if(name==='progress') renderCharts(); if(name==='home') updateHomeHighlights(); if(name==='creed'){ renderCreedScreen(); renderCreedTicker(); loadCreedNotes(); } };
 window.switchSec=function(i){ document.querySelectorAll('.scontent').forEach((s,j)=>s.classList.toggle('active',j===i)); document.querySelectorAll('.stab').forEach((t,j)=>t.classList.toggle('active',j===i)); document.getElementById('jBadge').textContent='0'+(i+1)+'/05'; document.getElementById('screen-journal').scrollTop=0; document.querySelectorAll('.stab')[i]?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}); };
 window.rate=function(id,btn,val){ document.getElementById(id).querySelectorAll('.rbtn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); ratings[id]=val; window.debounceSave(); };
 window.toggleB=function(el){ el.classList.toggle('sel'); const txt=el.textContent.trim(); if(el.classList.contains('sel')){ selectedBeliefs.add(txt); el.querySelector('.bdot').style.background='var(--red)'; } else { selectedBeliefs.delete(txt); el.querySelector('.bdot').style.background='var(--border2)'; } window.debounceSave(); };
@@ -1352,14 +1416,16 @@ function saveCreeds(arr){ localStorage.setItem('tm_creeds',JSON.stringify(arr));
 function renderCreedTicker(){
   const creeds=getCreeds();
   const track=document.getElementById('creedTrack');
-  if(!track) return;
-  // Duplicate for seamless loop
-  const all=[...creeds,...creeds];
-  track.innerHTML=all.map((c,i)=>`<span class="creed-item">${i===0||i===creeds.length?'<span>✦</span> ':'· '}${c}</span>`).join('');
-  // Adjust animation speed based on content length
-  const totalLen=all.reduce((s,c)=>s+c.length,0);
-  const dur=Math.max(20,totalLen*0.4);
-  track.style.animationDuration=dur+'s';
+  const clone=document.getElementById('creedTrackClone');
+  const outer=document.getElementById('creedTrackOuter');
+  if(!track||!clone||!outer) return;
+  const items=creeds.map(c=>`<span class="creed-item"><span class="creed-item-dot">✦</span>${c}</span>`).join('<span class="creed-item"><span class="creed-item-dot">·</span></span>');
+  track.innerHTML=items;
+  clone.innerHTML=items;
+  // Speed based on content
+  const totalLen=creeds.reduce((s,c)=>s+c.length,0);
+  const dur=Math.max(25,totalLen*0.55);
+  outer.style.animationDuration=dur+'s';
 }
 
 function renderCreedScreen(){
@@ -1404,6 +1470,44 @@ window.markRitualDone=function(){
   showToast('Pre-trade ritual complete ✦');
 };
 
+
+// ── CREED CHECK-IN ──
+let checkinMood='', checkinReady=null, creedNotesTimer=null;
+
+window.selCheckinMood=function(el){
+  document.querySelectorAll('.checkin-mood').forEach(b=>{ if(b.id!=='ciYes'&&b.id!=='ciNo') b.classList.remove('sel'); });
+  el.classList.add('sel'); checkinMood=el.textContent.trim();
+};
+window.selCheckinReady=function(val){
+  checkinReady=val;
+  document.getElementById('ciYes').classList.toggle('sel',val==='yes');
+  document.getElementById('ciNo').classList.toggle('sel',val==='no');
+};
+window.saveCheckin=function(){
+  const clarity=document.getElementById('claritySlider').value;
+  const entry={date:new Date().toISOString(),mood:checkinMood,clarity:parseInt(clarity),ready:checkinReady,notes:document.getElementById('creedNotes')?.value||''};
+  const hist=JSON.parse(localStorage.getItem('tm_checkins')||'[]');
+  hist.unshift(entry); if(hist.length>90) hist.pop();
+  localStorage.setItem('tm_checkins',JSON.stringify(hist));
+  const s=document.getElementById('checkinSaved'); s.classList.add('show'); setTimeout(()=>s.classList.remove('show'),2500);
+  if(checkinReady==='no') showToast('⛔ Consider sitting this session out');
+  else showToast('Check-in saved ✓');
+};
+window.debounceSaveCreedNotes=function(){
+  clearTimeout(creedNotesTimer);
+  creedNotesTimer=setTimeout(()=>{
+    const txt=document.getElementById('creedNotes')?.value||'';
+    const today=new Date().toDateString();
+    localStorage.setItem('tm_creed_notes_'+today, txt);
+    const s=document.getElementById('notesSaved'); if(s){s.classList.add('show');setTimeout(()=>s.classList.remove('show'),1500);}
+  },1000);
+};
+function loadCreedNotes(){
+  const today=new Date().toDateString();
+  const saved=localStorage.getItem('tm_creed_notes_'+today);
+  const el=document.getElementById('creedNotes');
+  if(el&&saved) el.value=saved;
+}
 // ── TOAST ──
 window.showToast=function(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); };
 
