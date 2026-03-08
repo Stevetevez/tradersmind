@@ -639,10 +639,11 @@ canvas{display:block;}
 
 <div class="toast" id="toast"></div>
 
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+<!-- Firebase compat SDKs (work with onclick handlers) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
 
 // ── STATE ──
 let app, auth, db, currentUser;
@@ -693,17 +694,17 @@ window.initFirebase = async function(){
   try{
     fbConfig={apiKey,authDomain,projectId,appId};
     localStorage.setItem('tm_fbconfig',JSON.stringify(fbConfig));
-    app=initializeApp(fbConfig); auth=getAuth(app); db=getFirestore(app);
+    try{ app=firebase.initializeApp(fbConfig); }catch(e){ app=firebase.app(); } auth=firebase.auth(); db=firebase.firestore();
     document.getElementById('stepConfig').style.display='none';
     document.getElementById('stepLogin').style.display='block';
   }catch(e){ err.textContent='Firebase init failed: '+e.message; err.style.display='block'; }
 };
 window.signInGoogle = async function(){
   const err=document.getElementById('setupError2'); err.style.display='none';
-  try{ await signInWithPopup(auth, new GoogleAuthProvider()); }
+  try{ await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   catch(e){ err.textContent='Sign-in failed: '+e.message; err.style.display='block'; }
 };
-window.signOutUser = async function(){ if(confirm('Sign out?')){ await signOut(auth); location.reload(); } };
+window.signOutUser = async function(){ if(confirm('Sign out?')){ await auth.signOut(); location.reload(); } };
 window.resetConfig = function(){ localStorage.removeItem('tm_fbconfig'); location.reload(); };
 
 function tryRestoreConfig(){
@@ -712,13 +713,13 @@ function tryRestoreConfig(){
   try{
     fbConfig=JSON.parse(saved);
     if(!fbConfig.apiKey?.startsWith('AIza')||!fbConfig.authDomain||!fbConfig.projectId||!fbConfig.appId) return false;
-    app=initializeApp(fbConfig); auth=getAuth(app); db=getFirestore(app);
+    try{ app=firebase.initializeApp(fbConfig); }catch(e){ app=firebase.app(); } auth=firebase.auth(); db=firebase.firestore();
     return true;
   }catch(e){ localStorage.removeItem('tm_fbconfig'); return false; }
 }
 
 function setupAuth(){
-  onAuthStateChanged(auth, async user => {
+  auth.onAuthStateChanged(async user => {
     if(user){
       currentUser=user;
       document.getElementById('setupScreen').classList.add('hidden');
@@ -799,10 +800,10 @@ async function loadJournal(){
   setSyncDot('syncing');
   try{
     const wk=getWeekKey(currentWeekOffset);
-    const ref=doc(db,'users',currentUser.uid,'journal',wk);
-    const snap=await getDoc(ref);
+    const ref=db.collection('users').doc(currentUser.uid).collection('journal').doc(wk);
+    const snap=await ref.get();
     clearJournalUI();
-    if(snap.exists()){ jData=snap.data(); populateJournalUI(jData); }
+    if(snap.exists){ jData=snap.data(); populateJournalUI(jData); }
     else jData={};
     setSyncDot('synced');
   }catch(e){ setSyncDot('error'); }
@@ -827,7 +828,7 @@ async function saveJournal(){
   obj.ratings=ratings; obj.beliefs=[...selectedBeliefs]; jData=obj;
   try{
     const wk=getWeekKey(currentWeekOffset);
-    await setDoc(doc(db,'users',currentUser.uid,'journal',wk),obj,{merge:true});
+    await db.collection('users').doc(currentUser.uid).collection('journal').doc(wk).set(obj,{merge:true});
     setSyncDot('synced');
     const ind=document.getElementById('saveInd'); ind.classList.add('show'); setTimeout(()=>ind.classList.remove('show'),2000);
   }catch(e){ setSyncDot('error'); }
@@ -838,9 +839,7 @@ window.debounceSave=function(){ clearTimeout(saveTimer); saveTimer=setTimeout(sa
 function listenTrades(){
   if(!currentUser) return;
   if(unsubTrades) unsubTrades();
-  const col=collection(db,'users',currentUser.uid,'trades');
-  const q=query(col,orderBy('date','asc'));
-  unsubTrades=onSnapshot(q,snap=>{ trades=snap.docs.map(d=>({id:d.id,...d.data()})); renderTradeList(); updateHomeHighlights(); setSyncDot('synced'); },err=>setSyncDot('error'));
+  unsubTrades=db.collection('users').doc(currentUser.uid).collection('trades').orderBy('date','asc').onSnapshot(snap=>{ trades=snap.docs.map(d=>({id:d.id,...d.data()})); renderTradeList(); updateHomeHighlights(); setSyncDot('synced'); },err=>setSyncDot('error'));
 }
 window.saveTrade = async function(){
   if(!currentUser) return;
@@ -864,12 +863,12 @@ window.saveTrade = async function(){
   };
   setSyncDot('syncing');
   try{
-    if(editingTradeId){ await updateDoc(doc(db,'users',currentUser.uid,'trades',editingTradeId),trade); showToast('Trade updated ✓'); }
-    else{ await addDoc(collection(db,'users',currentUser.uid,'trades'),trade); showToast('Trade saved ✓'); }
+    if(editingTradeId){ await db.collection('users').doc(currentUser.uid).collection('trades').doc(editingTradeId).update(trade); showToast('Trade updated ✓'); }
+    else{ await db.collection('users').doc(currentUser.uid).collection('trades').add(trade); showToast('Trade saved ✓'); }
     closeTradeForm();
-  }catch(e){ setSyncDot('error'); showToast('Save failed — check connection'); }
+  }catch(e){ setSyncDot('error'); showToast('Save failed: '+e.message.substring(0,50)); console.error('Save error:',e); }
 };
-window.deleteTrade=async function(id,e){ e.stopPropagation(); if(!confirm('Delete this trade log?')) return; try{ await deleteDoc(doc(db,'users',currentUser.uid,'trades',id)); showToast('Deleted'); }catch(e){ showToast('Delete failed'); } };
+window.deleteTrade=async function(id,e){ e.stopPropagation(); if(!confirm('Delete this trade log?')) return; try{ await db.collection('users').doc(currentUser.uid).collection('trades').doc(id).delete(); showToast('Deleted'); }catch(e){ showToast('Delete failed'); } };
 
 // ── FILTER ──
 window.setFilter=function(f,btn){ activeFilter=f; document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.getElementById('calendarWrap').style.display=f==='calendar'?'block':'none'; renderTradeList(); };
@@ -1026,8 +1025,10 @@ window.runAI=async function(){
   const btn=document.getElementById('runAiBtn'),card=document.getElementById('aiCard'),body=document.getElementById('aiBody'),stat=document.getElementById('aiStat');
   btn.disabled=true; btn.textContent='⏳ Analysing...'; card.style.display='block'; card.scrollIntoView({behavior:'smooth',block:'start'});
   body.innerHTML='<div class="thinking-row"><div class="tdots"><span></span><span></span><span></span></div> Reading your journal and trade history...</div>'; stat.textContent='Reading...';
-  const g=id=>(jData[id]||'').trim()||'(not answered)';
-  const lm={1:'1 day',2:'2-3 days',3:'4-5 days',4:'A week+'};const jr=jData.ratings||{};
+  // Read journal directly from both form fields AND saved jData (whichever has content)
+  const gField=id=>{ const el=document.getElementById(id); return (el&&el.value.trim())||(jData[id]||'').trim()||'(not answered)'; };
+  const g=gField;
+  const lm={1:'1 day',2:'2-3 days',3:'4-5 days',4:'A week+'};const jr=jData.ratings||ratings||{};
   let txt=`WEEKLY JOURNAL (${jData.weekLabel||'current week'})\nBeliefs: Money=${g('q1_1')} | Family=${g('q1_2')} | Self-worth=${jr.r1||'—'}/10 | Limiting beliefs: ${(jData.beliefs||[]).join('; ')||'none'}\nEmotions: Before rules broken=${g('q2_1')} | After losses=${g('q2_2')} | FOMO=${jr.r2||'—'}/10 | Win effect=${g('q2_4')}\nGoals: Real reason=${g('q3_1')} | Target=${g('q3_2')} | Loss tolerance=${lm[jr.r3]||'—'} | 3yr vision=${g('q3_4')}\nIdentity: Self-describe=${g('q4_1')} | Losing week=${g('q4_2')} | Discipline=${g('q4_3')} | Ideal self=${g('q4_4')}\nCommitments: Focus=${g('q5_1')} | Rule=${g('q5_2')} | Last week review=${g('q5_3')}`;
   if(trades.length){
     const avg=Math.round(trades.reduce((s,t)=>s+(t.overall||50),0)/trades.length);
