@@ -70,10 +70,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 
 /* ── HOME ── */
 .home-hero{padding:22px 18px 18px;background:linear-gradient(160deg,rgba(26,158,110,0.08) 0%,transparent 55%);border-bottom:1px solid var(--border);}
-.home-date{font-size:11px;color:var(--muted);margin-bottom:4px;}
+.home-date{font-size:12px;color:#4a5568;font-weight:600;margin-bottom:4px;}
 .home-greeting{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:400;line-height:1.2;}
 .home-greeting em{color:var(--gold);font-style:italic;}
-.home-sub{font-size:12px;color:var(--muted);line-height:1.6;margin-top:6px;}
+.home-sub{font-size:13px;color:#4a5568;font-weight:500;line-height:1.6;margin-top:6px;}
 
 /* Highlight cards row */
 .highlights{padding:14px 18px 6px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
@@ -88,26 +88,26 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .hl-val.green{color:var(--green);}
 .hl-val.blue{color:var(--blue);}
 .hl-val.orange{color:var(--orange);}
-.hl-lbl{font-size:10px;color:var(--muted);margin-top:3px;font-weight:500;}
-.hl-sub{font-size:9px;color:var(--muted2);margin-top:2px;}
+.hl-lbl{font-size:11px;color:#3a4a5c;margin-top:3px;font-weight:700;}
+.hl-sub{font-size:10px;color:#6b7a92;margin-top:2px;font-weight:500;}
 
 /* AI Insight snippet */
 .insight-card{margin:10px 18px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow);cursor:pointer;}
 .insight-card:active{background:var(--card2);}
 .insight-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
 .insight-dot{width:8px;height:8px;border-radius:50%;background:var(--green);}
-.insight-lbl{font-size:10px;font-weight:600;color:var(--green);letter-spacing:1px;text-transform:uppercase;flex:1;}
-.insight-date{font-size:10px;color:var(--muted);}
-.insight-txt{font-size:12px;color:var(--text);line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
-.insight-empty{font-size:12px;color:var(--muted);line-height:1.6;font-style:italic;}
+.insight-lbl{font-size:11px;font-weight:700;color:var(--green);letter-spacing:1px;text-transform:uppercase;flex:1;}
+.insight-date{font-size:11px;color:#4a5568;font-weight:600;}
+.insight-txt{font-size:13px;color:#1a2332;font-weight:500;line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.insight-empty{font-size:13px;color:#4a5568;font-weight:500;line-height:1.6;font-style:italic;}
 
 /* Journal reminder card */
 .remind-card{margin:0 18px 10px;background:linear-gradient(135deg,rgba(26,158,110,0.08),rgba(26,158,110,0.02));border:1px solid var(--gold-dim);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;}
 .remind-card:active{opacity:.8;}
 .remind-left{font-size:22px;}
 .remind-info{flex:1;}
-.remind-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;}
-.remind-sub{font-size:11px;color:var(--muted);}
+.remind-title{font-size:14px;font-weight:700;color:#1a2332;margin-bottom:2px;}
+.remind-sub{font-size:12px;color:#4a5568;font-weight:600;}
 .remind-arrow{color:var(--gold);font-size:18px;}
 
 /* Quick actions */
@@ -115,10 +115,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .quick-btn{flex:1;padding:13px 10px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-align:center;cursor:pointer;box-shadow:var(--shadow);transition:all .15s;}
 .quick-btn:active{transform:scale(.97);}
 .quick-btn .qico{font-size:20px;margin-bottom:4px;}
-.quick-btn .qtxt{font-size:10px;font-weight:600;color:var(--text);}
-.quick-btn .qsub{font-size:9px;color:var(--muted);margin-top:1px;}
+.quick-btn .qtxt{font-size:12px;font-weight:700;color:#1a2332;}
+.quick-btn .qsub{font-size:11px;color:#4a5568;font-weight:500;margin-top:1px;}
 
-.section-label{font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--green);text-transform:uppercase;padding:12px 18px 6px;}
+.section-label{font-size:11px;font-weight:800;letter-spacing:1.5px;color:var(--green);text-transform:uppercase;padding:12px 18px 6px;}
 
 /* ── JOURNAL ── */
 .week-banner{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--card);border-bottom:1px solid var(--border);}
@@ -310,6 +310,37 @@ canvas{display:block;}
 .mchip.habit.sel .mcdot,.mchip.habit.sel .habit-dot{background:var(--green);}
 .habit-dot{background:var(--border2);}
 
+
+/* ── CREED TICKER ── */
+.creed-ticker-wrap{margin:0 18px 10px;background:linear-gradient(135deg,#0f1e14,#1a2d1e);border:1px solid rgba(26,158,110,0.4);border-radius:14px;overflow:hidden;cursor:pointer;}
+.creed-ticker-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 6px;}
+.creed-ticker-label{font-size:9px;font-weight:800;letter-spacing:2.5px;color:var(--gold-light);text-transform:uppercase;}
+.creed-ticker-tap{font-size:10px;color:rgba(26,158,110,0.7);font-weight:600;}
+.creed-ticker-body{overflow:hidden;padding:0 0 12px;}
+.creed-track{display:flex;gap:0;white-space:nowrap;animation:tickerScroll 28s linear infinite;}
+.creed-track:hover{animation-play-state:paused;}
+.creed-item{display:inline-block;padding:4px 28px;font-size:13px;font-weight:800;color:#ffffff;letter-spacing:1.5px;font-family:'IBM Plex Mono',monospace;}
+.creed-item span{color:var(--gold-light);}
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ── CREED SCREEN ── */
+.creed-hero{padding:28px 18px 20px;background:linear-gradient(160deg,#0f1e14 0%,#1a2d1e 60%,#0f1e14 100%);border-bottom:2px solid rgba(26,158,110,0.3);}
+.creed-hero-label{font-size:10px;font-weight:800;letter-spacing:3px;color:var(--gold-light);text-transform:uppercase;margin-bottom:8px;}
+.creed-hero-title{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:400;color:#ffffff;line-height:1.1;}
+.creed-hero-title em{color:var(--gold-light);font-style:italic;}
+.creed-hero-sub{font-size:12px;color:rgba(255,255,255,0.6);margin-top:8px;line-height:1.7;font-weight:500;}
+.creed-list{padding:16px 18px;}
+.creed-card{background:linear-gradient(135deg,#0f1e14,#162819);border:1px solid rgba(26,158,110,0.25);border-radius:14px;padding:18px 18px;margin-bottom:10px;position:relative;overflow:hidden;}
+.creed-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold-light);border-radius:3px 0 0 3px;}
+.creed-num{font-size:9px;font-weight:800;letter-spacing:2px;color:var(--gold-light);text-transform:uppercase;margin-bottom:6px;font-family:'IBM Plex Mono',monospace;}
+.creed-text{font-size:15px;font-weight:800;color:#ffffff;line-height:1.5;letter-spacing:0.5px;text-transform:uppercase;}
+.creed-card-custom{background:linear-gradient(135deg,#0f1e14,#162819);border:1px dashed rgba(26,158,110,0.4);border-radius:14px;padding:16px 18px;margin-bottom:10px;}
+.creed-add-btn{width:100%;padding:15px;background:transparent;border:2px dashed rgba(26,158,110,0.5);border-radius:12px;color:var(--gold-light);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin:6px 0 20px;letter-spacing:1px;transition:all .2s;}
+.creed-add-btn:active{transform:scale(.97);}
+.creed-ritual-btn{display:flex;align-items:center;justify-content:center;gap:8px;margin:4px 18px 14px;padding:16px;background:var(--gold);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;width:calc(100% - 36px);letter-spacing:1px;box-shadow:0 4px 16px rgba(26,158,110,0.4);}
+.creed-ritual-btn:active{transform:scale(.97);}
+.creed-del-btn{position:absolute;top:10px;right:10px;width:26px;height:26px;background:rgba(224,82,82,0.15);border:none;border-radius:6px;color:var(--red);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
 /* ── TOAST ── */
 .toast{position:fixed;bottom:calc(var(--nav-h) + 14px);left:50%;transform:translateX(-50%) translateY(20px);background:#1a2332;color:#fff;padding:11px 22px;font-size:12px;font-weight:500;border-radius:20px;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none;box-shadow:0 4px 20px rgba(26,45,80,0.25);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -417,15 +448,18 @@ canvas{display:block;}
       <div id="insightSnippet" class="insight-empty">Run your first AI analysis to see insights here. Tap to go to Analysis →</div>
     </div>
 
-    <!-- Journal reminder -->
-    <div class="section-label">Weekly Journal</div>
-    <div class="remind-card" onclick="showScreen('journal')">
-      <div class="remind-left">📓</div>
-      <div class="remind-info">
-        <div class="remind-title" id="remindTitle">Review This Week's Journal</div>
-        <div class="remind-sub" id="remindSub">Week of <span id="weekLabel">—</span></div>
+    <!-- Creed ticker -->
+    <div class="section-label">My Creed</div>
+    <div class="creed-ticker-wrap" onclick="showScreen('creed')">
+      <div class="creed-ticker-header">
+        <div class="creed-ticker-label">✦ Trader's Creed</div>
+        <div class="creed-ticker-tap">Tap to open →</div>
       </div>
-      <div class="remind-arrow">›</div>
+      <div class="creed-ticker-body">
+        <div class="creed-track" id="creedTrack">
+          <!-- filled by JS -->
+        </div>
+      </div>
     </div>
 
     <!-- Quick Actions -->
@@ -588,12 +622,32 @@ canvas{display:block;}
     </div>
   </div>
 
+  <!-- CREED SCREEN -->
+  <div class="screen" id="screen-creed">
+    <div class="topbar" style="background:#0f1e14;border-bottom:1px solid rgba(26,158,110,0.3);">
+      <div class="tbar-logo" style="color:#ffffff;">Trader<em>Mind</em></div>
+      <div class="tbar-right"><div class="tbar-badge" style="color:var(--gold-light);border-color:rgba(26,158,110,0.4);background:rgba(26,158,110,0.1);">My Creed</div></div>
+    </div>
+    <div class="creed-hero">
+      <div class="creed-hero-label">Pre-Trade Ritual</div>
+      <div class="creed-hero-title">My Trader's<br><em>Creed</em></div>
+      <div class="creed-hero-sub">Read before every session. Absorb every word.<br>These are the truths that set you free.</div>
+    </div>
+    <div class="creed-list" id="creedList">
+      <!-- filled by JS -->
+    </div>
+    <div style="padding:0 18px;">
+      <button class="creed-add-btn" onclick="addCreedPrompt()">+ Add New Affirmation</button>
+    </div>
+    <button class="creed-ritual-btn" onclick="markRitualDone()">✦ I Am Ready To Trade</button>
+  </div>
+
   <!-- BOTTOM NAV -->
   <div class="bnav">
     <div class="bni active" id="nav-home" onclick="showScreen('home')"><div class="ico">🏠</div><div class="lbl">Home</div></div>
     <div class="bni" id="nav-journal" onclick="showScreen('journal')"><div class="ico">📓</div><div class="lbl">Journal</div></div>
     <div class="bni" id="nav-tradelog" onclick="showScreen('tradelog')"><div class="ico">📈</div><div class="lbl">Trades</div></div>
-    <div class="bni" id="nav-progress" onclick="showScreen('progress');renderCharts()"><div class="ico">📊</div><div class="lbl">Progress</div></div>
+    <div class="bni" id="nav-creed" onclick="showScreen('creed')"><div class="ico">🔥</div><div class="lbl">Creed</div></div>
     <div class="bni" id="nav-analysis" onclick="showScreen('analysis')"><div class="ico">✦</div><div class="lbl">Analysis</div></div>
   </div>
 </div>
@@ -820,6 +874,8 @@ function setupAuth(){
       if(user.photoURL) av.innerHTML=`<img src="${user.photoURL}">`;
       else av.textContent=user.displayName?.[0]||'👤';
       initHomeUI(user);
+      renderCreedTicker();
+      renderCreedScreen();
       await loadJournal();
       listenTrades();
     } else {
@@ -1107,7 +1163,7 @@ window.toggleChip=function(el,type){
 window.setDeviate=function(val){ deviated=val; document.getElementById('deviateNo').classList.toggle('active',val===false); document.getElementById('deviateYes').classList.toggle('active',val===true); };
 
 // ── JOURNAL NAV ──
-window.showScreen=function(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.bni').forEach(n=>n.classList.remove('active')); document.getElementById('screen-'+name).classList.add('active'); const ni=document.getElementById('nav-'+name); if(ni) ni.classList.add('active'); document.getElementById('screen-'+name).scrollTop=0; if(name==='progress') renderCharts(); if(name==='home') updateHomeHighlights(); };
+window.showScreen=function(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.bni').forEach(n=>n.classList.remove('active')); document.getElementById('screen-'+name).classList.add('active'); const ni=document.getElementById('nav-'+name); if(ni) ni.classList.add('active'); document.getElementById('screen-'+name).scrollTop=0; if(name==='progress') renderCharts(); if(name==='home') updateHomeHighlights(); if(name==='creed'){ renderCreedScreen(); renderCreedTicker(); } };
 window.switchSec=function(i){ document.querySelectorAll('.scontent').forEach((s,j)=>s.classList.toggle('active',j===i)); document.querySelectorAll('.stab').forEach((t,j)=>t.classList.toggle('active',j===i)); document.getElementById('jBadge').textContent='0'+(i+1)+'/05'; document.getElementById('screen-journal').scrollTop=0; document.querySelectorAll('.stab')[i]?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}); };
 window.rate=function(id,btn,val){ document.getElementById(id).querySelectorAll('.rbtn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); ratings[id]=val; window.debounceSave(); };
 window.toggleB=function(el){ el.classList.toggle('sel'); const txt=el.textContent.trim(); if(el.classList.contains('sel')){ selectedBeliefs.add(txt); el.querySelector('.bdot').style.background='var(--red)'; } else { selectedBeliefs.delete(txt); el.querySelector('.bdot').style.background='var(--border2)'; } window.debounceSave(); };
@@ -1276,6 +1332,77 @@ function fmtAI(t){
     .replace(/\*([^*]+)\*/g,'<em>$1</em>')
     .replace(/"([^"]+)"/g,'<b style="color:var(--green)">"$1"</b>');
 }
+
+
+// ── CREED ──
+const DEFAULT_CREEDS = [
+  'ANYTHING CAN HAPPEN IN A TRADE',
+  'EVERY MOMENT IN THE MARKET IS UNIQUE',
+  "I DON'T NEED TO KNOW WHAT WILL HAPPEN NEXT FOR ME TO MAKE MONEY",
+  "THERE'S A RANDOM DISTRIBUTION OF WINS AND LOSSES",
+  'I PREDEFINE MY RISK FOR EVERY TRADE AND I ACCEPT THE OUTCOME CALMLY',
+  'I ACT ON MY EDGE WITHOUT HESITATION OR RESERVATION'
+];
+
+function getCreeds(){
+  try{ const s=localStorage.getItem('tm_creeds'); return s?JSON.parse(s):DEFAULT_CREEDS.slice(); }catch(e){ return DEFAULT_CREEDS.slice(); }
+}
+function saveCreeds(arr){ localStorage.setItem('tm_creeds',JSON.stringify(arr)); }
+
+function renderCreedTicker(){
+  const creeds=getCreeds();
+  const track=document.getElementById('creedTrack');
+  if(!track) return;
+  // Duplicate for seamless loop
+  const all=[...creeds,...creeds];
+  track.innerHTML=all.map((c,i)=>`<span class="creed-item">${i===0||i===creeds.length?'<span>✦</span> ':'· '}${c}</span>`).join('');
+  // Adjust animation speed based on content length
+  const totalLen=all.reduce((s,c)=>s+c.length,0);
+  const dur=Math.max(20,totalLen*0.4);
+  track.style.animationDuration=dur+'s';
+}
+
+function renderCreedScreen(){
+  const creeds=getCreeds();
+  const list=document.getElementById('creedList');
+  if(!list) return;
+  list.innerHTML=creeds.map((c,i)=>`
+    <div class="creed-card" id="creedCard${i}">
+      <button class="creed-del-btn" onclick="deleteCreed(${i})" title="Delete">✕</button>
+      <div class="creed-num">Belief ${String(i+1).padStart(2,'0')}</div>
+      <div class="creed-text">${c}</div>
+    </div>
+  `).join('');
+}
+
+window.addCreedPrompt=function(){
+  const text=prompt('Enter your new affirmation (it will be saved and added to your creed):');
+  if(!text||!text.trim()) return;
+  const creeds=getCreeds();
+  creeds.push(text.trim().toUpperCase());
+  saveCreeds(creeds);
+  renderCreedScreen();
+  renderCreedTicker();
+  showToast('Affirmation added ✦');
+};
+
+window.deleteCreed=function(i){
+  if(!confirm('Remove this belief from your creed?')) return;
+  const creeds=getCreeds();
+  creeds.splice(i,1);
+  saveCreeds(creeds);
+  renderCreedScreen();
+  renderCreedTicker();
+  showToast('Removed');
+};
+
+window.markRitualDone=function(){
+  const btn=document.querySelector('.creed-ritual-btn');
+  btn.textContent='✦ Ritual Complete — Trade With Clarity';
+  btn.style.background='#0f5a3a';
+  setTimeout(()=>{ btn.textContent='✦ I Am Ready To Trade'; btn.style.background=''; },3000);
+  showToast('Pre-trade ritual complete ✦');
+};
 
 // ── TOAST ──
 window.showToast=function(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); };
