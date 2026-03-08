@@ -9,217 +9,299 @@
 <title>TraderMind</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--gold:#1a9e6e;--gold-light:#22c48a;--gold-dim:rgba(26,158,110,0.15);--gold-glow:rgba(26,158,110,0.07);--bg:#f4f6f8;--card:#ffffff;--card2:#f0f3f5;--border:#e2e6ea;--border2:#d4dbe2;--text:#1a2332;--muted:#8a9bb0;--muted2:#c8d4df;--red:#e05252;--red-dim:rgba(224,82,82,0.10);--green:#1a9e6e;--green-dim:rgba(26,158,110,0.10);--blue:#2980b9;--nav-h:68px;--topbar-h:58px;--shadow:0 1px 4px rgba(26,45,80,0.07),0 4px 16px rgba(26,45,80,0.04);}
+:root{
+  --gold:#1a9e6e;--gold-light:#22c48a;--gold-dim:rgba(26,158,110,0.15);--gold-glow:rgba(26,158,110,0.07);
+  --bg:#f4f6f8;--card:#ffffff;--card2:#f0f3f5;--border:#e2e6ea;--border2:#d4dbe2;
+  --text:#1a2332;--muted:#8a9bb0;--muted2:#c8d4df;
+  --red:#e05252;--red-dim:rgba(224,82,82,0.10);
+  --green:#1a9e6e;--green-dim:rgba(26,158,110,0.10);
+  --blue:#2980b9;--blue-dim:rgba(41,128,185,0.12);
+  --orange:#e07b1a;--orange-dim:rgba(224,123,26,0.12);
+  --nav-h:68px;--topbar-h:58px;
+  --shadow:0 1px 4px rgba(26,45,80,0.07),0 4px 16px rgba(26,45,80,0.04);
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow:hidden;overscroll-behavior:none;-webkit-font-smoothing:antialiased;}
 #app{display:flex;flex-direction:column;height:100%;width:100%;max-width:500px;margin:0 auto;background:var(--bg);position:relative;}
 
-/* ── SETUP SCREEN ── */
-#setupScreen{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;}
+/* ── SETUP ── */
+#setupScreen{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;overflow-y:auto;}
 #setupScreen.hidden{display:none;}
 .setup-logo{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:400;margin-bottom:8px;}
 .setup-logo em{color:var(--gold);font-style:italic;}
-.setup-sub{font-size:11px;color:var(--muted);line-height:1.8;max-width:320px;margin-bottom:40px;}
-.setup-card{width:100%;max-width:380px;background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:28px 24px;margin-bottom:20px;}
+.setup-sub{font-size:11px;color:var(--muted);line-height:1.8;max-width:320px;margin-bottom:32px;}
+.setup-card{width:100%;max-width:380px;background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:28px 24px;margin-bottom:16px;box-shadow:var(--shadow);}
 .setup-card h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;margin-bottom:8px;color:var(--gold);}
 .setup-card p{font-size:11px;color:var(--muted);line-height:1.8;margin-bottom:20px;}
 .setup-input{width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:12px;padding:13px 14px;line-height:1.7;transition:border-color .2s;-webkit-appearance:none;margin-bottom:10px;}
 .setup-input:focus{outline:none;border-color:var(--gold);}
-.setup-btn{width:100%;padding:15px;background:var(--gold);color:#ffffff;border:none;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500;margin-top:8px;transition:all .2s;}
+.setup-btn{width:100%;padding:15px;background:var(--gold);color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-top:8px;transition:all .2s;}
 .setup-btn:active{transform:scale(.97);}
-.setup-btn.outline{background:transparent;color:var(--gold);border:1px solid var(--gold-dim);margin-top:6px;}
-.setup-btn:disabled{opacity:.4;cursor:not-allowed;}
-.setup-step{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;}
-.setup-divider{display:flex;align-items:center;gap:12px;margin:14px 0;color:var(--muted);font-size:10px;}
-.setup-divider::before,.setup-divider::after{content:'';flex:1;height:1px;background:var(--border2);}
-.google-btn{width:100%;padding:14px;background:var(--card2);color:var(--text);border:1px solid var(--border2);border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s;}
+.google-btn{width:100%;padding:14px;background:var(--card2);color:var(--text);border:1px solid var(--border2);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s;}
 .google-btn:active{transform:scale(.97);}
 .google-btn svg{width:18px;height:18px;flex-shrink:0;}
 .config-hint{font-size:10px;color:var(--muted);line-height:1.8;padding:12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;text-align:left;margin-top:12px;}
 .config-hint code{color:var(--gold-light);font-size:10px;}
-#setupError{color:var(--red);font-size:11px;margin-top:10px;display:none;text-align:center;}
-.spinner{width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;vertical-align:middle;margin-right:8px;}
-@keyframes spin{to{transform:rotate(360deg)}}
+#setupError,#setupError2{color:var(--red);font-size:11px;margin-top:10px;display:none;text-align:center;}
+.setup-step{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;}
 
 /* ── SCREENS ── */
-.screen{display:none;flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h) + 20px);}
+.screen{display:none;flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h) + 16px);}
 .screen.active{display:block;}
 .topbar{height:var(--topbar-h);display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--border);background:var(--card);position:sticky;top:0;z-index:20;flex-shrink:0;box-shadow:0 1px 8px rgba(26,45,80,0.06);}
 .tbar-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;}
 .tbar-logo em{color:var(--gold);font-style:italic;}
 .tbar-right{display:flex;align-items:center;gap:8px;}
-.tbar-badge{font-size:9px;letter-spacing:2px;color:var(--gold);border:1px solid var(--gold-dim);padding:4px 9px;border-radius:20px;text-transform:uppercase;background:var(--gold-glow);}
+.tbar-badge{font-size:9px;letter-spacing:1.5px;color:var(--gold);border:1px solid var(--gold-dim);padding:4px 9px;border-radius:20px;text-transform:uppercase;background:var(--gold-glow);}
 .tbar-avatar{width:32px;height:32px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;overflow:hidden;}
 .tbar-avatar img{width:100%;height:100%;object-fit:cover;}
 .sync-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
-.sync-dot.syncing{background:var(--gold);animation:pulse 1s infinite;}
+.sync-dot.syncing{background:var(--orange);animation:pulse 1s infinite;}
 .sync-dot.error{background:var(--red);}
 
 /* ── BOTTOM NAV ── */
 .bnav{display:flex;background:var(--card);border-top:1px solid var(--border);height:var(--nav-h);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -2px 12px rgba(26,45,80,0.06);}
 .bni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;position:relative;padding:8px 0;min-height:48px;}
-.bni .ico{font-size:22px;opacity:.35;transition:opacity .2s;}
-.bni .lbl{font-size:8px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;transition:color .2s;}
+.bni .ico{font-size:20px;opacity:.3;transition:all .2s;}
+.bni .lbl{font-size:8px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;transition:color .2s;}
 .bni.active .ico{opacity:1;}
 .bni.active .lbl{color:var(--gold);}
-.bni.active::after{content:'';position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--gold);border-radius:0 0 3px 3px;}
+.bni.active::after{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;background:var(--gold);border-radius:0 0 4px 4px;}
 
 /* ── HOME ── */
-.home-hero{padding:28px 18px 22px;background:linear-gradient(160deg,rgba(26,158,110,0.07) 0%,transparent 60%);border-bottom:1px solid var(--border);}
-.home-greeting{font-size:10px;color:var(--muted);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:6px;}
-.home-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:400;line-height:1.15;}
-.home-title em{color:var(--gold);font-style:italic;}
-.home-sub{font-size:11px;color:var(--muted);line-height:1.8;margin-top:10px;}
-.stats-row{display:flex;gap:10px;padding:16px 18px;}
-.stat-card{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 12px;text-align:center;box-shadow:var(--shadow);}
-.stat-val{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);}
-.stat-lbl{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
-.ring-card{margin:0 18px 14px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:16px;box-shadow:var(--shadow);}
-.ring-wrap{position:relative;width:60px;height:60px;flex-shrink:0;}
-.ring-wrap svg{transform:rotate(-90deg);}
-.r-bg{fill:none;stroke:var(--border2);stroke-width:5;}
-.r-fill{fill:none;stroke:var(--gold);stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .6s ease;}
-.ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--gold);}
-.ring-info h3{font-size:13px;margin-bottom:4px;}
-.ring-info p{font-size:10px;color:var(--muted);line-height:1.6;}
-.home-section{padding:0 18px 8px;}
-.home-section-title{font-size:9px;letter-spacing:2px;color:var(--green);text-transform:uppercase;margin-bottom:10px;padding-top:4px;font-weight:600;}
-.hcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px 16px;display:flex;align-items:center;gap:13px;cursor:pointer;transition:background .15s;margin-bottom:9px;box-shadow:var(--shadow);}
-.hcard:active{background:var(--card2);}
-.hcard.done{border-color:rgba(201,168,76,.25);}
-.hcard-left{font-size:22px;}
-.hcard-info{flex:1;}
-.hcard-title{font-size:13px;margin-bottom:3px;}
-.hcard-sub{font-size:10px;color:var(--muted);}
-.hcard-right{color:var(--muted2);font-size:18px;}
-.hcard.done .hcard-right{color:var(--green);}
-.cta-btn{display:flex;align-items:center;justify-content:center;gap:8px;margin:4px 18px 20px;padding:16px;background:var(--gold);color:#ffffff;border:none;border-radius:12px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500;transition:all .2s;width:calc(100% - 36px);}
-.cta-btn:active{transform:scale(.97);}
-.cta-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+.home-hero{padding:22px 18px 18px;background:linear-gradient(160deg,rgba(26,158,110,0.08) 0%,transparent 55%);border-bottom:1px solid var(--border);}
+.home-date{font-size:11px;color:var(--muted);margin-bottom:4px;}
+.home-greeting{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:400;line-height:1.2;}
+.home-greeting em{color:var(--gold);font-style:italic;}
+.home-sub{font-size:12px;color:var(--muted);line-height:1.6;margin-top:6px;}
+
+/* Highlight cards row */
+.highlights{padding:14px 18px 6px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.hl-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 14px 12px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.hl-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;}
+.hl-card.green::before{background:var(--green);}
+.hl-card.blue::before{background:var(--blue);}
+.hl-card.orange::before{background:var(--orange);}
+.hl-card.red::before{background:var(--red);}
+.hl-ico{font-size:20px;margin-bottom:6px;}
+.hl-val{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--text);line-height:1;}
+.hl-val.green{color:var(--green);}
+.hl-val.blue{color:var(--blue);}
+.hl-val.orange{color:var(--orange);}
+.hl-lbl{font-size:10px;color:var(--muted);margin-top:3px;font-weight:500;}
+.hl-sub{font-size:9px;color:var(--muted2);margin-top:2px;}
+
+/* AI Insight snippet */
+.insight-card{margin:10px 18px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow);cursor:pointer;}
+.insight-card:active{background:var(--card2);}
+.insight-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.insight-dot{width:8px;height:8px;border-radius:50%;background:var(--green);}
+.insight-lbl{font-size:10px;font-weight:600;color:var(--green);letter-spacing:1px;text-transform:uppercase;flex:1;}
+.insight-date{font-size:10px;color:var(--muted);}
+.insight-txt{font-size:12px;color:var(--text);line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.insight-empty{font-size:12px;color:var(--muted);line-height:1.6;font-style:italic;}
+
+/* Journal reminder card */
+.remind-card{margin:0 18px 10px;background:linear-gradient(135deg,rgba(26,158,110,0.08),rgba(26,158,110,0.02));border:1px solid var(--gold-dim);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+.remind-card:active{opacity:.8;}
+.remind-left{font-size:22px;}
+.remind-info{flex:1;}
+.remind-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.remind-sub{font-size:11px;color:var(--muted);}
+.remind-arrow{color:var(--gold);font-size:18px;}
+
+/* Quick actions */
+.quick-row{display:flex;gap:10px;padding:0 18px 10px;}
+.quick-btn{flex:1;padding:13px 10px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-align:center;cursor:pointer;box-shadow:var(--shadow);transition:all .15s;}
+.quick-btn:active{transform:scale(.97);}
+.quick-btn .qico{font-size:20px;margin-bottom:4px;}
+.quick-btn .qtxt{font-size:10px;font-weight:600;color:var(--text);}
+.quick-btn .qsub{font-size:9px;color:var(--muted);margin-top:1px;}
+
+.section-label{font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--green);text-transform:uppercase;padding:12px 18px 6px;}
 
 /* ── JOURNAL ── */
+.week-banner{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--card);border-bottom:1px solid var(--border);}
+.week-info{font-size:12px;font-weight:600;color:var(--text);}
+.week-sub{font-size:10px;color:var(--muted);margin-top:1px;}
+.week-nav{display:flex;gap:6px;align-items:center;}
+.week-nav-btn{width:32px;height:32px;border-radius:8px;background:var(--card2);border:1px solid var(--border2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);}
+.week-nav-btn:active{transform:scale(.92);}
+.week-badge{font-size:9px;color:var(--green);background:var(--green-dim);border:1px solid var(--gold-dim);padding:3px 8px;border-radius:12px;font-weight:600;}
 .sec-tabs{display:flex;overflow-x:auto;scrollbar-width:none;background:var(--card);border-bottom:1px solid var(--border);}
 .sec-tabs::-webkit-scrollbar{display:none;}
-.stab{flex-shrink:0;padding:13px 16px;font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.stab{flex-shrink:0;padding:12px 14px;font-size:10px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
 .stab.active{color:var(--gold);border-bottom-color:var(--gold);}
-.scontent{padding:20px;display:none;}
+.scontent{padding:18px;display:none;background:var(--bg);}
 .scontent.active{display:block;}
-.sec-hdr{margin-bottom:22px;}
-.sec-hdr .snum{font-size:10px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:5px;}
-.sec-hdr h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;line-height:1.2;}
-.sec-hdr p{font-size:11px;color:var(--muted);line-height:1.8;margin-top:8px;border-left:2px solid var(--border2);padding-left:10px;}
-.qb{margin-bottom:22px;}
-.qlbl{display:block;font-size:11px;color:var(--gold);margin-bottom:9px;line-height:1.6;}
-.qlbl .qn{color:var(--muted);font-size:10px;margin-right:4px;}
-textarea,input[type=text],select{width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:13px 14px;line-height:1.7;transition:border-color .2s;-webkit-appearance:none;appearance:none;}
-textarea:focus,input[type=text]:focus,select:focus{outline:none;border-color:var(--gold);}
-textarea{resize:none;min-height:88px;}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666055' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
-select option{background:var(--card2);}
-.rating-wrap{display:flex;gap:7px;flex-wrap:wrap;}
-.rbtn{min-width:38px;height:40px;background:var(--card2);border:1px solid var(--border2);border-radius:8px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s;padding:0 10px;}
+.sec-hdr{margin-bottom:20px;}
+.sec-hdr .snum{font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-weight:600;}
+.sec-hdr h2{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;line-height:1.2;}
+.sec-hdr p{font-size:11px;color:var(--muted);line-height:1.8;margin-top:7px;border-left:2px solid var(--gold-dim);padding-left:10px;}
+.qb{margin-bottom:20px;}
+.qlbl{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.5;}
+.qlbl .qn{color:var(--gold);font-size:11px;margin-right:4px;}
+textarea,input[type=text],input[type=number],select{width:100%;background:var(--card);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:12px 14px;line-height:1.6;transition:border-color .2s;-webkit-appearance:none;appearance:none;box-shadow:0 1px 3px rgba(26,45,80,0.04);}
+textarea:focus,input[type=text]:focus,input[type=number]:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim);}
+textarea{resize:none;min-height:84px;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a9bb0' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+select option{background:#fff;}
+.rating-wrap{display:flex;gap:6px;flex-wrap:wrap;}
+.rbtn{min-width:36px;height:38px;background:var(--card);border:1px solid var(--border2);border-radius:8px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;padding:0 10px;}
 .rbtn:active{transform:scale(.92);}
-.rbtn.active{background:var(--gold);color:#080808;border-color:var(--gold);font-weight:500;}
-.belief-list{display:flex;flex-direction:column;gap:8px;}
-.bchip{display:flex;align-items:flex-start;gap:10px;padding:13px 14px;background:var(--card2);border:1px solid var(--border2);border-radius:10px;cursor:pointer;font-size:11px;line-height:1.6;transition:all .15s;}
-.bchip:active{transform:scale(.98);}
+.rbtn.active{background:var(--gold);color:#fff;border-color:var(--gold);font-weight:600;}
+.belief-list{display:flex;flex-direction:column;gap:7px;}
+.bchip{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--card);border:1px solid var(--border2);border-radius:10px;cursor:pointer;font-size:12px;line-height:1.6;transition:all .15s;}
 .bchip.sel{border-color:var(--red);background:var(--red-dim);}
-.bdot{width:8px;height:8px;border-radius:50%;background:var(--border2);flex-shrink:0;margin-top:4px;transition:background .15s;}
+.bdot{width:8px;height:8px;border-radius:50%;background:var(--border2);flex-shrink:0;margin-top:5px;transition:background .15s;}
 .bchip.sel .bdot{background:var(--red);}
-.nav-btns{display:flex;gap:10px;margin-top:26px;}
-.nb{flex:1;padding:15px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;border:1px solid;}
+.nav-btns{display:flex;gap:10px;margin-top:24px;}
+.nb{flex:1;padding:13px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid;}
 .nb:active{transform:scale(.97);}
 .nb-prev{background:transparent;color:var(--muted);border-color:var(--border2);}
-.nb-next{background:var(--gold);color:#ffffff;border-color:var(--gold);font-weight:500;}
-.save-indicator{font-size:10px;color:var(--green);letter-spacing:1px;opacity:0;transition:opacity .3s;margin-top:8px;text-align:center;}
+.nb-next{background:var(--gold);color:#fff;border-color:var(--gold);}
+.save-indicator{font-size:11px;color:var(--green);opacity:0;transition:opacity .3s;margin-top:8px;text-align:center;font-weight:500;}
 .save-indicator.show{opacity:1;}
 
 /* ── TRADE LOG ── */
-.tlog-actions{display:flex;gap:10px;padding:16px 18px 8px;}
-.tlog-fab{flex:1;padding:14px;background:var(--gold);color:#ffffff;border:none;border-radius:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px;}
+.tlog-topbar{padding:12px 18px 8px;display:flex;gap:8px;align-items:center;}
+.tlog-fab{flex:1;padding:13px;background:var(--gold);color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 2px 8px rgba(26,158,110,0.3);}
 .tlog-fab:active{transform:scale(.97);}
-.overlay{position:fixed;inset:0;background:rgba(26,35,50,0.65);backdrop-filter:blur(6px);z-index:100;display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;}
-.overlay.open{display:flex;align-items:flex-start;justify-content:center;padding:20px 0 60px;}
+
+/* Filter bar */
+.filter-bar{display:flex;gap:6px;padding:0 18px 10px;overflow-x:auto;scrollbar-width:none;}
+.filter-bar::-webkit-scrollbar{display:none;}
+.fbtn{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:var(--card);color:var(--muted);transition:all .15s;white-space:nowrap;}
+.fbtn:active{transform:scale(.95);}
+.fbtn.active{background:var(--gold);color:#fff;border-color:var(--gold);}
+
+/* Calendar */
+.calendar-wrap{margin:0 18px 12px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:var(--shadow);}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.cal-title{font-size:13px;font-weight:600;}
+.cal-nav{display:flex;gap:6px;}
+.cal-nav-btn{width:28px;height:28px;border-radius:6px;background:var(--card2);border:1px solid var(--border2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-day-lbl{font-size:9px;font-weight:600;color:var(--muted);text-align:center;padding:3px 0;text-transform:uppercase;}
+.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:11px;font-weight:500;cursor:pointer;position:relative;transition:all .15s;}
+.cal-day.today{background:var(--gold-dim);color:var(--gold);font-weight:700;}
+.cal-day.has-trades{background:var(--green-dim);color:var(--green);font-weight:700;}
+.cal-day.has-trades.has-loss{background:var(--red-dim);color:var(--red);}
+.cal-day.selected{outline:2px solid var(--gold);}
+.cal-day.empty{opacity:0;}
+.cal-dot{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--green);}
+
+/* Trade groups */
+.day-group{margin-bottom:14px;}
+.day-group-header{display:flex;align-items:center;justify-content:space-between;padding:6px 18px;margin-bottom:4px;}
+.day-group-date{font-size:11px;font-weight:700;color:var(--text);}
+.day-group-meta{font-size:10px;color:var(--muted);}
+.tlog-list{padding:0 18px;}
+.tlog-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;line-height:2;}
+.trade-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 15px;margin-bottom:8px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow);}
+.trade-card:active{background:var(--card2);}
+.tc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.tc-pair{font-size:14px;font-weight:700;color:var(--text);}
+.tc-time{font-size:10px;color:var(--muted);}
+.tc-dir{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;}
+.tc-dir.buy{background:var(--green-dim);color:var(--green);}
+.tc-dir.sell{background:var(--red-dim);color:var(--red);}
+.tc-result-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px;}
+.tc-outcome-pill{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.tc-outcome-pill.win{background:var(--green-dim);color:var(--green);}
+.tc-outcome-pill.loss{background:var(--red-dim);color:var(--red);}
+.tc-outcome-pill.be{background:rgba(138,155,176,0.15);color:var(--muted);}
+.tc-outcome-pill.open{background:var(--blue-dim);color:var(--blue);}
+.tc-rr{font-size:10px;font-weight:600;color:var(--orange);}
+.tc-moods{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px;}
+.mood-tag{font-size:9px;padding:2px 7px;border-radius:12px;font-weight:500;}
+.mood-tag.before{background:var(--gold-dim);color:var(--gold);}
+.mood-tag.during{background:var(--blue-dim);color:var(--blue);}
+.mood-tag.after{background:var(--green-dim);color:var(--green);}
+.tc-score{font-size:10px;color:var(--muted);font-weight:500;}
+.tc-actions{display:flex;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+.tc-del{padding:5px 12px;background:var(--red-dim);color:var(--red);border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;}
+
+/* Overlay */
+.overlay{position:fixed;inset:0;background:rgba(26,35,50,0.6);backdrop-filter:blur(6px);z-index:100;display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.overlay.open{display:flex;align-items:flex-start;justify-content:center;padding:16px 0 60px;}
 .overlay-card{width:calc(100% - 24px);max-width:480px;background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin:auto;box-shadow:0 20px 60px rgba(26,45,80,0.2);}
-.overlay-hdr{padding:18px 20px;background:rgba(201,168,76,.06);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.overlay-hdr{padding:16px 20px;background:linear-gradient(135deg,rgba(26,158,110,0.06),transparent);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .overlay-hdr h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;}
-.overlay-close{width:36px;height:36px;background:var(--card2);border:1px solid var(--border2);border-radius:8px;color:var(--muted);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.overlay-body{padding:20px;}
-.phase-tabs{display:flex;gap:0;border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:20px;}
-.ptab{flex:1;padding:11px 6px;text-align:center;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .2s;background:var(--card2);}
-.ptab.active{background:var(--gold);color:#080808;font-weight:500;}
+.overlay-close{width:34px;height:34px;background:var(--card2);border:1px solid var(--border2);border-radius:8px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.overlay-body{padding:18px;}
+.timestamp-badge{display:flex;align-items:center;gap:6px;padding:8px 12px;background:var(--green-dim);border:1px solid var(--gold-dim);border-radius:8px;margin-bottom:16px;}
+.timestamp-badge span{font-size:11px;color:var(--green);font-weight:600;}
+
+/* Trade form fields */
+.field-row{display:flex;gap:10px;margin-bottom:16px;}
+.field-row .field{flex:1;}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px;}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.result-item label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px;}
+.result-item input{padding:10px 12px;font-size:13px;}
+
+/* Phase tabs */
+.phase-tabs{display:flex;border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:16px;}
+.ptab{flex:1;padding:10px 6px;text-align:center;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;background:var(--card2);}
+.ptab.active{background:var(--gold);color:#fff;}
 .phase-content{display:none;}
 .phase-content.active{display:block;}
-.mood-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
-.mood-btn{padding:9px 12px;background:var(--card2);border:1px solid var(--border2);border-radius:8px;font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.mood-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.mood-btn{padding:8px 11px;background:var(--card2);border:1px solid var(--border2);border-radius:8px;font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .mood-btn:active{transform:scale(.92);}
 .mood-btn.sel{border-color:var(--gold);background:var(--gold-dim);}
-.save-trade-btn{width:100%;padding:15px;background:var(--gold);color:#ffffff;border:none;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500;margin-top:20px;}
+.save-trade-btn{width:100%;padding:14px;background:var(--gold);color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;box-shadow:0 2px 8px rgba(26,158,110,0.3);}
 .save-trade-btn:active{transform:scale(.97);}
-.tlog-list{padding:0 18px 12px;}
-.tlog-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:12px;line-height:2;}
-.trade-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px 16px;margin-bottom:10px;cursor:pointer;transition:background .15s;box-shadow:var(--shadow);}
-.trade-card:active{background:var(--card2);}
-.tc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.tc-pair{font-size:14px;font-weight:500;}
-.tc-date{font-size:10px;color:var(--muted);}
-.tc-phases{display:flex;gap:6px;flex-wrap:wrap;}
-.phase-pill{font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:20px;text-transform:uppercase;}
-.phase-pill.before{background:var(--gold-dim);color:var(--gold);}
-.phase-pill.during{background:rgba(41,128,185,.15);color:#5ba8d4;}
-.phase-pill.after{background:var(--green-dim);color:var(--green);}
-.tc-outcome{display:flex;align-items:center;gap:6px;margin-top:8px;}
-.outcome-dot{width:8px;height:8px;border-radius:50%;}
-.outcome-dot.win{background:var(--green);}
-.outcome-dot.loss{background:var(--red);}
-.outcome-dot.be{background:var(--muted);}
-.tc-score{font-size:11px;color:var(--gold);}
 
 /* ── PROGRESS ── */
-.prog-hero{padding:24px 18px 16px;border-bottom:1px solid var(--border);background:linear-gradient(160deg,rgba(26,158,110,0.05) 0%,transparent 60%);}
-.prog-hero h2{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:400;}
+.prog-hero{padding:22px 18px 14px;border-bottom:1px solid var(--border);background:linear-gradient(160deg,rgba(26,158,110,0.06) 0%,transparent 60%);}
+.prog-hero h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;}
 .prog-hero h2 em{color:var(--gold);font-style:italic;}
-.prog-hero p{font-size:11px;color:var(--muted);line-height:1.7;margin-top:6px;}
-.chart-card{margin:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;overflow:hidden;box-shadow:var(--shadow);}
-.chart-title{font-size:10px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;}
-.chart-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
-canvas{display:block;}
-.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;}
-.legend-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted);}
-.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px 14px;}
+.prog-hero p{font-size:12px;color:var(--muted);line-height:1.6;margin-top:5px;}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 18px 6px;}
 .metric-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
-.metric-val{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--gold);}
-.metric-lbl{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;line-height:1.4;}
-.metric-trend{font-size:10px;margin-top:6px;}
+.metric-val{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);}
+.metric-lbl{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px;line-height:1.4;font-weight:600;}
+.metric-trend{font-size:10px;margin-top:5px;font-weight:500;}
 .metric-trend.up{color:var(--green);}
 .metric-trend.down{color:var(--red);}
 .metric-trend.flat{color:var(--muted);}
+.chart-card{margin:10px 18px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;overflow:hidden;box-shadow:var(--shadow);}
+.chart-title{font-size:10px;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;margin-bottom:12px;font-weight:600;}
+.chart-wrap{width:100%;overflow-x:auto;}
+canvas{display:block;}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 
 /* ── ANALYSIS ── */
-.analysis-hero{padding:24px 18px 16px;border-bottom:1px solid var(--border);background:linear-gradient(160deg,rgba(26,158,110,0.05) 0%,transparent 60%);}
-.analysis-hero h2{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:400;}
+.analysis-hero{padding:22px 18px 14px;border-bottom:1px solid var(--border);background:linear-gradient(160deg,rgba(26,158,110,0.06) 0%,transparent 60%);}
+.analysis-hero h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;}
 .analysis-hero h2 em{color:var(--gold);font-style:italic;}
-.analysis-hero p{font-size:11px;color:var(--muted);line-height:1.7;margin-top:6px;}
-.ai-card{margin:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);}
-.ai-card-hdr{padding:14px 16px;background:rgba(201,168,76,.05);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
-.ai-live-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite;}
-.ai-card-hdr span{font-size:10px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;flex:1;}
+.analysis-hero p{font-size:12px;color:var(--muted);line-height:1.6;margin-top:5px;}
+.ai-card{margin:12px 18px;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);}
+.ai-card-hdr{padding:12px 16px;background:var(--green-dim);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.ai-live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+.ai-card-hdr span{font-size:10px;letter-spacing:1.5px;color:var(--green);text-transform:uppercase;flex:1;font-weight:600;}
 .ai-status{font-size:10px;color:var(--muted);}
-.ai-body{padding:18px;font-size:12px;line-height:1.9;color:var(--text);min-height:80px;white-space:pre-wrap;}
-.ai-stag{display:block;color:var(--gold);font-size:9px;letter-spacing:3px;text-transform:uppercase;margin:18px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.ai-body{padding:16px;font-size:13px;line-height:1.9;color:var(--text);min-height:80px;white-space:pre-wrap;}
+.ai-stag{display:block;color:var(--green);font-size:9px;letter-spacing:2px;text-transform:uppercase;margin:16px 0 6px;padding-bottom:5px;border-bottom:1px solid var(--border);font-weight:700;}
 .ai-stag:first-child{margin-top:0;}
-.thinking-row{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:11px;letter-spacing:1px;}
+.thinking-row{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;}
 .tdots{display:flex;gap:4px;}
-.tdots span{width:4px;height:4px;border-radius:50%;background:var(--gold);animation:blink 1.4s infinite both;}
+.tdots span{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:blink 1.4s infinite both;}
 .tdots span:nth-child(2){animation-delay:.2s;}
 .tdots span:nth-child(3){animation-delay:.4s;}
-.cursor{display:inline-block;width:2px;height:13px;background:var(--gold);margin-left:2px;vertical-align:middle;animation:cblink .8s infinite;}
-.note-box{margin:0 18px 14px;padding:14px;background:rgba(26,158,110,0.05);border:1px solid rgba(26,158,110,0.15);border-radius:10px;font-size:10px;color:var(--muted);line-height:1.8;}
-.note-box strong{color:var(--text);display:block;margin-bottom:3px;}
+.cursor{display:inline-block;width:2px;height:14px;background:var(--gold);margin-left:2px;vertical-align:middle;animation:cblink .8s infinite;}
+.note-box{margin:0 18px 12px;padding:14px;background:rgba(26,158,110,0.05);border:1px solid rgba(26,158,110,0.2);border-radius:12px;font-size:12px;color:var(--muted);line-height:1.8;}
+.note-box strong{color:var(--text);display:block;margin-bottom:4px;font-size:13px;}
+.cta-btn{display:flex;align-items:center;justify-content:center;gap:8px;margin:4px 18px 14px;padding:15px;background:var(--gold);color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;width:calc(100% - 36px);box-shadow:0 2px 12px rgba(26,158,110,0.3);}
+.cta-btn:active{transform:scale(.97);}
+.cta-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
 
 /* ── TOAST ── */
-.toast{position:fixed;bottom:calc(var(--nav-h) + 12px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--card);border:1px solid transparent;color:#ffffff;background:#1a2332;padding:10px 20px;font-size:11px;letter-spacing:1px;border-radius:20px;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none;}
+.toast{position:fixed;bottom:calc(var(--nav-h) + 14px);left:50%;transform:translateX(-50%) translateY(20px);background:#1a2332;color:#fff;padding:11px 22px;font-size:12px;font-weight:500;border-radius:20px;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none;box-shadow:0 4px 20px rgba(26,45,80,0.25);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
@@ -229,15 +311,14 @@ canvas{display:block;}
 </head>
 <body>
 
-<!-- ══ FIREBASE SETUP SCREEN ══ -->
+<!-- ══ SETUP ══ -->
 <div id="setupScreen">
   <div class="setup-logo">Trader<em>Mind</em></div>
-  <div class="setup-sub">Your psychology journal — synced across all your devices in real time.</div>
-
+  <div class="setup-sub">Your trading psychology journal — synced across all devices in real time.</div>
   <div id="stepConfig" class="setup-card">
     <div class="setup-step">Step 1 of 2 — Firebase Config</div>
     <h3>Connect Your Database</h3>
-    <p>Paste your Firebase project config below. This links the app to your personal cloud database so data syncs across all devices.</p>
+    <p>Paste your Firebase config to link your personal cloud database.</p>
     <input class="setup-input" id="cfgApiKey" placeholder="apiKey (e.g. AIzaSy...)">
     <input class="setup-input" id="cfgAuthDomain" placeholder="authDomain (e.g. myapp.firebaseapp.com)">
     <input class="setup-input" id="cfgProjectId" placeholder="projectId (e.g. my-tradermind)">
@@ -246,77 +327,136 @@ canvas{display:block;}
     <div class="config-hint">
       <strong style="color:var(--text);display:block;margin-bottom:6px;">How to get your config:</strong>
       1. Go to <code>console.firebase.google.com</code><br>
-      2. Create a project (free) → Add Web App<br>
-      3. Copy the config values shown and paste above<br>
-      4. Enable <code>Authentication → Google</code><br>
-      5. Enable <code>Firestore Database</code> (start in test mode)
+      2. Create project → Add Web App → copy config<br>
+      3. Enable <code>Authentication → Google</code><br>
+      4. Enable <code>Firestore Database</code> (test mode)
     </div>
     <div id="setupError"></div>
   </div>
-  <div style="font-size:10px;color:#3a3530;margin-top:8px;cursor:pointer;" onclick="resetConfig()">Reset saved config</div>
-
+  <div style="font-size:11px;color:var(--muted);cursor:pointer;margin-top:4px;" onclick="resetConfig()">↺ Reset saved config</div>
   <div id="stepLogin" class="setup-card" style="display:none">
     <div class="setup-step">Step 2 of 2 — Sign In</div>
     <h3>Sign In to Sync</h3>
-    <p>Sign in with Google to access your data from any device. Your data is private and only accessible to you.</p>
+    <p>Sign in with Google to access your data from any device.</p>
     <button class="google-btn" onclick="signInGoogle()">
       <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Continue with Google
     </button>
-    <div id="setupError2" style="color:var(--red);font-size:11px;margin-top:10px;display:none;text-align:center;"></div>
+    <div id="setupError2"></div>
   </div>
 </div>
 
-<!-- ══ MAIN APP ══ -->
+<!-- ══ APP ══ -->
 <div id="app" style="display:none">
+
   <!-- HOME -->
   <div class="screen active" id="screen-home">
     <div class="topbar">
       <div class="tbar-logo">Trader<em>Mind</em></div>
       <div class="tbar-right">
-        <div class="sync-dot" id="syncDot" title="Sync status"></div>
+        <div class="sync-dot" id="syncDot"></div>
         <div class="tbar-avatar" id="userAvatar" onclick="signOutUser()" title="Sign out">👤</div>
       </div>
     </div>
+
+    <!-- Hero -->
     <div class="home-hero">
-      <div class="home-greeting" id="homeGreeting">Welcome back</div>
-      <div class="home-title">Know <em>Yourself,</em><br>Know the Market</div>
-      <div class="home-sub">Track your psychology before, during &amp; after every trade. Synced across all your devices.</div>
+      <div class="home-date" id="homeDate"></div>
+      <div class="home-greeting">Good <em id="timeGreet">morning</em>,<br><span id="firstName">Trader</span></div>
+      <div class="home-sub" id="homeSub">Here's your trading mind at a glance.</div>
     </div>
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-val" id="statTrades">0</div><div class="stat-lbl">Trades Logged</div></div>
-      <div class="stat-card"><div class="stat-val" id="statScore">—</div><div class="stat-lbl">Avg Mind Score</div></div>
-      <div class="stat-card"><div class="stat-val" id="statStreak">0</div><div class="stat-lbl">Days Active</div></div>
-    </div>
-    <div class="ring-card">
-      <div class="ring-wrap">
-        <svg width="60" height="60" viewBox="0 0 60 60">
-          <circle class="r-bg" cx="30" cy="30" r="25"/>
-          <circle class="r-fill" id="homeRing" cx="30" cy="30" r="25" stroke-dasharray="157" stroke-dashoffset="157"/>
-        </svg>
-        <div class="ring-pct" id="homeRingPct">0%</div>
+
+    <!-- Highlights -->
+    <div class="section-label">This Week's Highlights</div>
+    <div class="highlights">
+      <div class="hl-card green">
+        <div class="hl-ico">🧠</div>
+        <div class="hl-val green" id="hlMindScore">—</div>
+        <div class="hl-lbl">Mind Score</div>
+        <div class="hl-sub">This week's avg</div>
       </div>
-      <div class="ring-info"><h3>Journal Progress</h3><p id="homeRingDesc">Complete your self-discovery journal to unlock full AI analysis.</p></div>
+      <div class="hl-card blue">
+        <div class="hl-ico">📈</div>
+        <div class="hl-val blue" id="hlTodayTrades">0</div>
+        <div class="hl-lbl">Trades Today</div>
+        <div class="hl-sub" id="hlTodaySub">None logged yet</div>
+      </div>
+      <div class="hl-card orange">
+        <div class="hl-ico">🔥</div>
+        <div class="hl-val orange" id="hlStreak">0</div>
+        <div class="hl-lbl">Journal Streak</div>
+        <div class="hl-sub">weeks active</div>
+      </div>
+      <div class="hl-card" style="border-top:3px solid var(--green);">
+        <div class="hl-ico">📊</div>
+        <div class="hl-val" id="hlWinRate" style="color:var(--text)">—</div>
+        <div class="hl-lbl">Week Win Rate</div>
+        <div class="hl-sub" id="hlWinSub">No trades yet</div>
+      </div>
     </div>
-    <div class="home-section">
-      <div class="home-section-title">Self-Discovery Journal</div>
-      <div class="hcard" id="hc0" onclick="goTo('journal',0)"><div class="hcard-left">🧠</div><div class="hcard-info"><div class="hcard-title">Beliefs About Money</div><div class="hcard-sub">Section 01 · 4 questions</div></div><div class="hcard-right" id="hc0r">›</div></div>
-      <div class="hcard" id="hc1" onclick="goTo('journal',1)"><div class="hcard-left">⚡</div><div class="hcard-info"><div class="hcard-title">Emotional Triggers</div><div class="hcard-sub">Section 02 · 4 questions</div></div><div class="hcard-right" id="hc1r">›</div></div>
-      <div class="hcard" id="hc2" onclick="goTo('journal',2)"><div class="hcard-left">🎯</div><div class="hcard-info"><div class="hcard-title">Goals &amp; Expectations</div><div class="hcard-sub">Section 03 · 4 questions</div></div><div class="hcard-right" id="hc2r">›</div></div>
-      <div class="hcard" id="hc3" onclick="goTo('journal',3)"><div class="hcard-left">🪞</div><div class="hcard-info"><div class="hcard-title">Identity &amp; Self-Image</div><div class="hcard-sub">Section 04 · 4 questions</div></div><div class="hcard-right" id="hc3r">›</div></div>
-      <div class="hcard" id="hc4" onclick="goTo('journal',4)"><div class="hcard-left">📋</div><div class="hcard-info"><div class="hcard-title">Commitments</div><div class="hcard-sub">Section 05 · 3 questions</div></div><div class="hcard-right" id="hc4r">›</div></div>
+
+    <!-- AI Insight snippet -->
+    <div class="section-label">Last AI Insight</div>
+    <div class="insight-card" onclick="showScreen('analysis')">
+      <div class="insight-top">
+        <div class="insight-dot"></div>
+        <div class="insight-lbl">AI Psychology Note</div>
+        <div class="insight-date" id="insightDate">—</div>
+      </div>
+      <div id="insightSnippet" class="insight-empty">Run your first AI analysis to see insights here. Tap to go to Analysis →</div>
     </div>
-    <div class="home-section" style="margin-top:6px;">
-      <div class="home-section-title">Quick Actions</div>
-      <div class="hcard" onclick="goTo('tradelog')"><div class="hcard-left">📈</div><div class="hcard-info"><div class="hcard-title">Log a Trade</div><div class="hcard-sub">Before, during &amp; after psychology</div></div><div class="hcard-right">›</div></div>
-      <div class="hcard" onclick="goTo('progress')"><div class="hcard-left">📊</div><div class="hcard-info"><div class="hcard-title">View Progress</div><div class="hcard-sub">Charts &amp; psychology metrics</div></div><div class="hcard-right">›</div></div>
+
+    <!-- Journal reminder -->
+    <div class="section-label">Weekly Journal</div>
+    <div class="remind-card" onclick="showScreen('journal')">
+      <div class="remind-left">📓</div>
+      <div class="remind-info">
+        <div class="remind-title" id="remindTitle">Review This Week's Journal</div>
+        <div class="remind-sub" id="remindSub">Week of <span id="weekLabel">—</span></div>
+      </div>
+      <div class="remind-arrow">›</div>
     </div>
-    <button class="cta-btn" onclick="goTo('analysis')">✦ Get AI Analysis</button>
+
+    <!-- Quick Actions -->
+    <div class="section-label">Quick Actions</div>
+    <div class="quick-row">
+      <div class="quick-btn" onclick="openTradeForm()">
+        <div class="qico">➕</div>
+        <div class="qtxt">Log Trade</div>
+        <div class="qsub">Add new entry</div>
+      </div>
+      <div class="quick-btn" onclick="showScreen('tradelog')">
+        <div class="qico">📋</div>
+        <div class="qtxt">Trade Log</div>
+        <div class="qsub">View history</div>
+      </div>
+      <div class="quick-btn" onclick="showScreen('progress');renderCharts()">
+        <div class="qico">📊</div>
+        <div class="qtxt">Progress</div>
+        <div class="qsub">Charts & stats</div>
+      </div>
+    </div>
+    <button class="cta-btn" onclick="showScreen('analysis')">✦ Get AI Analysis</button>
   </div>
 
   <!-- JOURNAL -->
   <div class="screen" id="screen-journal">
-    <div class="topbar"><div class="tbar-logo">Trader<em>Mind</em></div><div class="tbar-right"><div class="sync-dot" id="syncDot2"></div><div class="tbar-badge" id="jBadge">01/05</div></div></div>
+    <div class="topbar">
+      <div class="tbar-logo">Trader<em>Mind</em></div>
+      <div class="tbar-right"><div class="sync-dot" id="syncDot2"></div><div class="tbar-badge" id="jBadge">01/05</div></div>
+    </div>
+    <!-- Week selector -->
+    <div class="week-banner">
+      <div>
+        <div class="week-info" id="jWeekLabel">Week of —</div>
+        <div class="week-sub">Review &amp; update weekly · Auto-saved to cloud</div>
+      </div>
+      <div class="week-nav">
+        <button class="week-nav-btn" onclick="changeWeek(-1)">‹</button>
+        <div class="week-badge" id="weekStatusBadge">Current</div>
+        <button class="week-nav-btn" onclick="changeWeek(1)">›</button>
+      </div>
+    </div>
     <div class="sec-tabs" id="secTabs">
       <div class="stab active" onclick="switchSec(0)">01 Beliefs</div>
       <div class="stab" onclick="switchSec(1)">02 Emotions</div>
@@ -324,12 +464,24 @@ canvas{display:block;}
       <div class="stab" onclick="switchSec(3)">04 Identity</div>
       <div class="stab" onclick="switchSec(4)">05 Commit</div>
     </div>
+
     <div class="scontent active" id="sc0">
-      <div class="sec-hdr"><div class="snum">Section 01</div><h2>Beliefs About<br>Money &amp; Trading</h2><p>Your beliefs are invisible rules your subconscious follows — formed long before you opened a chart.</p></div>
+      <div class="sec-hdr"><div class="snum">Section 01</div><h2>Beliefs About<br>Money &amp; Trading</h2><p>Your beliefs are invisible rules formed long before you opened a chart.</p></div>
       <div class="qb"><label class="qlbl"><span class="qn">1.1</span> Complete honestly: "Money is __________"</label><input type="text" id="q1_1" placeholder="hard to keep, freedom, dangerous..." oninput="debounceSave()"></div>
       <div class="qb"><label class="qlbl"><span class="qn">1.2</span> What did your family teach you about money?</label><textarea id="q1_2" placeholder="Words or behaviour you observed growing up..." oninput="debounceSave()"></textarea></div>
       <div class="qb"><label class="qlbl"><span class="qn">1.3</span> Do you truly believe you DESERVE consistent profit? (1=No · 10=Absolutely)</label><div class="rating-wrap" id="r1"><button class="rbtn" onclick="rate('r1',this,1)">1</button><button class="rbtn" onclick="rate('r1',this,2)">2</button><button class="rbtn" onclick="rate('r1',this,3)">3</button><button class="rbtn" onclick="rate('r1',this,4)">4</button><button class="rbtn" onclick="rate('r1',this,5)">5</button><button class="rbtn" onclick="rate('r1',this,6)">6</button><button class="rbtn" onclick="rate('r1',this,7)">7</button><button class="rbtn" onclick="rate('r1',this,8)">8</button><button class="rbtn" onclick="rate('r1',this,9)">9</button><button class="rbtn" onclick="rate('r1',this,10)">10</button></div></div>
-      <div class="qb"><label class="qlbl"><span class="qn">1.4</span> Select any limiting beliefs you recognise:</label><div class="belief-list" id="beliefs"><div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>I always lose my profits eventually</div><div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>Trading is just gambling</div><div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>I need to trade every day or I'll miss out</div><div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>I'm not smart enough to be consistently profitable</div><div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>If I make a lot of money, people will judge me</div><div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>I need to recover losses immediately</div><div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>One big trade will fix everything</div><div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>The market is out to get me personally</div></div></div>
+      <div class="qb"><label class="qlbl"><span class="qn">1.4</span> Select any limiting beliefs you recognise:</label>
+        <div class="belief-list" id="beliefs">
+          <div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>I always lose my profits eventually</div>
+          <div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>Trading is just gambling</div>
+          <div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>I need to trade every day or I'll miss out</div>
+          <div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>I'm not smart enough to be consistently profitable</div>
+          <div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>If I make a lot of money, people will judge me</div>
+          <div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>I need to recover losses immediately</div>
+          <div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>One big trade will fix everything</div>
+          <div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>The market is out to get me personally</div>
+        </div>
+      </div>
       <div class="save-indicator" id="saveInd">Saved to cloud ✓</div>
       <div class="nav-btns"><button class="nb nb-prev" onclick="showScreen('home')">← Home</button><button class="nb nb-next" onclick="switchSec(1)">Next →</button></div>
     </div>
@@ -359,18 +511,43 @@ canvas{display:block;}
     </div>
     <div class="scontent" id="sc4">
       <div class="sec-hdr"><div class="snum">Section 05</div><h2>Commitments &amp;<br>Next Steps</h2><p>Insight without action is entertainment.</p></div>
-      <div class="qb"><label class="qlbl"><span class="qn">5.1</span> The ONE pattern you commit to working on first:</label><input type="text" id="q5_1" placeholder="e.g. revenge trading after losses" oninput="debounceSave()"></div>
-      <div class="qb"><label class="qlbl"><span class="qn">5.2</span> The specific rule or ritual you will implement this week:</label><textarea id="q5_2" placeholder="e.g. After any loss, I close the platform for 1 hour and journal." oninput="debounceSave()"></textarea></div>
-      <div class="qb"><label class="qlbl"><span class="qn">5.3</span> Support and accountability plan:</label><textarea id="q5_3" placeholder="Trading journal, mentor, community, weekly reviews..." oninput="debounceSave()"></textarea></div>
-      <div class="nav-btns"><button class="nb nb-prev" onclick="switchSec(3)">← Back</button><button class="nb nb-next" onclick="goTo('tradelog')">Trade Log →</button></div>
+      <div class="qb"><label class="qlbl"><span class="qn">5.1</span> The ONE pattern you commit to working on this week:</label><input type="text" id="q5_1" placeholder="e.g. revenge trading after losses" oninput="debounceSave()"></div>
+      <div class="qb"><label class="qlbl"><span class="qn">5.2</span> The specific rule or ritual for this week:</label><textarea id="q5_2" placeholder="e.g. After any loss, I close the platform for 1 hour and journal." oninput="debounceSave()"></textarea></div>
+      <div class="qb"><label class="qlbl"><span class="qn">5.3</span> How did last week's commitment go? Honest review:</label><textarea id="q5_3" placeholder="What worked, what didn't, what you learned..." oninput="debounceSave()"></textarea></div>
+      <div class="nav-btns"><button class="nb nb-prev" onclick="switchSec(3)">← Back</button><button class="nb nb-next" onclick="openTradeForm()">Log a Trade →</button></div>
     </div>
   </div>
 
   <!-- TRADE LOG -->
   <div class="screen" id="screen-tradelog">
-    <div class="topbar"><div class="tbar-logo">Trader<em>Mind</em></div><div class="tbar-right"><div class="sync-dot" id="syncDot3"></div><div class="tbar-badge" id="tradeCount">0 trades</div></div></div>
-    <div class="tlog-actions"><button class="tlog-fab" onclick="openTradeForm()">+ Log New Trade</button></div>
-    <div class="tlog-list" id="tradeList"><div class="tlog-empty">No trades logged yet.<br>Tap "+ Log New Trade" to begin<br>tracking your psychology.</div></div>
+    <div class="topbar">
+      <div class="tbar-logo">Trader<em>Mind</em></div>
+      <div class="tbar-right"><div class="sync-dot" id="syncDot3"></div><div class="tbar-badge" id="tradeCount">0 trades</div></div>
+    </div>
+    <div class="tlog-topbar">
+      <button class="tlog-fab" onclick="openTradeForm()">+ Log New Trade</button>
+    </div>
+    <!-- Filters -->
+    <div class="filter-bar">
+      <div class="fbtn active" onclick="setFilter('all',this)">All</div>
+      <div class="fbtn" onclick="setFilter('today',this)">Today</div>
+      <div class="fbtn" onclick="setFilter('week',this)">This Week</div>
+      <div class="fbtn" onclick="setFilter('month',this)">This Month</div>
+      <div class="fbtn" onclick="setFilter('calendar',this)">📅 Calendar</div>
+    </div>
+    <!-- Calendar (hidden by default) -->
+    <div class="calendar-wrap" id="calendarWrap" style="display:none">
+      <div class="cal-header">
+        <div class="cal-title" id="calTitle">March 2026</div>
+        <div class="cal-nav">
+          <button class="cal-nav-btn" onclick="changeCalMonth(-1)">‹</button>
+          <button class="cal-nav-btn" onclick="changeCalMonth(1)">›</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+    <!-- Trades list -->
+    <div id="tradeListWrap"></div>
   </div>
 
   <!-- PROGRESS -->
@@ -383,7 +560,7 @@ canvas{display:block;}
       <div class="metric-card"><div class="metric-val" id="mBefore">—</div><div class="metric-lbl">Avg Pre-Trade</div><div class="metric-trend flat">Clarity score</div></div>
       <div class="metric-card"><div class="metric-val" id="mAfter">—</div><div class="metric-lbl">Avg Post-Trade</div><div class="metric-trend flat">Reflection score</div></div>
     </div>
-    <div class="chart-card"><div class="chart-title">Psychology Score Per Trade</div><div class="chart-wrap"><canvas id="lineChart" height="180"></canvas></div><div class="legend"><div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Overall</div><div class="legend-item"><div class="legend-dot" style="background:#5ba8d4"></div>Pre-Trade</div><div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Post-Trade</div></div></div>
+    <div class="chart-card"><div class="chart-title">Psychology Score Per Trade</div><div class="chart-wrap"><canvas id="lineChart" height="180"></canvas></div><div class="legend"><div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Overall</div><div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Pre-Trade</div><div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Post-Trade</div></div></div>
     <div class="chart-card"><div class="chart-title">Emotional State Distribution</div><div class="chart-wrap"><canvas id="barChart" height="180"></canvas></div></div>
     <div class="chart-card"><div class="chart-title">Running Discipline Score (%)</div><div class="chart-wrap"><canvas id="discChart" height="160"></canvas></div></div>
   </div>
@@ -391,12 +568,12 @@ canvas{display:block;}
   <!-- ANALYSIS -->
   <div class="screen" id="screen-analysis">
     <div class="topbar"><div class="tbar-logo">Trader<em>Mind</em></div><div class="tbar-right"><div class="tbar-badge">AI Analysis</div></div></div>
-    <div class="analysis-hero"><h2>Your <em>AI</em><br>Psychology Report</h2><p>Claude reads your journal AND all trade logs to give you a personalised profile and progress measurement.</p></div>
-    <div class="note-box"><strong>How it works</strong>Your journal + every trade log is sent to Claude for analysis. The more trades you log, the more accurate your progress tracking becomes.</div>
+    <div class="analysis-hero"><h2>Your <em>AI</em><br>Psychology Report</h2><p>Claude reads your journal AND all trade logs for a personalised, evolving report.</p></div>
+    <div class="note-box"><strong>How it works</strong>Your weekly journal + every trade log is sent to Claude. The more you log, the deeper and more accurate your analysis becomes.</div>
     <button class="cta-btn" id="runAiBtn" onclick="runAI()">✦ Analyse My Psychology</button>
     <div class="ai-card" id="aiCard" style="display:none">
       <div class="ai-card-hdr"><div class="ai-live-dot"></div><span>AI Psychological Profile</span><div class="ai-status" id="aiStat">Reading...</div></div>
-      <div class="ai-body" id="aiBody"><div class="thinking-row"><div class="tdots"><span></span><span></span><span></span></div>Reading your data...</div></div>
+      <div class="ai-body" id="aiBody"><div class="thinking-row"><div class="tdots"><span></span><span></span><span></span></div> Reading your data...</div></div>
     </div>
   </div>
 
@@ -415,11 +592,25 @@ canvas{display:block;}
   <div class="overlay-card">
     <div class="overlay-hdr"><h3 id="overlayTitle">Log Trade</h3><button class="overlay-close" onclick="closeTradeForm()">✕</button></div>
     <div class="overlay-body">
-      <div class="qb"><label class="qlbl">Currency Pair</label><input type="text" id="tPair" placeholder="e.g. EUR/USD, GBP/JPY..."></div>
-      <div style="display:flex;gap:10px;" class="qb">
-        <div style="flex:1"><label class="qlbl">Direction</label><select id="tDir"><option value="">Select</option><option>BUY</option><option>SELL</option></select></div>
-        <div style="flex:1"><label class="qlbl">Outcome</label><select id="tOutcome"><option value="">Select</option><option value="win">Win ✓</option><option value="loss">Loss ✗</option><option value="be">Break Even</option><option value="open">Still Open</option></select></div>
+      <!-- Auto timestamp -->
+      <div class="timestamp-badge"><span>🕐</span><span id="tradeTimestamp">—</span></div>
+      <!-- Pair + Direction + Outcome -->
+      <div class="field-row">
+        <div class="field"><label>Currency Pair</label><input type="text" id="tPair" placeholder="EUR/USD, GBP/JPY..."></div>
+        <div class="field"><label>Direction</label><select id="tDir"><option value="">Select</option><option>BUY</option><option>SELL</option></select></div>
       </div>
+      <div class="field-row">
+        <div class="field"><label>Outcome</label><select id="tOutcome"><option value="">Select</option><option value="tp">✅ Take Profit (TP)</option><option value="sl">❌ Stop Loss (SL)</option><option value="be">➡️ Break Even (BE)</option><option value="open">🔵 Still Open</option></select></div>
+        <div class="field"><label>RR Gained</label><input type="number" id="tRR" placeholder="e.g. 2.5" step="0.1" min="0"></div>
+      </div>
+      <!-- TP / SL / Result -->
+      <div class="result-grid">
+        <div class="result-item"><label>TP Price</label><input type="number" id="tTP" placeholder="e.g. 1.0850" step="0.0001"></div>
+        <div class="result-item"><label>SL Price</label><input type="number" id="tSL" placeholder="e.g. 1.0800" step="0.0001"></div>
+        <div class="result-item"><label>Entry Price</label><input type="number" id="tEntry" placeholder="e.g. 1.0820" step="0.0001"></div>
+        <div class="result-item"><label>Pips / Points</label><input type="number" id="tPips" placeholder="e.g. 30" step="1"></div>
+      </div>
+      <!-- Psychology phases -->
       <div class="phase-tabs">
         <div class="ptab active" onclick="switchPhase(0)">Before</div>
         <div class="ptab" onclick="switchPhase(1)">During</div>
@@ -439,7 +630,7 @@ canvas{display:block;}
       <div class="phase-content" id="ph2">
         <div class="qb"><label class="qlbl">Emotional state after closing:</label><div class="mood-row" id="moodAfter"><span class="mood-btn" onclick="selMood(this,'after')">😌 Peaceful</span><span class="mood-btn" onclick="selMood(this,'after')">😤 Angry</span><span class="mood-btn" onclick="selMood(this,'after')">😔 Disappointed</span><span class="mood-btn" onclick="selMood(this,'after')">🎉 Proud</span><span class="mood-btn" onclick="selMood(this,'after')">😰 Regretful</span><span class="mood-btn" onclick="selMood(this,'after')">🧘 Neutral</span><span class="mood-btn" onclick="selMood(this,'after')">🤯 Overconfident</span></div></div>
         <div class="qb"><label class="qlbl">Reflection score (1=Emotional chaos · 10=Fully disciplined)</label><div class="rating-wrap" id="rAfter"><button class="rbtn" onclick="rateT('rAfter',this,1)">1</button><button class="rbtn" onclick="rateT('rAfter',this,2)">2</button><button class="rbtn" onclick="rateT('rAfter',this,3)">3</button><button class="rbtn" onclick="rateT('rAfter',this,4)">4</button><button class="rbtn" onclick="rateT('rAfter',this,5)">5</button><button class="rbtn" onclick="rateT('rAfter',this,6)">6</button><button class="rbtn" onclick="rateT('rAfter',this,7)">7</button><button class="rbtn" onclick="rateT('rAfter',this,8)">8</button><button class="rbtn" onclick="rateT('rAfter',this,9)">9</button><button class="rbtn" onclick="rateT('rAfter',this,10)">10</button></div></div>
-        <div class="qb"><label class="qlbl">What did you learn from this trade?</label><textarea id="tAfterNote" placeholder="The lesson, what you'd do differently, how you felt about your discipline..."></textarea></div>
+        <div class="qb"><label class="qlbl">What did you learn from this trade?</label><textarea id="tAfterNote" placeholder="The lesson, what you'd do differently..."></textarea></div>
       </div>
       <button class="save-trade-btn" onclick="saveTrade()">Save Trade Log</button>
     </div>
@@ -448,7 +639,6 @@ canvas{display:block;}
 
 <div class="toast" id="toast"></div>
 
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
@@ -461,466 +651,430 @@ let jData = {};
 let ratings = {}, tradeRatings = {}, selectedBeliefs = new Set();
 let currentMoods = {before:'',during:'',after:''};
 let followedRules = null, deviated = null, editingTradeId = null;
-let saveTimer = null, unsubTrades = null;
-let fbConfig = null;
+let saveTimer = null, unsubTrades = null, fbConfig = null;
+let currentWeekOffset = 0;
+let activeFilter = 'all';
+let calYear = new Date().getFullYear(), calMonth = new Date().getMonth();
+let selectedCalDay = null, lastAiInsight = '', lastAiDate = '';
+
+// ── WEEK HELPERS ──
+function getWeekStart(offset = 0) {
+  const d = new Date();
+  const day = d.getDay(); // 0=Sun
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Mon start
+  const mon = new Date(d.setDate(diff));
+  mon.setDate(mon.getDate() + offset * 7);
+  mon.setHours(0,0,0,0);
+  return mon;
+}
+function getWeekKey(offset = 0) {
+  const s = getWeekStart(offset);
+  return `${s.getFullYear()}-W${String(Math.ceil((s.getDate() + 6) / 7)).padStart(2,'0')}-${s.getMonth()}`;
+}
+function fmtWeekLabel(offset = 0) {
+  const s = getWeekStart(offset);
+  const e = new Date(s); e.setDate(e.getDate() + 6);
+  const opts = {day:'2-digit',month:'short'};
+  return `${s.toLocaleDateString('en-GB',opts)} – ${e.toLocaleDateString('en-GB',opts)}`;
+}
+function fmtDate(iso){ try{ return new Date(iso).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){ return iso; } }
+function fmtTime(iso){ try{ return new Date(iso).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
+function fmtDayKey(iso){ try{ const d=new Date(iso); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }catch(e){ return iso; } }
+function fmtDayLabel(key){ try{ const [y,m,d]=key.split('-'); const dt=new Date(y,m,d); return dt.toLocaleDateString('en-GB',{weekday:'long',day:'2-digit',month:'long'}); }catch(e){ return key; } }
+function isToday(iso){ const d=new Date(iso),t=new Date(); return d.toDateString()===t.toDateString(); }
+function isThisWeek(iso){ const d=new Date(iso),s=getWeekStart(0),e=new Date(s); e.setDate(e.getDate()+7); return d>=s&&d<e; }
+function isThisMonth(iso){ const d=new Date(iso),t=new Date(); return d.getMonth()===t.getMonth()&&d.getFullYear()===t.getFullYear(); }
 
 // ── SETUP ──
-window.initFirebase = async function() {
-  const apiKey = document.getElementById('cfgApiKey').value.trim();
-  const authDomain = document.getElementById('cfgAuthDomain').value.trim();
-  const projectId = document.getElementById('cfgProjectId').value.trim();
-  const appId = document.getElementById('cfgAppId').value.trim();
-  const err = document.getElementById('setupError');
-  if (!apiKey || !authDomain || !projectId || !appId) { err.textContent = 'Please fill in all fields.'; err.style.display='block'; return; }
+window.initFirebase = async function(){
+  const apiKey=document.getElementById('cfgApiKey').value.trim(), authDomain=document.getElementById('cfgAuthDomain').value.trim(), projectId=document.getElementById('cfgProjectId').value.trim(), appId=document.getElementById('cfgAppId').value.trim(), err=document.getElementById('setupError');
+  if(!apiKey||!authDomain||!projectId||!appId){ err.textContent='Please fill in all fields.'; err.style.display='block'; return; }
   err.style.display='none';
-  try {
-    fbConfig = { apiKey, authDomain, projectId, appId };
-    localStorage.setItem('tm_fbconfig', JSON.stringify(fbConfig));
-    app = initializeApp(fbConfig);
-    auth = getAuth(app); db = getFirestore(app);
+  try{
+    fbConfig={apiKey,authDomain,projectId,appId};
+    localStorage.setItem('tm_fbconfig',JSON.stringify(fbConfig));
+    app=initializeApp(fbConfig); auth=getAuth(app); db=getFirestore(app);
     document.getElementById('stepConfig').style.display='none';
     document.getElementById('stepLogin').style.display='block';
-  } catch(e) {
-    err.textContent = 'Firebase init failed: ' + e.message;
-    err.style.display='block';
-  }
+  }catch(e){ err.textContent='Firebase init failed: '+e.message; err.style.display='block'; }
 };
-
-window.signInGoogle = async function() {
-  const err = document.getElementById('setupError2');
-  err.style.display='none';
-  try {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-  } catch(e) {
-    err.textContent = 'Sign-in failed: ' + e.message;
-    err.style.display='block';
-  }
+window.signInGoogle = async function(){
+  const err=document.getElementById('setupError2'); err.style.display='none';
+  try{ await signInWithPopup(auth, new GoogleAuthProvider()); }
+  catch(e){ err.textContent='Sign-in failed: '+e.message; err.style.display='block'; }
 };
+window.signOutUser = async function(){ if(confirm('Sign out?')){ await signOut(auth); location.reload(); } };
+window.resetConfig = function(){ localStorage.removeItem('tm_fbconfig'); location.reload(); };
 
-window.signOutUser = async function() {
-  if (confirm('Sign out?')) { await signOut(auth); location.reload(); }
-};
-
-// Auto-restore config
-function tryRestoreConfig() {
-  const saved = localStorage.getItem('tm_fbconfig');
-  if (!saved) return false;
-  try {
-    fbConfig = JSON.parse(saved);
-    app = initializeApp(fbConfig);
-    auth = getAuth(app); db = getFirestore(app);
+function tryRestoreConfig(){
+  const saved=localStorage.getItem('tm_fbconfig');
+  if(!saved) return false;
+  try{
+    fbConfig=JSON.parse(saved);
+    if(!fbConfig.apiKey?.startsWith('AIza')||!fbConfig.authDomain||!fbConfig.projectId||!fbConfig.appId) return false;
+    app=initializeApp(fbConfig); auth=getAuth(app); db=getFirestore(app);
     return true;
-  } catch(e) { localStorage.removeItem('tm_fbconfig'); return false; }
+  }catch(e){ localStorage.removeItem('tm_fbconfig'); return false; }
 }
 
-// Auth state
-function setupAuth() {
+function setupAuth(){
   onAuthStateChanged(auth, async user => {
-    if (user) {
-      currentUser = user;
+    if(user){
+      currentUser=user;
       document.getElementById('setupScreen').classList.add('hidden');
       document.getElementById('app').style.display='flex';
-      const av = document.getElementById('userAvatar');
-      if (user.photoURL) av.innerHTML = `<img src="${user.photoURL}">`;
-      else av.textContent = user.displayName?.[0] || '👤';
-      document.getElementById('homeGreeting').textContent = 'Welcome, ' + (user.displayName?.split(' ')[0] || 'Trader');
+      const av=document.getElementById('userAvatar');
+      if(user.photoURL) av.innerHTML=`<img src="${user.photoURL}">`;
+      else av.textContent=user.displayName?.[0]||'👤';
+      initHomeUI(user);
       await loadJournal();
       listenTrades();
-      updateAll();
     } else {
-      currentUser = null;
+      currentUser=null;
       document.getElementById('setupScreen').classList.remove('hidden');
       document.getElementById('app').style.display='none';
-      document.getElementById('stepConfig').style.display = fbConfig ? 'none' : 'block';
-      document.getElementById('stepLogin').style.display = fbConfig ? 'block' : 'none';
+      document.getElementById('stepConfig').style.display=fbConfig?'none':'block';
+      document.getElementById('stepLogin').style.display=fbConfig?'block':'none';
     }
   });
+}
+
+// ── HOME UI ──
+function initHomeUI(user){
+  const h=new Date().getHours();
+  const greet=h<12?'morning':h<17?'afternoon':'evening';
+  document.getElementById('timeGreet').textContent=greet;
+  document.getElementById('firstName').textContent=user.displayName?.split(' ')[0]||'Trader';
+  const now=new Date();
+  document.getElementById('homeDate').textContent=now.toLocaleDateString('en-GB',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  document.getElementById('weekLabel').textContent=fmtWeekLabel(0);
+  document.getElementById('remindSub').innerHTML=`Week of <span id="weekLabel">${fmtWeekLabel(0)}</span>`;
+  // Load last AI insight from localStorage
+  const si=localStorage.getItem('tm_last_insight');
+  if(si){ try{ const p=JSON.parse(si); showInsightSnippet(p.text,p.date); }catch(e){} }
+}
+function showInsightSnippet(text,date){
+  const el=document.getElementById('insightSnippet');
+  el.className='insight-txt';
+  el.textContent=text.substring(0,200)+(text.length>200?'...':'');
+  document.getElementById('insightDate').textContent=date||'';
+}
+function updateHomeHighlights(){
+  // Mind score this week
+  const weekTrades=trades.filter(t=>isThisWeek(t.date));
+  const wScore=weekTrades.length?Math.round(weekTrades.reduce((s,t)=>s+(t.overall||50),0)/weekTrades.length):null;
+  document.getElementById('hlMindScore').textContent=wScore!==null?wScore+'%':'—';
+  // Trades today
+  const todayTrades=trades.filter(t=>isToday(t.date));
+  document.getElementById('hlTodayTrades').textContent=todayTrades.length;
+  document.getElementById('hlTodaySub').textContent=todayTrades.length?`${todayTrades.filter(t=>t.outcome==='tp').length} TP · ${todayTrades.filter(t=>t.outcome==='sl').length} SL`:'None logged yet';
+  // Win rate this week
+  const closed=weekTrades.filter(t=>t.outcome&&t.outcome!=='open');
+  const wins=closed.filter(t=>t.outcome==='tp').length;
+  document.getElementById('hlWinRate').textContent=closed.length?Math.round(wins/closed.length*100)+'%':'—';
+  document.getElementById('hlWinSub').textContent=closed.length?`${wins}W / ${closed.length-wins}L this week`:'No trades yet';
+  // Streak = distinct weeks with any trade
+  const weeks=new Set(trades.map(t=>{ const d=new Date(t.date); const s=getWeekStart(0); const diff=Math.floor((s-new Date(d.getFullYear(),d.getMonth(),d.getDate()-d.getDay()+1))/604800000); return diff; }));
+  document.getElementById('hlStreak').textContent=weeks.size;
 }
 
 // ── SYNC INDICATOR ──
-function setSyncDot(state) {
-  ['syncDot','syncDot2','syncDot3'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.className = 'sync-dot' + (state==='syncing'?' syncing':state==='error'?' error':'');
-  });
+function setSyncDot(state){ ['syncDot','syncDot2','syncDot3'].forEach(id=>{ const el=document.getElementById(id); if(el) el.className='sync-dot'+(state==='syncing'?' syncing':state==='error'?' error':''); }); }
+
+// ── JOURNAL WEEK NAV ──
+window.changeWeek = function(dir){
+  currentWeekOffset+=dir;
+  updateWeekUI();
+  loadJournal();
+};
+function updateWeekUI(){
+  const lbl=fmtWeekLabel(currentWeekOffset);
+  document.getElementById('jWeekLabel').textContent=`Week of ${lbl}`;
+  document.getElementById('weekStatusBadge').textContent=currentWeekOffset===0?'Current':currentWeekOffset<0?`${Math.abs(currentWeekOffset)}w ago`:`${currentWeekOffset}w ahead`;
 }
 
 // ── JOURNAL FIRESTORE ──
-async function loadJournal() {
-  if (!currentUser) return;
+async function loadJournal(){
+  if(!currentUser) return;
   setSyncDot('syncing');
-  try {
-    const ref = doc(db, 'users', currentUser.uid, 'data', 'journal');
-    const snap = await getDoc(ref);
-    if (snap.exists()) {
-      jData = snap.data();
-      populateJournalUI(jData);
-    }
+  try{
+    const wk=getWeekKey(currentWeekOffset);
+    const ref=doc(db,'users',currentUser.uid,'journal',wk);
+    const snap=await getDoc(ref);
+    clearJournalUI();
+    if(snap.exists()){ jData=snap.data(); populateJournalUI(jData); }
+    else jData={};
     setSyncDot('synced');
-  } catch(e) { setSyncDot('error'); }
+  }catch(e){ setSyncDot('error'); }
 }
-
-function populateJournalUI(d) {
-  ['q1_1','q1_2','q2_1','q2_2','q2_4','q3_1','q3_2','q3_4','q4_1','q4_2','q4_3','q4_4','q5_1','q5_2','q5_3'].forEach(id => {
-    const el = document.getElementById(id); if (el && d[id]) el.value = d[id];
-  });
-  if (d.ratings) {
-    ratings = d.ratings;
-    Object.entries(ratings).forEach(([gid, val]) => {
-      const grp = document.getElementById(gid); if (!grp) return;
-      grp.querySelectorAll('.rbtn').forEach(b => {
-        const bVal = parseInt(b.textContent);
-        if (bVal === val || b.textContent.includes(['1 day','2–3','4–5','Week+'][val-1]||'')) b.classList.add('active');
-      });
-    });
-  }
-  if (d.beliefs) {
-    selectedBeliefs = new Set(d.beliefs);
-    document.querySelectorAll('.bchip').forEach(el => {
-      if (selectedBeliefs.has(el.textContent.trim())) { el.classList.add('sel'); el.querySelector('.bdot').style.background='var(--red)'; }
-    });
-  }
+function clearJournalUI(){
+  ['q1_1','q1_2','q2_1','q2_2','q2_4','q3_1','q3_2','q3_4','q4_1','q4_2','q4_3','q4_4','q5_1','q5_2','q5_3'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  document.querySelectorAll('.rbtn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.bchip').forEach(c=>{ c.classList.remove('sel'); c.querySelector('.bdot').style.background='var(--border2)'; });
+  ratings={}; selectedBeliefs=new Set();
 }
-
-async function saveJournal() {
-  if (!currentUser) return;
+function populateJournalUI(d){
+  ['q1_1','q1_2','q2_1','q2_2','q2_4','q3_1','q3_2','q3_4','q4_1','q4_2','q4_3','q4_4','q5_1','q5_2','q5_3'].forEach(id=>{ const el=document.getElementById(id); if(el&&d[id]) el.value=d[id]; });
+  if(d.ratings){ ratings=d.ratings; Object.entries(ratings).forEach(([gid,val])=>{ const grp=document.getElementById(gid); if(!grp) return; grp.querySelectorAll('.rbtn').forEach(b=>{ if(parseInt(b.textContent)===val||b.textContent.includes(['1 day','2–3','4–5','Week+'][val-1]||'')) b.classList.add('active'); }); }); }
+  if(d.beliefs){ selectedBeliefs=new Set(d.beliefs); document.querySelectorAll('.bchip').forEach(el=>{ if(selectedBeliefs.has(el.textContent.trim())){ el.classList.add('sel'); el.querySelector('.bdot').style.background='var(--red)'; } }); }
+}
+async function saveJournal(){
+  if(!currentUser) return;
   setSyncDot('syncing');
-  const fields = ['q1_1','q1_2','q2_1','q2_2','q2_4','q3_1','q3_2','q3_4','q4_1','q4_2','q4_3','q4_4','q5_1','q5_2','q5_3'];
-  const obj = { updatedAt: new Date().toISOString() };
-  fields.forEach(id => { const el = document.getElementById(id); if(el) obj[id] = el.value; });
-  obj.ratings = ratings;
-  obj.beliefs = [...selectedBeliefs];
-  jData = obj;
-  try {
-    const ref = doc(db, 'users', currentUser.uid, 'data', 'journal');
-    await setDoc(ref, obj, {merge:true});
+  const fields=['q1_1','q1_2','q2_1','q2_2','q2_4','q3_1','q3_2','q3_4','q4_1','q4_2','q4_3','q4_4','q5_1','q5_2','q5_3'];
+  const obj={updatedAt:new Date().toISOString(),weekKey:getWeekKey(currentWeekOffset),weekLabel:fmtWeekLabel(currentWeekOffset)};
+  fields.forEach(id=>{ const el=document.getElementById(id); if(el) obj[id]=el.value; });
+  obj.ratings=ratings; obj.beliefs=[...selectedBeliefs]; jData=obj;
+  try{
+    const wk=getWeekKey(currentWeekOffset);
+    await setDoc(doc(db,'users',currentUser.uid,'journal',wk),obj,{merge:true});
     setSyncDot('synced');
-    const ind = document.getElementById('saveInd');
-    ind.classList.add('show');
-    setTimeout(() => ind.classList.remove('show'), 2000);
-  } catch(e) { setSyncDot('error'); }
+    const ind=document.getElementById('saveInd'); ind.classList.add('show'); setTimeout(()=>ind.classList.remove('show'),2000);
+  }catch(e){ setSyncDot('error'); }
 }
-
-window.debounceSave = function() {
-  updateAll();
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(saveJournal, 1200);
-};
+window.debounceSave=function(){ clearTimeout(saveTimer); saveTimer=setTimeout(saveJournal,1200); };
 
 // ── TRADES FIRESTORE ──
-function listenTrades() {
-  if (!currentUser) return;
-  if (unsubTrades) unsubTrades();
-  const col = collection(db, 'users', currentUser.uid, 'trades');
-  const q = query(col, orderBy('date','asc'));
-  unsubTrades = onSnapshot(q, snap => {
-    trades = snap.docs.map(d => ({id:d.id, ...d.data()}));
-    renderTradeList();
-    updateHomeStats();
-    setSyncDot('synced');
-  }, err => { setSyncDot('error'); });
+function listenTrades(){
+  if(!currentUser) return;
+  if(unsubTrades) unsubTrades();
+  const col=collection(db,'users',currentUser.uid,'trades');
+  const q=query(col,orderBy('date','asc'));
+  unsubTrades=onSnapshot(q,snap=>{ trades=snap.docs.map(d=>({id:d.id,...d.data()})); renderTradeList(); updateHomeHighlights(); setSyncDot('synced'); },err=>setSyncDot('error'));
 }
-
-window.saveTrade = async function() {
-  if (!currentUser) return;
-  const pair = document.getElementById('tPair').value.trim();
-  if (!pair) { showToast('Please enter a currency pair'); return; }
-  const clarityBefore = tradeRatings['rBefore'] || 5;
-  const reflectionAfter = tradeRatings['rAfter'] || 5;
-  const overall = Math.round((clarityBefore + reflectionAfter) / 2 * 10);
-  const trade = {
-    pair, dir: document.getElementById('tDir').value,
-    outcome: document.getElementById('tOutcome').value,
-    moodBefore: currentMoods.before, moodDuring: currentMoods.during, moodAfter: currentMoods.after,
-    clarityBefore, reflectionAfter, overall,
-    followedRules, deviated,
-    beforeNote: document.getElementById('tBeforeNote').value.trim(),
-    duringNote: document.getElementById('tDuringNote').value.trim(),
-    afterNote: document.getElementById('tAfterNote').value.trim(),
-    date: new Date().toISOString()
+window.saveTrade = async function(){
+  if(!currentUser) return;
+  const pair=document.getElementById('tPair').value.trim();
+  if(!pair){ showToast('Please enter a currency pair'); return; }
+  const clarityBefore=tradeRatings['rBefore']||5, reflectionAfter=tradeRatings['rAfter']||5;
+  const overall=Math.round((clarityBefore+reflectionAfter)/2*10);
+  const trade={
+    pair, dir:document.getElementById('tDir').value, outcome:document.getElementById('tOutcome').value,
+    rr:parseFloat(document.getElementById('tRR').value)||null,
+    tp:parseFloat(document.getElementById('tTP').value)||null,
+    sl:parseFloat(document.getElementById('tSL').value)||null,
+    entry:parseFloat(document.getElementById('tEntry').value)||null,
+    pips:parseFloat(document.getElementById('tPips').value)||null,
+    moodBefore:currentMoods.before, moodDuring:currentMoods.during, moodAfter:currentMoods.after,
+    clarityBefore, reflectionAfter, overall, followedRules, deviated,
+    beforeNote:document.getElementById('tBeforeNote').value.trim(),
+    duringNote:document.getElementById('tDuringNote').value.trim(),
+    afterNote:document.getElementById('tAfterNote').value.trim(),
+    date:editingTradeId?trades.find(t=>t.id===editingTradeId)?.date||new Date().toISOString():new Date().toISOString()
   };
   setSyncDot('syncing');
-  try {
-    const col = collection(db, 'users', currentUser.uid, 'trades');
-    if (editingTradeId) {
-      const ref = doc(db, 'users', currentUser.uid, 'trades', editingTradeId);
-      trade.date = trades.find(t=>t.id===editingTradeId)?.date || trade.date;
-      await updateDoc(ref, trade);
-      showToast('Trade updated ✓');
-    } else {
-      await addDoc(col, trade);
-      showToast('Trade saved ✓');
-    }
+  try{
+    if(editingTradeId){ await updateDoc(doc(db,'users',currentUser.uid,'trades',editingTradeId),trade); showToast('Trade updated ✓'); }
+    else{ await addDoc(collection(db,'users',currentUser.uid,'trades'),trade); showToast('Trade saved ✓'); }
     closeTradeForm();
-  } catch(e) { setSyncDot('error'); showToast('Save failed — check connection'); }
+  }catch(e){ setSyncDot('error'); showToast('Save failed — check connection'); }
 };
+window.deleteTrade=async function(id,e){ e.stopPropagation(); if(!confirm('Delete this trade log?')) return; try{ await deleteDoc(doc(db,'users',currentUser.uid,'trades',id)); showToast('Deleted'); }catch(e){ showToast('Delete failed'); } };
 
-window.deleteTrade = async function(id, e) {
-  e.stopPropagation();
-  if (!confirm('Delete this trade log?')) return;
-  try {
-    await deleteDoc(doc(db, 'users', currentUser.uid, 'trades', id));
-    showToast('Trade deleted');
-  } catch(e) { showToast('Delete failed'); }
-};
-
-// ── NAVIGATION ──
-window.showScreen = function(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.bni').forEach(n => n.classList.remove('active'));
-  document.getElementById('screen-'+name).classList.add('active');
-  document.getElementById('nav-'+name).classList.add('active');
-  document.getElementById('screen-'+name).scrollTop = 0;
-  if (name==='progress') renderCharts();
-  if (name==='home') updateHomeStats();
-};
-window.goTo = function(screen, secIdx) { showScreen(screen); if(screen==='journal'&&secIdx!==undefined) switchSec(secIdx); };
-
-// ── JOURNAL UI ──
-window.switchSec = function(i) {
-  document.querySelectorAll('.scontent').forEach((s,j) => s.classList.toggle('active', j===i));
-  document.querySelectorAll('.stab').forEach((t,j) => t.classList.toggle('active', j===i));
-  document.getElementById('jBadge').textContent = '0'+(i+1)+'/05';
-  document.getElementById('screen-journal').scrollTop = 0;
-  document.querySelectorAll('.stab')[i]?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
-};
-window.rate = function(id, btn, val) {
-  document.getElementById(id).querySelectorAll('.rbtn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active'); ratings[id]=val; window.debounceSave();
-};
-window.toggleB = function(el) {
-  el.classList.toggle('sel');
-  const txt = el.textContent.trim();
-  if(el.classList.contains('sel')) { selectedBeliefs.add(txt); el.querySelector('.bdot').style.background='var(--red)'; }
-  else { selectedBeliefs.delete(txt); el.querySelector('.bdot').style.background='var(--border2)'; }
-  window.debounceSave();
-};
-
-function updateAll() {
-  const fields = ['q1_1','q1_2','q2_1','q2_2','q2_4','q3_1','q3_2','q3_4','q4_1','q4_2','q4_3','q4_4','q5_1','q5_2','q5_3'];
-  let filled = fields.filter(id=>(document.getElementById(id)?.value||'').trim().length>3).length;
-  const rf = Object.keys(ratings).length;
-  const total = fields.length+3;
-  const pct = Math.min(100,Math.round(((filled+rf)/total)*100));
-  const circ=157;
-  document.getElementById('homeRing').style.strokeDashoffset=circ-(circ*pct/100);
-  document.getElementById('homeRingPct').textContent=pct+'%';
-  document.getElementById('homeRingDesc').textContent = pct<20?'Start with Section 01 — Beliefs.':pct<60?'Keep going — depth leads to better analysis.':pct<100?'Almost complete!':'Journal complete ✓ Full AI analysis unlocked.';
-  const checks=[['q1_1','q1_2'],['q2_1','q2_2','q2_4'],['q3_1','q3_2','q3_4'],['q4_1','q4_2','q4_3','q4_4'],['q5_1','q5_2','q5_3']];
-  checks.forEach((keys,i)=>{
-    const done=keys.every(k=>(document.getElementById(k)?.value||'').trim().length>3);
-    document.getElementById('hc'+i)?.classList.toggle('done',done);
-    const arr=document.getElementById('hc'+i+'r');
-    if(arr){arr.textContent=done?'✓':'›';arr.style.color=done?'var(--green)':'var(--muted2)';}
-  });
+// ── FILTER ──
+window.setFilter=function(f,btn){ activeFilter=f; document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.getElementById('calendarWrap').style.display=f==='calendar'?'block':'none'; renderTradeList(); };
+function getFilteredTrades(){
+  if(activeFilter==='today') return trades.filter(t=>isToday(t.date));
+  if(activeFilter==='week') return trades.filter(t=>isThisWeek(t.date));
+  if(activeFilter==='month') return trades.filter(t=>isThisMonth(t.date));
+  if(activeFilter==='calendar'&&selectedCalDay){ return trades.filter(t=>fmtDayKey(t.date)===selectedCalDay); }
+  return trades;
 }
 
+// ── TRADE LIST ──
+function renderTradeList(){
+  const wrap=document.getElementById('tradeListWrap');
+  document.getElementById('tradeCount').textContent=trades.length+' trade'+(trades.length!==1?'s':'');
+  const filtered=getFilteredTrades();
+  if(!filtered.length){ wrap.innerHTML=`<div class="tlog-list"><div class="tlog-empty">No trades for this period.<br>Tap "+ Log New Trade" to begin.</div></div>`; return; }
+  // Group by day
+  const groups={};
+  [...filtered].reverse().forEach(t=>{ const k=fmtDayKey(t.date); if(!groups[k]) groups[k]=[]; groups[k].push(t); });
+  let html='<div class="tlog-list">';
+  Object.entries(groups).forEach(([dayKey,dayTrades])=>{
+    const wins=dayTrades.filter(t=>t.outcome==='tp').length, losses=dayTrades.filter(t=>t.outcome==='sl').length;
+    const avgRR=dayTrades.filter(t=>t.rr).reduce((s,t)=>s+(t.rr||0),0)/(dayTrades.filter(t=>t.rr).length||1);
+    html+=`<div class="day-group"><div class="day-group-header"><div class="day-group-date">${fmtDayLabel(dayKey)}</div><div class="day-group-meta">${dayTrades.length} trade${dayTrades.length!==1?'s':''} · ${wins}W ${losses}L${dayTrades.some(t=>t.rr)?` · ${avgRR.toFixed(1)}R avg`:''}</div></div>`;
+    dayTrades.forEach(t=>{
+      const outcomeMap={tp:'✅ TP',sl:'❌ SL',be:'➡️ BE',open:'🔵 Open'};
+      const outcomeClass={tp:'win',sl:'loss',be:'be',open:'open'};
+      html+=`<div class="trade-card" onclick="openTradeForm('${t.id}')">
+        <div class="tc-top">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="tc-pair">${t.pair||'—'}</div>
+            ${t.dir?`<div class="tc-dir ${t.dir.toLowerCase()}">${t.dir}</div>`:''}
+          </div>
+          <div class="tc-time">${fmtTime(t.date)}</div>
+        </div>
+        <div class="tc-result-row">
+          ${t.outcome?`<div class="tc-outcome-pill ${outcomeClass[t.outcome]||'be'}">${outcomeMap[t.outcome]||t.outcome}</div>`:''}
+          ${t.rr?`<div class="tc-rr">⚡ ${t.rr}R</div>`:''}
+          ${t.pips?`<div class="tc-rr" style="color:var(--blue)">${t.pips} pips</div>`:''}
+          ${t.entry?`<div class="tc-score">Entry: ${t.entry}</div>`:''}
+        </div>
+        ${t.tp||t.sl?`<div class="tc-result-row" style="margin-bottom:4px">${t.tp?`<div class="tc-score" style="color:var(--green)">TP: ${t.tp}</div>`:''}${t.sl?`<div class="tc-score" style="color:var(--red)">SL: ${t.sl}</div>`:''}</div>`:''}
+        <div class="tc-moods">
+          ${t.moodBefore?`<span class="mood-tag before">${t.moodBefore.replace(/^\S+\s/,'')}</span>`:''}
+          ${t.moodDuring?`<span class="mood-tag during">${t.moodDuring.replace(/^\S+\s/,'')}</span>`:''}
+          ${t.moodAfter?`<span class="mood-tag after">${t.moodAfter.replace(/^\S+\s/,'')}</span>`:''}
+          <span class="tc-score" style="margin-left:auto">Mind: ${t.overall}%</span>
+        </div>
+        ${t.followedRules===false?'<div style="font-size:10px;color:var(--red);margin-top:4px;font-weight:600;">⚠ Rules not followed</div>':''}
+        ${t.beforeNote?`<div style="font-size:11px;color:var(--muted);margin-top:7px;line-height:1.6;border-top:1px solid var(--border);padding-top:7px;">${t.beforeNote.substring(0,100)}${t.beforeNote.length>100?'...':''}</div>`:''}
+        <div class="tc-actions"><button class="tc-del" onclick="deleteTrade('${t.id}',event)">Delete</button></div>
+      </div>`;
+    });
+    html+='</div>';
+  });
+  html+='</div>';
+  wrap.innerHTML=html;
+  if(activeFilter==='calendar') renderCalendar();
+}
+
+// ── CALENDAR ──
+window.changeCalMonth=function(dir){ calMonth+=dir; if(calMonth>11){calMonth=0;calYear++;} if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); };
+function renderCalendar(){
+  const title=new Date(calYear,calMonth,1).toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  document.getElementById('calTitle').textContent=title;
+  const tradeDays={};
+  trades.forEach(t=>{ const d=new Date(t.date); if(d.getFullYear()===calYear&&d.getMonth()===calMonth){ const k=d.getDate(); if(!tradeDays[k]) tradeDays[k]={count:0,hasLoss:false}; tradeDays[k].count++; if(t.outcome==='sl') tradeDays[k].hasLoss=true; } });
+  const firstDay=new Date(calYear,calMonth,1).getDay(); const startOffset=(firstDay===0?6:firstDay-1);
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const today=new Date();
+  let html='';
+  ['Mo','Tu','We','Th','Fr','Sa','Su'].forEach(d=>{ html+=`<div class="cal-day-lbl">${d}</div>`; });
+  for(let i=0;i<startOffset;i++) html+=`<div class="cal-day empty"></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const isT=today.getDate()===d&&today.getMonth()===calMonth&&today.getFullYear()===calYear;
+    const dayKey=`${calYear}-${calMonth}-${d}`;
+    const isSel=selectedCalDay===dayKey;
+    const hasTrades=tradeDays[d];
+    let cls='cal-day';
+    if(isT) cls+=' today';
+    if(hasTrades) cls+=hasTrades.hasLoss?' has-trades has-loss':' has-trades';
+    if(isSel) cls+=' selected';
+    html+=`<div class="${cls}" onclick="selectCalDay('${dayKey}')">${d}${hasTrades?'<div class="cal-dot"></div>':''}</div>`;
+  }
+  document.getElementById('calGrid').innerHTML=html;
+}
+window.selectCalDay=function(key){ selectedCalDay=selectedCalDay===key?null:key; renderCalendar(); renderTradeList(); };
+
 // ── TRADE FORM ──
-window.openTradeForm = function(tradeId) {
-  editingTradeId=tradeId||null;
-  resetTradeForm();
+window.openTradeForm=function(tradeId){
+  editingTradeId=tradeId||null; resetTradeForm();
   if(tradeId){ const t=trades.find(x=>x.id===tradeId); if(t) populateTrade(t); document.getElementById('overlayTitle').textContent='Edit Trade'; }
-  else document.getElementById('overlayTitle').textContent='Log New Trade';
+  else { document.getElementById('overlayTitle').textContent='Log New Trade'; document.getElementById('tradeTimestamp').textContent=new Date().toLocaleString('en-GB',{weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}); }
   document.getElementById('tradeOverlay').classList.add('open');
 };
-window.closeTradeForm = function() { document.getElementById('tradeOverlay').classList.remove('open'); };
-function resetTradeForm() {
-  ['tPair','tBeforeNote','tDuringNote','tAfterNote'].forEach(id=>document.getElementById(id).value='');
+window.closeTradeForm=function(){ document.getElementById('tradeOverlay').classList.remove('open'); };
+function resetTradeForm(){
+  ['tPair','tBeforeNote','tDuringNote','tAfterNote','tRR','tTP','tSL','tEntry','tPips'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
   document.getElementById('tDir').value=''; document.getElementById('tOutcome').value='';
   document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel'));
   document.querySelectorAll('#tradeOverlay .rbtn').forEach(b=>b.classList.remove('active'));
   tradeRatings={}; currentMoods={before:'',during:'',after:''}; followedRules=null; deviated=null;
-  ['ruleYes','ruleNo','deviateNo','deviateYes'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  ['ruleYes','ruleNo','deviateNo','deviateYes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('active'); });
   switchPhase(0);
 }
-function populateTrade(t) {
+function populateTrade(t){
   document.getElementById('tPair').value=t.pair||''; document.getElementById('tDir').value=t.dir||''; document.getElementById('tOutcome').value=t.outcome||'';
+  document.getElementById('tRR').value=t.rr||''; document.getElementById('tTP').value=t.tp||''; document.getElementById('tSL').value=t.sl||''; document.getElementById('tEntry').value=t.entry||''; document.getElementById('tPips').value=t.pips||'';
   document.getElementById('tBeforeNote').value=t.beforeNote||''; document.getElementById('tDuringNote').value=t.duringNote||''; document.getElementById('tAfterNote').value=t.afterNote||'';
-  if(t.clarityBefore){tradeRatings['rBefore']=t.clarityBefore;document.querySelectorAll('#rBefore .rbtn')[t.clarityBefore-1]?.classList.add('active');}
-  if(t.reflectionAfter){tradeRatings['rAfter']=t.reflectionAfter;document.querySelectorAll('#rAfter .rbtn')[t.reflectionAfter-1]?.classList.add('active');}
+  document.getElementById('tradeTimestamp').textContent=t.date?new Date(t.date).toLocaleString('en-GB',{weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'—';
+  if(t.clarityBefore){ tradeRatings['rBefore']=t.clarityBefore; document.querySelectorAll('#rBefore .rbtn')[t.clarityBefore-1]?.classList.add('active'); }
+  if(t.reflectionAfter){ tradeRatings['rAfter']=t.reflectionAfter; document.querySelectorAll('#rAfter .rbtn')[t.reflectionAfter-1]?.classList.add('active'); }
   currentMoods={before:t.moodBefore||'',during:t.moodDuring||'',after:t.moodAfter||''};
   followedRules=t.followedRules; deviated=t.deviated;
-  if(followedRules===true)document.getElementById('ruleYes').classList.add('active');
-  if(followedRules===false)document.getElementById('ruleNo').classList.add('active');
-  if(deviated===false)document.getElementById('deviateNo').classList.add('active');
-  if(deviated===true)document.getElementById('deviateYes').classList.add('active');
-  ['before','during','after'].forEach(phase=>{
-    const mood=currentMoods[phase]; if(!mood) return;
-    const row=document.getElementById('mood'+phase.charAt(0).toUpperCase()+phase.slice(1));
-    row?.querySelectorAll('.mood-btn').forEach(b=>{ if(b.textContent.trim()===mood) b.classList.add('sel'); });
-  });
+  if(followedRules===true) document.getElementById('ruleYes').classList.add('active');
+  if(followedRules===false) document.getElementById('ruleNo').classList.add('active');
+  if(deviated===false) document.getElementById('deviateNo').classList.add('active');
+  if(deviated===true) document.getElementById('deviateYes').classList.add('active');
+  ['before','during','after'].forEach(phase=>{ const mood=currentMoods[phase]; if(!mood) return; const row=document.getElementById('mood'+phase.charAt(0).toUpperCase()+phase.slice(1)); row?.querySelectorAll('.mood-btn').forEach(b=>{ if(b.textContent.trim()===mood) b.classList.add('sel'); }); });
 }
-window.switchPhase=function(i){
-  document.querySelectorAll('.phase-content').forEach((p,j)=>p.classList.toggle('active',j===i));
-  document.querySelectorAll('.ptab').forEach((t,j)=>t.classList.toggle('active',j===i));
-};
-window.selMood=function(btn,phase){
-  btn.closest('.mood-row').querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel'));
-  btn.classList.add('sel'); currentMoods[phase]=btn.textContent.trim();
-};
-window.rateT=function(id,btn,val){
-  document.getElementById(id).querySelectorAll('.rbtn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); tradeRatings[id]=val;
-};
-window.setRule=function(val){
-  followedRules=val;
-  document.getElementById('ruleYes').classList.toggle('active',val===true);
-  document.getElementById('ruleNo').classList.toggle('active',val===false);
-};
-window.setDeviate=function(val){
-  deviated=val;
-  document.getElementById('deviateNo').classList.toggle('active',val===false);
-  document.getElementById('deviateYes').classList.toggle('active',val===true);
-};
+window.switchPhase=function(i){ document.querySelectorAll('.phase-content').forEach((p,j)=>p.classList.toggle('active',j===i)); document.querySelectorAll('.ptab').forEach((t,j)=>t.classList.toggle('active',j===i)); };
+window.selMood=function(btn,phase){ btn.closest('.mood-row').querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); currentMoods[phase]=btn.textContent.trim(); };
+window.rateT=function(id,btn,val){ document.getElementById(id).querySelectorAll('.rbtn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); tradeRatings[id]=val; };
+window.setRule=function(val){ followedRules=val; document.getElementById('ruleYes').classList.toggle('active',val===true); document.getElementById('ruleNo').classList.toggle('active',val===false); };
+window.setDeviate=function(val){ deviated=val; document.getElementById('deviateNo').classList.toggle('active',val===false); document.getElementById('deviateYes').classList.toggle('active',val===true); };
 
-// ── TRADE LIST ──
-function renderTradeList() {
-  const list=document.getElementById('tradeList');
-  document.getElementById('tradeCount').textContent=trades.length+' trade'+(trades.length!==1?'s':'');
-  if(!trades.length){list.innerHTML='<div class="tlog-empty">No trades logged yet.<br>Tap "+ Log New Trade" to begin.</div>';return;}
-  list.innerHTML=[...trades].reverse().map(t=>`
-    <div class="trade-card" onclick="openTradeForm('${t.id}')">
-      <div class="tc-top"><div class="tc-pair">${t.pair} ${t.dir?'<span style="font-size:11px;color:var(--muted)">· '+t.dir+'</span>':''}</div>
-      <div style="display:flex;gap:8px;align-items:center"><div class="tc-date">${fmtDate(t.date)}</div><button onclick="deleteTrade('${t.id}',event)" style="background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:4px;">✕</button></div></div>
-      <div class="tc-phases">
-        ${t.moodBefore?`<span class="phase-pill before">${t.moodBefore.replace(/^\S+\s/,'')}</span>`:''}
-        ${t.moodDuring?`<span class="phase-pill during">${t.moodDuring.replace(/^\S+\s/,'')}</span>`:''}
-        ${t.moodAfter?`<span class="phase-pill after">${t.moodAfter.replace(/^\S+\s/,'')}</span>`:''}
-      </div>
-      <div class="tc-outcome">
-        ${t.outcome?`<div class="outcome-dot ${t.outcome}"></div><span class="outcome-lbl">${{win:'Win',loss:'Loss',be:'Break Even',open:'Open'}[t.outcome]||t.outcome}</span>`:''}
-        <span style="flex:1"></span><span class="tc-score">Mind Score: ${t.overall}%</span>
-      </div>
-      ${t.followedRules===false?'<div style="font-size:10px;color:var(--red);margin-top:6px;">⚠ Rules not followed</div>':''}
-      ${t.beforeNote?`<div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6;border-top:1px solid var(--border);padding-top:8px;">${t.beforeNote.substring(0,100)}${t.beforeNote.length>100?'...':''}</div>`:''}
-    </div>`).join('');
-}
-
-function fmtDate(iso){ try{return new Date(iso).toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});}catch(e){return iso;} }
-
-// ── HOME STATS ──
-function updateHomeStats() {
-  document.getElementById('statTrades').textContent=trades.length;
-  document.getElementById('statScore').textContent=trades.length?Math.round(trades.reduce((s,t)=>s+(t.overall||50),0)/trades.length)+'%':'—';
-  document.getElementById('statStreak').textContent=new Set(trades.map(t=>new Date(t.date).toDateString())).size;
-}
+// ── JOURNAL NAV ──
+window.showScreen=function(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.bni').forEach(n=>n.classList.remove('active')); document.getElementById('screen-'+name).classList.add('active'); const ni=document.getElementById('nav-'+name); if(ni) ni.classList.add('active'); document.getElementById('screen-'+name).scrollTop=0; if(name==='progress') renderCharts(); if(name==='home') updateHomeHighlights(); };
+window.switchSec=function(i){ document.querySelectorAll('.scontent').forEach((s,j)=>s.classList.toggle('active',j===i)); document.querySelectorAll('.stab').forEach((t,j)=>t.classList.toggle('active',j===i)); document.getElementById('jBadge').textContent='0'+(i+1)+'/05'; document.getElementById('screen-journal').scrollTop=0; document.querySelectorAll('.stab')[i]?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}); };
+window.rate=function(id,btn,val){ document.getElementById(id).querySelectorAll('.rbtn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); ratings[id]=val; window.debounceSave(); };
+window.toggleB=function(el){ el.classList.toggle('sel'); const txt=el.textContent.trim(); if(el.classList.contains('sel')){ selectedBeliefs.add(txt); el.querySelector('.bdot').style.background='var(--red)'; } else { selectedBeliefs.delete(txt); el.querySelector('.bdot').style.background='var(--border2)'; } window.debounceSave(); };
 
 // ── CHARTS ──
-window.renderCharts=function(){updateMetrics();drawLine();drawBar();drawDisc();};
-function gw(){return Math.min(window.innerWidth-68,432);}
+window.renderCharts=function(){ updateMetrics(); drawLine(); drawBar(); drawDisc(); };
+function gw(){ return Math.min(window.innerWidth-68,432); }
 function updateMetrics(){
-  if(!trades.length)return;
+  if(!trades.length) return;
   const avg=Math.round(trades.reduce((s,t)=>s+(t.overall||50),0)/trades.length);
   const tracked=trades.filter(t=>t.followedRules!==null&&t.followedRules!==undefined);
   const disc=tracked.length?Math.round(tracked.filter(t=>t.followedRules===true).length/tracked.length*100):0;
   const avgB=Math.round(trades.reduce((s,t)=>s+(t.clarityBefore||5),0)/trades.length*10);
   const avgA=Math.round(trades.reduce((s,t)=>s+(t.reflectionAfter||5),0)/trades.length*10);
-  document.getElementById('mAvg').textContent=avg+'%';
-  document.getElementById('mWin').textContent=tracked.length?disc+'%':'—';
-  document.getElementById('mBefore').textContent=avgB+'%';
-  document.getElementById('mAfter').textContent=avgA+'%';
-  if(trades.length>=4){const h=Math.floor(trades.length/2),f=trades.slice(0,h).reduce((s,t)=>s+(t.overall||50),0)/h,l=trades.slice(h).reduce((s,t)=>s+(t.overall||50),0)/(trades.length-h),tr=document.getElementById('mTrend');if(l>f+3){tr.textContent='↑ Improving';tr.className='metric-trend up';}else if(l<f-3){tr.textContent='↓ Declining';tr.className='metric-trend down';}else{tr.textContent='→ Stable';tr.className='metric-trend flat';}}
+  document.getElementById('mAvg').textContent=avg+'%'; document.getElementById('mWin').textContent=tracked.length?disc+'%':'—';
+  document.getElementById('mBefore').textContent=avgB+'%'; document.getElementById('mAfter').textContent=avgA+'%';
+  if(trades.length>=4){ const h=Math.floor(trades.length/2),f=trades.slice(0,h).reduce((s,t)=>s+(t.overall||50),0)/h,l=trades.slice(h).reduce((s,t)=>s+(t.overall||50),0)/(trades.length-h),tr=document.getElementById('mTrend'); if(l>f+3){tr.textContent='↑ Improving';tr.className='metric-trend up';}else if(l<f-3){tr.textContent='↓ Declining';tr.className='metric-trend down';}else{tr.textContent='→ Stable';tr.className='metric-trend flat';} }
 }
-function drawLine(){
-  const cv=document.getElementById('lineChart'),ctx=cv.getContext('2d'),w=gw(),h=180;
-  cv.width=w;cv.height=h;ctx.clearRect(0,0,w,h);
-  if(!trades.length){ctx.fillStyle='#444';ctx.font='11px IBM Plex Mono';ctx.textAlign='center';ctx.fillText('No trade data yet',w/2,h/2);return;}
-  const pts=trades.slice(-20),pad={l:36,r:16,t:16,b:28},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
-  [0,25,50,75,100].forEach(v=>{const y=pad.t+ch*(1-v/100);ctx.strokeStyle='#1e1e1e';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillStyle='#444';ctx.font='9px IBM Plex Mono';ctx.textAlign='right';ctx.fillText(v+'%',pad.l-4,y+3);});
-  const dl=(data,color,alpha=1)=>{ctx.strokeStyle=color;ctx.lineWidth=2;ctx.globalAlpha=alpha;ctx.beginPath();data.forEach((v,i)=>{const x=pad.l+(i/(Math.max(data.length-1,1)))*cw,y=pad.t+ch*(1-v/100);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();ctx.globalAlpha=1;};
-  dl(pts.map(t=>t.overall||50),'#c9a84c');
-  dl(pts.map(t=>(t.clarityBefore||5)*10),'#5ba8d4',.7);
-  dl(pts.map(t=>(t.reflectionAfter||5)*10),'#27a85f',.7);
-  pts.forEach((t,i)=>{const x=pad.l+(i/(Math.max(pts.length-1,1)))*cw,y=pad.t+ch*(1-(t.overall||50)/100);ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle='#c9a84c';ctx.fill();if(pts.length<=10){ctx.fillStyle='#444';ctx.font='9px IBM Plex Mono';ctx.textAlign='center';ctx.fillText(t.pair?.substring(0,6)||'',x,h-4);}});
-}
-function drawBar(){
-  const cv=document.getElementById('barChart'),ctx=cv.getContext('2d'),w=gw(),h=180;
-  cv.width=w;cv.height=h;ctx.clearRect(0,0,w,h);
-  if(!trades.length){ctx.fillStyle='#444';ctx.font='11px IBM Plex Mono';ctx.textAlign='center';ctx.fillText('No trade data yet',w/2,h/2);return;}
-  const mc={};trades.forEach(t=>[t.moodBefore,t.moodDuring,t.moodAfter].forEach(m=>{if(m){const k=m.replace(/^\S+\s/,'').trim();mc[k]=(mc[k]||0)+1;}}));
-  const entries=Object.entries(mc).sort((a,b)=>b[1]-a[1]).slice(0,8);if(!entries.length)return;
-  const pad={l:8,r:8,t:16,b:40},bw=(w-pad.l-pad.r)/entries.length,max=Math.max(...entries.map(e=>e[1])),ch=h-pad.t-pad.b;
-  const colors=['#c9a84c','#e8c97a','#5ba8d4','#27a85f','#c0392b','#8e44ad','#e67e22','#16a085'];
-  entries.forEach(([mood,count],i)=>{
-    const bh=(count/max)*ch,x=pad.l+i*bw+bw*.15,y=pad.t+ch-bh,bwa=bw*.7;
-    ctx.fillStyle=colors[i%colors.length];ctx.beginPath();ctx.roundRect(x,y,bwa,bh,4);ctx.fill();
-    ctx.fillStyle='#c9a84c';ctx.font='bold 11px IBM Plex Mono';ctx.textAlign='center';ctx.fillText(count,x+bwa/2,y-5);
-    ctx.fillStyle='#666055';ctx.font='9px IBM Plex Mono';ctx.save();ctx.translate(x+bwa/2,h-6);ctx.rotate(-0.4);ctx.textAlign='right';ctx.fillText(mood,0,0);ctx.restore();
-  });
-}
-function drawDisc(){
-  const cv=document.getElementById('discChart'),ctx=cv.getContext('2d'),w=gw(),h=160;
-  cv.width=w;cv.height=h;ctx.clearRect(0,0,w,h);
-  const tracked=trades.filter(t=>t.followedRules!==null&&t.followedRules!==undefined);
-  if(tracked.length<2){ctx.fillStyle='#444';ctx.font='11px IBM Plex Mono';ctx.textAlign='center';ctx.fillText('Log 2+ trades with rule tracking',w/2,h/2);return;}
-  const pts=tracked.slice(-20),pad={l:36,r:16,t:16,b:28},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
-  let followed=0;
-  const disc=pts.map((t,i)=>{if(t.followedRules)followed++;return Math.round((followed/(i+1))*100);});
-  [0,50,100].forEach(v=>{const y=pad.t+ch*(1-v/100);ctx.strokeStyle='#1e1e1e';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillStyle='#444';ctx.font='9px IBM Plex Mono';ctx.textAlign='right';ctx.fillText(v+'%',pad.l-4,y+3);});
-  ctx.beginPath();disc.forEach((v,i)=>{const x=pad.l+(i/(Math.max(disc.length-1,1)))*cw,y=pad.t+ch*(1-v/100);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.lineTo(pad.l+cw,pad.t+ch);ctx.lineTo(pad.l,pad.t+ch);ctx.closePath();ctx.fillStyle='rgba(201,168,76,0.08)';ctx.fill();
-  ctx.strokeStyle='#c9a84c';ctx.lineWidth=2.5;ctx.beginPath();disc.forEach((v,i)=>{const x=pad.l+(i/(Math.max(disc.length-1,1)))*cw,y=pad.t+ch*(1-v/100);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();
-}
+function drawLine(){ const cv=document.getElementById('lineChart'),ctx=cv.getContext('2d'),w=gw(),h=180; cv.width=w;cv.height=h;ctx.clearRect(0,0,w,h); if(!trades.length){ctx.fillStyle='#8a9bb0';ctx.font='11px DM Sans';ctx.textAlign='center';ctx.fillText('No trade data yet',w/2,h/2);return;} const pts=trades.slice(-20),pad={l:36,r:16,t:16,b:28},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b; [0,25,50,75,100].forEach(v=>{const y=pad.t+ch*(1-v/100);ctx.strokeStyle='#e2e6ea';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillStyle='#8a9bb0';ctx.font='9px DM Sans';ctx.textAlign='right';ctx.fillText(v+'%',pad.l-4,y+3);}); const dl=(data,color,alpha=1)=>{ctx.strokeStyle=color;ctx.lineWidth=2;ctx.globalAlpha=alpha;ctx.beginPath();data.forEach((v,i)=>{const x=pad.l+(i/(Math.max(data.length-1,1)))*cw,y=pad.t+ch*(1-v/100);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();ctx.globalAlpha=1;}; dl(pts.map(t=>t.overall||50),'#1a9e6e'); dl(pts.map(t=>(t.clarityBefore||5)*10),'#2980b9',.7); dl(pts.map(t=>(t.reflectionAfter||5)*10),'#22c48a',.7); pts.forEach((t,i)=>{const x=pad.l+(i/(Math.max(pts.length-1,1)))*cw,y=pad.t+ch*(1-(t.overall||50)/100);ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle='#1a9e6e';ctx.fill();}); }
+function drawBar(){ const cv=document.getElementById('barChart'),ctx=cv.getContext('2d'),w=gw(),h=180; cv.width=w;cv.height=h;ctx.clearRect(0,0,w,h); if(!trades.length){ctx.fillStyle='#8a9bb0';ctx.font='11px DM Sans';ctx.textAlign='center';ctx.fillText('No trade data yet',w/2,h/2);return;} const mc={};trades.forEach(t=>[t.moodBefore,t.moodDuring,t.moodAfter].forEach(m=>{if(m){const k=m.replace(/^\S+\s/,'').trim();mc[k]=(mc[k]||0)+1;}})); const entries=Object.entries(mc).sort((a,b)=>b[1]-a[1]).slice(0,8);if(!entries.length)return; const pad={l:8,r:8,t:16,b:40},bw=(w-pad.l-pad.r)/entries.length,max=Math.max(...entries.map(e=>e[1])),ch=h-pad.t-pad.b; const colors=['#1a9e6e','#2980b9','#e07b1a','#e05252','#8e44ad','#16a085','#e67e22','#2c3e50']; entries.forEach(([mood,count],i)=>{const bh=(count/max)*ch,x=pad.l+i*bw+bw*.15,y=pad.t+ch-bh,bwa=bw*.7;ctx.fillStyle=colors[i%colors.length];ctx.beginPath();ctx.roundRect(x,y,bwa,bh,4);ctx.fill();ctx.fillStyle=colors[i%colors.length];ctx.font='bold 11px DM Sans';ctx.textAlign='center';ctx.fillText(count,x+bwa/2,y-5);ctx.fillStyle='#8a9bb0';ctx.font='9px DM Sans';ctx.save();ctx.translate(x+bwa/2,h-6);ctx.rotate(-0.4);ctx.textAlign='right';ctx.fillText(mood,0,0);ctx.restore();}); }
+function drawDisc(){ const cv=document.getElementById('discChart'),ctx=cv.getContext('2d'),w=gw(),h=160; cv.width=w;cv.height=h;ctx.clearRect(0,0,w,h); const tracked=trades.filter(t=>t.followedRules!==null&&t.followedRules!==undefined); if(tracked.length<2){ctx.fillStyle='#8a9bb0';ctx.font='11px DM Sans';ctx.textAlign='center';ctx.fillText('Log 2+ trades with rule tracking',w/2,h/2);return;} const pts=tracked.slice(-20),pad={l:36,r:16,t:16,b:28},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b; let followed=0; const disc=pts.map((t,i)=>{if(t.followedRules)followed++;return Math.round((followed/(i+1))*100);}); [0,50,100].forEach(v=>{const y=pad.t+ch*(1-v/100);ctx.strokeStyle='#e2e6ea';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillStyle='#8a9bb0';ctx.font='9px DM Sans';ctx.textAlign='right';ctx.fillText(v+'%',pad.l-4,y+3);}); ctx.beginPath();disc.forEach((v,i)=>{const x=pad.l+(i/(Math.max(disc.length-1,1)))*cw,y=pad.t+ch*(1-v/100);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.lineTo(pad.l+cw,pad.t+ch);ctx.lineTo(pad.l,pad.t+ch);ctx.closePath();ctx.fillStyle='rgba(26,158,110,0.08)';ctx.fill(); ctx.strokeStyle='#1a9e6e';ctx.lineWidth=2.5;ctx.beginPath();disc.forEach((v,i)=>{const x=pad.l+(i/(Math.max(disc.length-1,1)))*cw,y=pad.t+ch*(1-v/100);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke(); }
 
 // ── AI ANALYSIS ──
 window.runAI=async function(){
   const btn=document.getElementById('runAiBtn'),card=document.getElementById('aiCard'),body=document.getElementById('aiBody'),stat=document.getElementById('aiStat');
-  btn.disabled=true;btn.textContent='⏳ Analysing...';card.style.display='block';card.scrollIntoView({behavior:'smooth',block:'start'});
-  body.innerHTML='<div class="thinking-row"><div class="tdots"><span></span><span></span><span></span></div>Reading your journal and trade history...</div>';stat.textContent='Reading...';
+  btn.disabled=true; btn.textContent='⏳ Analysing...'; card.style.display='block'; card.scrollIntoView({behavior:'smooth',block:'start'});
+  body.innerHTML='<div class="thinking-row"><div class="tdots"><span></span><span></span><span></span></div> Reading your journal and trade history...</div>'; stat.textContent='Reading...';
   const g=id=>(jData[id]||'').trim()||'(not answered)';
   const lm={1:'1 day',2:'2-3 days',3:'4-5 days',4:'A week+'};const jr=jData.ratings||{};
-  let txt=`JOURNAL\nBeliefs: Money is: ${g('q1_1')} | Family: ${g('q1_2')} | Self-worth: ${jr.r1||'—'}/10 | Limiting beliefs: ${(jData.beliefs||[]).join('; ')||'none'}\nEmotions: Before rules broken: ${g('q2_1')} | After losses: ${g('q2_2')} | FOMO: ${jr.r2||'—'}/10 | Win effect: ${g('q2_4')}\nGoals: Real reason: ${g('q3_1')} | Target: ${g('q3_2')} | Loss tolerance: ${lm[jr.r3]||'—'} | 3yr vision: ${g('q3_4')}\nIdentity: Self-describe: ${g('q4_1')} | Losing week effect: ${g('q4_2')} | Discipline elsewhere: ${g('q4_3')} | Ideal self: ${g('q4_4')}\nCommitments: Focus: ${g('q5_1')} | Rule: ${g('q5_2')} | Support: ${g('q5_3')}`;
+  let txt=`WEEKLY JOURNAL (${jData.weekLabel||'current week'})\nBeliefs: Money=${g('q1_1')} | Family=${g('q1_2')} | Self-worth=${jr.r1||'—'}/10 | Limiting beliefs: ${(jData.beliefs||[]).join('; ')||'none'}\nEmotions: Before rules broken=${g('q2_1')} | After losses=${g('q2_2')} | FOMO=${jr.r2||'—'}/10 | Win effect=${g('q2_4')}\nGoals: Real reason=${g('q3_1')} | Target=${g('q3_2')} | Loss tolerance=${lm[jr.r3]||'—'} | 3yr vision=${g('q3_4')}\nIdentity: Self-describe=${g('q4_1')} | Losing week=${g('q4_2')} | Discipline=${g('q4_3')} | Ideal self=${g('q4_4')}\nCommitments: Focus=${g('q5_1')} | Rule=${g('q5_2')} | Last week review=${g('q5_3')}`;
   if(trades.length){
     const avg=Math.round(trades.reduce((s,t)=>s+(t.overall||50),0)/trades.length);
-    const disc=trades.filter(t=>t.followedRules===true).length,broken=trades.filter(t=>t.followedRules===false).length;
+    const tpCount=trades.filter(t=>t.outcome==='tp').length, slCount=trades.filter(t=>t.outcome==='sl').length;
+    const avgRR=trades.filter(t=>t.rr).reduce((s,t)=>s+(t.rr||0),0)/(trades.filter(t=>t.rr).length||1);
+    const winRate=Math.round(tpCount/(tpCount+slCount||1)*100);
     const moods={};trades.forEach(t=>[t.moodBefore,t.moodDuring,t.moodAfter].forEach(m=>{if(m)moods[m]=(moods[m]||0)+1;}));
-    txt+=`\n\nTRADE LOG (${trades.length} trades) — Avg score: ${avg}% | Rules followed: ${disc}x | Broken: ${broken}x\nTop moods: ${Object.entries(moods).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([m,c])=>`${m}(${c}x)`).join(', ')}\n`;
-    trades.slice(-10).forEach((t,i)=>{txt+=`\nTrade ${i+1}: ${t.pair} ${t.dir||''} | ${t.outcome||'?'} | Score: ${t.overall}% | Rules: ${t.followedRules===true?'Yes':t.followedRules===false?'No':'N/A'}`;if(t.moodBefore)txt+=` | Before: ${t.moodBefore}(${t.clarityBefore}/10)`;if(t.moodAfter)txt+=` | After: ${t.moodAfter}(${t.reflectionAfter}/10)`;if(t.beforeNote)txt+=`\n  Pre-note: ${t.beforeNote.substring(0,100)}`;if(t.afterNote)txt+=`\n  Lesson: ${t.afterNote.substring(0,100)}`;});
-    if(trades.length>=4){const h=Math.floor(trades.length/2),f=trades.slice(0,h).reduce((s,t)=>s+(t.overall||50),0)/h,l=trades.slice(h).reduce((s,t)=>s+(t.overall||50),0)/(trades.length-h);txt+=`\nTrend: First half avg ${Math.round(f)}% → Recent half avg ${Math.round(l)}% (${l>f?'IMPROVING':'DECLINING'})`;}
-  }else{txt+='\n\nTRADE LOG: No trades logged yet.';}
-  const sys=`You are an expert forex trading psychology coach. Analyse the trader's journal and trade log data. Deliver a personalised, honest, actionable report.\n\nFORMATTING: Section headers ALL CAPS + colon. Plain text only. Numbered lists for actions. Be specific to their data.\n\nSTRUCTURE:\nOPENING INSIGHT:\nCORE BELIEF PATTERNS:\nEMOTIONAL TRIGGERS & RISK PROFILE:\n${trades.length>=3?'PSYCHOLOGY PROGRESS ANALYSIS:\n':''}IDENTITY & TRADING CEILING:\nGOALS VS REALITY GAP:\nYOUR THREE PRIORITY ACTIONS:\nCLOSING:\n\nLength: 700-1000 words.`;
+    txt+=`\n\nTRADE LOG (${trades.length} trades) — Avg mind score: ${avg}% | TP: ${tpCount} | SL: ${slCount} | Win rate: ${winRate}% | Avg RR: ${avgRR.toFixed(1)}\nTop moods: ${Object.entries(moods).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([m,c])=>`${m}(${c}x)`).join(', ')}\n`;
+    trades.slice(-12).forEach((t,i)=>{
+      txt+=`\nTrade ${i+1}: ${t.pair} ${t.dir||''} | ${t.outcome?.toUpperCase()||'?'} | Score: ${t.overall}% | Rules: ${t.followedRules===true?'Yes':t.followedRules===false?'No':'N/A'}`;
+      if(t.rr) txt+=` | RR: ${t.rr}`;
+      if(t.moodBefore) txt+=` | Before: ${t.moodBefore}(${t.clarityBefore}/10)`;
+      if(t.moodAfter) txt+=` | After: ${t.moodAfter}(${t.reflectionAfter}/10)`;
+      if(t.beforeNote) txt+=`\n  Pre: ${t.beforeNote.substring(0,80)}`;
+      if(t.afterNote) txt+=`\n  Lesson: ${t.afterNote.substring(0,80)}`;
+    });
+    if(trades.length>=4){ const h=Math.floor(trades.length/2),f=trades.slice(0,h).reduce((s,t)=>s+(t.overall||50),0)/h,l=trades.slice(h).reduce((s,t)=>s+(t.overall||50),0)/(trades.length-h); txt+=`\nPsychology trend: First half avg ${Math.round(f)}% → Recent half ${Math.round(l)}% (${l>f?'IMPROVING':'DECLINING'})`; }
+  } else txt+='\n\nTRADE LOG: No trades logged yet.';
+  const sys=`You are an expert forex trading psychology coach. Analyse the trader's weekly journal and trade log. Be specific, honest, and actionable.\n\nFORMATTING: Section headers ALL CAPS + colon. Plain text. Numbered lists for actions. Reference their actual words where relevant.\n\nSTRUCTURE:\nOPENING INSIGHT:\nCORE BELIEF PATTERNS:\nEMOTIONAL TRIGGERS & RISK PROFILE:\n${trades.length>=3?'PSYCHOLOGY PROGRESS ANALYSIS:\n':''}IDENTITY & TRADING CEILING:\nGOALS VS REALITY GAP:\nYOUR THREE PRIORITY ACTIONS:\nCLOSING:\n\nLength: 700-1000 words.`;
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,stream:true,system:sys,messages:[{role:'user',content:`Here is my TraderMind data. Give me a deep, personalised psychological analysis:\n\n${txt}`}]})});
-    if(!res.ok)throw new Error('API error '+res.status);
-    body.innerHTML='';stat.textContent='Writing...';
-    const reader=res.body.getReader(),dec=new TextDecoder();let full='',buf='';
-    const cur=document.createElement('span');cur.className='cursor';
-    while(true){const{done,value}=await reader.read();if(done)break;buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop();for(const line of lines){if(!line.startsWith('data: '))continue;const d=line.slice(6).trim();if(d==='[DONE]')continue;try{const p=JSON.parse(d);if(p.type==='content_block_delta'&&p.delta?.text){full+=p.delta.text;body.innerHTML=fmtAI(full);body.appendChild(cur);}}catch(e){}}}
-    body.innerHTML=fmtAI(full);stat.textContent='Complete ✓';btn.textContent='✦ Re-Analyse';btn.disabled=false;
-  }catch(e){body.innerHTML=`<span style="color:var(--red)">Analysis failed. Check your connection.\n${e.message}</span>`;stat.textContent='Error';btn.textContent='✦ Try Again';btn.disabled=false;}
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,stream:true,system:sys,messages:[{role:'user',content:`Analyse my TraderMind data:\n\n${txt}`}]})});
+    if(!res.ok) throw new Error('API error '+res.status);
+    body.innerHTML=''; stat.textContent='Writing...';
+    const reader=res.body.getReader(),dec=new TextDecoder(); let full='',buf='';
+    const cur=document.createElement('span'); cur.className='cursor';
+    while(true){ const{done,value}=await reader.read(); if(done) break; buf+=dec.decode(value,{stream:true}); const lines=buf.split('\n'); buf=lines.pop(); for(const line of lines){ if(!line.startsWith('data: ')) continue; const d=line.slice(6).trim(); if(d==='[DONE]') continue; try{ const p=JSON.parse(d); if(p.type==='content_block_delta'&&p.delta?.text){ full+=p.delta.text; body.innerHTML=fmtAI(full); body.appendChild(cur); } }catch(e){} } }
+    body.innerHTML=fmtAI(full); stat.textContent='Complete ✓'; btn.textContent='✦ Re-Analyse'; btn.disabled=false;
+    // Save snippet for home screen
+    const snippet={text:full,date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short'})};
+    localStorage.setItem('tm_last_insight',JSON.stringify(snippet));
+    showInsightSnippet(full,snippet.date);
+  }catch(e){ body.innerHTML=`<span style="color:var(--red)">Analysis failed.\n${e.message}</span>`; stat.textContent='Error'; btn.textContent='✦ Try Again'; btn.disabled=false; }
 };
-function fmtAI(t){return t.replace(/^([A-Z][A-Z\s&':]+):$/gm,'<span class="ai-stag">$1</span>').replace(/"([^"]+)"/g,'<b style="color:var(--gold-light)">"$1"</b>');}
+function fmtAI(t){ return t.replace(/^([A-Z][A-Z\s&':]+):$/gm,'<span class="ai-stag">$1</span>').replace(/"([^"]+)"/g,'<b style="color:var(--green)">"$1"</b>'); }
 
 // ── TOAST ──
-window.showToast=function(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);};
-
-// ── RESET (clears saved config so setup screen shows again) ──
-window.resetConfig = function() {
-  localStorage.removeItem('tm_fbconfig');
-  location.reload();
-};
+window.showToast=function(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); };
 
 // ── INIT ──
-// Always validate saved config has real Firebase values before skipping setup
-const saved = localStorage.getItem('tm_fbconfig');
-let validConfig = false;
-if (saved) {
-  try {
-    const c = JSON.parse(saved);
-    // Must have all 4 real fields and apiKey must start with AIza (real Firebase keys do)
-    validConfig = c.apiKey && c.apiKey.startsWith('AIza') && c.authDomain && c.projectId && c.appId;
-  } catch(e) { validConfig = false; }
-}
+const saved=localStorage.getItem('tm_fbconfig');
+let validConfig=false;
+if(saved){ try{ const c=JSON.parse(saved); validConfig=c.apiKey?.startsWith('AIza')&&c.authDomain&&c.projectId&&c.appId; }catch(e){} }
+if(validConfig&&tryRestoreConfig()){ setupAuth(); }
+else { localStorage.removeItem('tm_fbconfig'); document.getElementById('setupScreen').classList.remove('hidden'); document.getElementById('app').style.display='none'; }
 
-if (validConfig && tryRestoreConfig()) {
-  setupAuth();
-} else {
-  // Clear any bad saved config
-  localStorage.removeItem('tm_fbconfig');
-  document.getElementById('setupScreen').classList.remove('hidden');
-  document.getElementById('app').style.display = 'none';
-}
+// Init week UI
+updateWeekUI();
 </script>
 </body>
 </html>
