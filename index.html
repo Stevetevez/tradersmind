@@ -21,7 +21,7 @@
   --shadow:0 1px 4px rgba(26,45,80,0.07),0 4px 16px rgba(26,45,80,0.04);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow:hidden;overscroll-behavior:none;-webkit-font-smoothing:antialiased;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;overflow:hidden;overscroll-behavior:none;-webkit-font-smoothing:antialiased;}
 #app{display:flex;flex-direction:column;height:100%;width:100%;max-width:500px;margin:0 auto;background:var(--bg);position:relative;}
 
 /* ── SETUP ── */
@@ -60,11 +60,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .sync-dot.error{background:var(--red);}
 
 /* ── BOTTOM NAV ── */
-.bnav{display:flex;background:var(--card);border-top:1px solid var(--border);height:var(--nav-h);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -2px 12px rgba(26,45,80,0.06);}
+.bnav{display:flex;background:var(--card);border-top:2px solid var(--border2);height:var(--nav-h);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -4px 20px rgba(26,45,80,0.10);}
 .bni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;position:relative;padding:8px 0;min-height:48px;}
-.bni .ico{font-size:20px;opacity:.3;transition:all .2s;}
-.bni .lbl{font-size:8px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;transition:color .2s;}
-.bni.active .ico{opacity:1;}
+.bni .ico{font-size:22px;opacity:.45;transition:all .2s;}
+.bni .lbl{font-size:9px;letter-spacing:0.5px;color:#6b7a92;text-transform:uppercase;transition:color .2s;font-weight:600;}
+.bni.active .ico{opacity:1;filter:drop-shadow(0 0 4px rgba(26,158,110,0.4));}
 .bni.active .lbl{color:var(--gold);}
 .bni.active::after{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;background:var(--gold);border-radius:0 0 4px 4px;}
 
@@ -139,19 +139,19 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .sec-hdr h2{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;line-height:1.2;}
 .sec-hdr p{font-size:11px;color:var(--muted);line-height:1.8;margin-top:7px;border-left:2px solid var(--gold-dim);padding-left:10px;}
 .qb{margin-bottom:20px;}
-.qlbl{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.5;}
+.qlbl{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.5;}
 .qlbl .qn{color:var(--gold);font-size:11px;margin-right:4px;}
-textarea,input[type=text],input[type=number],select{width:100%;background:var(--card);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:12px 14px;line-height:1.6;transition:border-color .2s;-webkit-appearance:none;appearance:none;box-shadow:0 1px 3px rgba(26,45,80,0.04);}
+textarea,input[type=text],input[type=number],select{width:100%;background:var(--card);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;padding:12px 14px;line-height:1.6;transition:border-color .2s;-webkit-appearance:none;appearance:none;box-shadow:0 1px 3px rgba(26,45,80,0.04);}
 textarea:focus,input[type=text]:focus,input[type=number]:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim);}
 textarea{resize:none;min-height:84px;}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a9bb0' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
 select option{background:#fff;}
 .rating-wrap{display:flex;gap:6px;flex-wrap:wrap;}
-.rbtn{min-width:36px;height:38px;background:var(--card);border:1px solid var(--border2);border-radius:8px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;padding:0 10px;}
+.rbtn{min-width:38px;height:40px;background:var(--card);border:1px solid var(--border2);border-radius:8px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;padding:0 10px;}
 .rbtn:active{transform:scale(.92);}
 .rbtn.active{background:var(--gold);color:#fff;border-color:var(--gold);font-weight:600;}
 .belief-list{display:flex;flex-direction:column;gap:7px;}
-.bchip{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--card);border:1px solid var(--border2);border-radius:10px;cursor:pointer;font-size:12px;line-height:1.6;transition:all .15s;}
+.bchip{display:flex;align-items:flex-start;gap:10px;padding:13px 14px;background:var(--card);border:1px solid var(--border2);border-radius:10px;cursor:pointer;font-size:13px;line-height:1.6;transition:all .15s;}
 .bchip.sel{border-color:var(--red);background:var(--red-dim);}
 .bdot{width:8px;height:8px;border-radius:50%;background:var(--border2);flex-shrink:0;margin-top:5px;transition:background .15s;}
 .bchip.sel .bdot{background:var(--red);}
@@ -171,7 +171,7 @@ select option{background:#fff;}
 /* Filter bar */
 .filter-bar{display:flex;gap:6px;padding:0 18px 10px;overflow-x:auto;scrollbar-width:none;}
 .filter-bar::-webkit-scrollbar{display:none;}
-.fbtn{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:var(--card);color:var(--muted);transition:all .15s;white-space:nowrap;}
+.fbtn{flex-shrink:0;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:var(--card);color:var(--muted);transition:all .15s;white-space:nowrap;}
 .fbtn:active{transform:scale(.95);}
 .fbtn.active{background:var(--gold);color:#fff;border-color:var(--gold);}
 
@@ -194,31 +194,31 @@ select option{background:#fff;}
 /* Trade groups */
 .day-group{margin-bottom:14px;}
 .day-group-header{display:flex;align-items:center;justify-content:space-between;padding:6px 18px;margin-bottom:4px;}
-.day-group-date{font-size:11px;font-weight:700;color:var(--text);}
-.day-group-meta{font-size:10px;color:var(--muted);}
+.day-group-date{font-size:13px;font-weight:700;color:var(--text);}
+.day-group-meta{font-size:12px;color:var(--muted);}
 .tlog-list{padding:0 18px;}
 .tlog-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;line-height:2;}
 .trade-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 15px;margin-bottom:8px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow);}
 .trade-card:active{background:var(--card2);}
 .tc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
-.tc-pair{font-size:14px;font-weight:700;color:var(--text);}
-.tc-time{font-size:10px;color:var(--muted);}
+.tc-pair{font-size:16px;font-weight:700;color:var(--text);}
+.tc-time{font-size:12px;color:var(--muted);}
 .tc-dir{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;}
 .tc-dir.buy{background:var(--green-dim);color:var(--green);}
 .tc-dir.sell{background:var(--red-dim);color:var(--red);}
 .tc-result-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px;}
-.tc-outcome-pill{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.tc-outcome-pill{font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;}
 .tc-outcome-pill.win{background:var(--green-dim);color:var(--green);}
 .tc-outcome-pill.loss{background:var(--red-dim);color:var(--red);}
 .tc-outcome-pill.be{background:rgba(138,155,176,0.15);color:var(--muted);}
 .tc-outcome-pill.open{background:var(--blue-dim);color:var(--blue);}
-.tc-rr{font-size:10px;font-weight:600;color:var(--orange);}
+.tc-rr{font-size:12px;font-weight:600;color:var(--orange);}
 .tc-moods{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px;}
-.mood-tag{font-size:9px;padding:2px 7px;border-radius:12px;font-weight:500;}
+.mood-tag{font-size:11px;padding:3px 9px;border-radius:12px;font-weight:500;}
 .mood-tag.before{background:var(--gold-dim);color:var(--gold);}
 .mood-tag.during{background:var(--blue-dim);color:var(--blue);}
 .mood-tag.after{background:var(--green-dim);color:var(--green);}
-.tc-score{font-size:10px;color:var(--muted);font-weight:500;}
+.tc-score{font-size:12px;color:var(--muted);font-weight:500;}
 .tc-actions{display:flex;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
 .tc-del{padding:5px 12px;background:var(--red-dim);color:var(--red);border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;}
 
@@ -248,7 +248,7 @@ select option{background:#fff;}
 .phase-content{display:none;}
 .phase-content.active{display:block;}
 .mood-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
-.mood-btn{padding:8px 11px;background:var(--card2);border:1px solid var(--border2);border-radius:8px;font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.mood-btn{padding:9px 13px;background:var(--card2);border:1px solid var(--border2);border-radius:8px;font-size:13px;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .mood-btn:active{transform:scale(.92);}
 .mood-btn.sel{border-color:var(--gold);background:var(--gold-dim);}
 .save-trade-btn{width:100%;padding:14px;background:var(--gold);color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;box-shadow:0 2px 8px rgba(26,158,110,0.3);}
@@ -285,7 +285,7 @@ canvas{display:block;}
 .ai-live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
 .ai-card-hdr span{font-size:10px;letter-spacing:1.5px;color:var(--green);text-transform:uppercase;flex:1;font-weight:600;}
 .ai-status{font-size:10px;color:var(--muted);}
-.ai-body{padding:16px;font-size:13px;line-height:1.9;color:var(--text);min-height:80px;white-space:pre-wrap;}
+.ai-body{padding:16px;font-size:14px;line-height:2.0;color:var(--text);min-height:80px;white-space:pre-wrap;}
 .ai-stag{display:block;color:var(--green);font-size:9px;letter-spacing:2px;text-transform:uppercase;margin:16px 0 6px;padding-bottom:5px;border-bottom:1px solid var(--border);font-weight:700;}
 .ai-stag:first-child{margin-top:0;}
 .thinking-row{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;}
@@ -299,6 +299,16 @@ canvas{display:block;}
 .cta-btn{display:flex;align-items:center;justify-content:center;gap:8px;margin:4px 18px 14px;padding:15px;background:var(--gold);color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;width:calc(100% - 36px);box-shadow:0 2px 12px rgba(26,158,110,0.3);}
 .cta-btn:active{transform:scale(.97);}
 .cta-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+
+/* ── MISTAKE / HABIT CHIPS ── */
+.mchip{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;background:var(--card);border:1px solid var(--border2);border-radius:10px;cursor:pointer;font-size:13px;line-height:1.5;transition:all .15s;font-weight:500;}
+.mchip:active{transform:scale(.98);}
+.mchip.mistake.sel{border-color:var(--red);background:var(--red-dim);color:var(--red);}
+.mchip.habit.sel{border-color:var(--green);background:var(--green-dim);color:var(--green);}
+.mcdot{width:9px;height:9px;border-radius:50%;background:var(--border2);flex-shrink:0;margin-top:4px;transition:background .15s;}
+.mchip.mistake.sel .mcdot{background:var(--red);}
+.mchip.habit.sel .mcdot,.mchip.habit.sel .habit-dot{background:var(--green);}
+.habit-dot{background:var(--border2);}
 
 /* ── TOAST ── */
 .toast{position:fixed;bottom:calc(var(--nav-h) + 14px);left:50%;transform:translateX(-50%) translateY(20px);background:#1a2332;color:#fff;padding:11px 22px;font-size:12px;font-weight:500;border-radius:20px;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none;box-shadow:0 4px 20px rgba(26,45,80,0.25);}
@@ -616,6 +626,7 @@ canvas{display:block;}
         <div class="ptab active" onclick="switchPhase(0)">Before</div>
         <div class="ptab" onclick="switchPhase(1)">During</div>
         <div class="ptab" onclick="switchPhase(2)">After</div>
+        <div class="ptab" onclick="switchPhase(3)">Review</div>
       </div>
       <div class="phase-content active" id="ph0">
         <div class="qb"><label class="qlbl">Emotional state before entry:</label><div class="mood-row" id="moodBefore"><span class="mood-btn" onclick="selMood(this,'before')">😌 Calm</span><span class="mood-btn" onclick="selMood(this,'before')">😤 Frustrated</span><span class="mood-btn" onclick="selMood(this,'before')">😰 Anxious</span><span class="mood-btn" onclick="selMood(this,'before')">🤩 Excited</span><span class="mood-btn" onclick="selMood(this,'before')">😑 Bored</span><span class="mood-btn" onclick="selMood(this,'before')">😤 Revenge</span><span class="mood-btn" onclick="selMood(this,'before')">💪 Confident</span><span class="mood-btn" onclick="selMood(this,'before')">😨 FOMO</span></div></div>
@@ -632,6 +643,57 @@ canvas{display:block;}
         <div class="qb"><label class="qlbl">Emotional state after closing:</label><div class="mood-row" id="moodAfter"><span class="mood-btn" onclick="selMood(this,'after')">😌 Peaceful</span><span class="mood-btn" onclick="selMood(this,'after')">😤 Angry</span><span class="mood-btn" onclick="selMood(this,'after')">😔 Disappointed</span><span class="mood-btn" onclick="selMood(this,'after')">🎉 Proud</span><span class="mood-btn" onclick="selMood(this,'after')">😰 Regretful</span><span class="mood-btn" onclick="selMood(this,'after')">🧘 Neutral</span><span class="mood-btn" onclick="selMood(this,'after')">🤯 Overconfident</span></div></div>
         <div class="qb"><label class="qlbl">Reflection score (1=Emotional chaos · 10=Fully disciplined)</label><div class="rating-wrap" id="rAfter"><button class="rbtn" onclick="rateT('rAfter',this,1)">1</button><button class="rbtn" onclick="rateT('rAfter',this,2)">2</button><button class="rbtn" onclick="rateT('rAfter',this,3)">3</button><button class="rbtn" onclick="rateT('rAfter',this,4)">4</button><button class="rbtn" onclick="rateT('rAfter',this,5)">5</button><button class="rbtn" onclick="rateT('rAfter',this,6)">6</button><button class="rbtn" onclick="rateT('rAfter',this,7)">7</button><button class="rbtn" onclick="rateT('rAfter',this,8)">8</button><button class="rbtn" onclick="rateT('rAfter',this,9)">9</button><button class="rbtn" onclick="rateT('rAfter',this,10)">10</button></div></div>
         <div class="qb"><label class="qlbl">What did you learn from this trade?</label><textarea id="tAfterNote" placeholder="The lesson, what you'd do differently..."></textarea></div>
+      </div>
+      <div class="phase-content" id="ph3">
+        <div class="qb">
+          <label class="qlbl" style="color:var(--red);font-size:14px;">⚠️ Mistakes Made</label>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Select all that apply to this trade:</p>
+          <div id="mistakesList" style="display:flex;flex-direction:column;gap:7px;">
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>FOMO Entry</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>Late entry / Chased price</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>Hesitation — missed planned entry</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>Revenge trade</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>Traded while distracted</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>No pre-market prep</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>Overtraded</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>Wrong position size</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>Traded against the trend</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>Ignored rules</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>News trading</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>Closed too early due to fear</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>Let a winning trade run into a loser</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>Didn't follow trade management rules</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>Held too long</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>Traded while emotional — anger / excitement / hype</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>Traded while stressed / tired</div>
+            <div class="mchip mistake" onclick="toggleChip(this,'mistakes')"><div class="mcdot"></div>Took low quality setup</div>
+          </div>
+          <textarea id="otherMistakes" placeholder="Any other mistakes? Describe here..." style="margin-top:10px;" oninput=""></textarea>
+        </div>
+        <div class="qb" style="margin-top:20px;">
+          <label class="qlbl" style="color:var(--green);font-size:14px;">✅ Good Habits Demonstrated</label>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6;">Select all that you did well:</p>
+          <div id="habitsList" style="display:flex;flex-direction:column;gap:7px;">
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Followed my trading plan</div>
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Used pre-trade checklist fully</div>
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Respected my stop loss</div>
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Accepted the outcome calmly</div>
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Stopped trading when rules were hit</div>
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Entry aligned with plan</div>
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Clean execution — no hesitation</div>
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Managed trade according to rules</div>
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Let the trade play out fully</div>
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Exited according to plan</div>
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Did not chase price</div>
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Accepted missing a trade</div>
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Controlled fear and FOMO</div>
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Stayed patient</div>
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Respected trading time window</div>
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Journaled honestly</div>
+            <div class="mchip habit" onclick="toggleChip(this,'habits')"><div class="mcdot habit-dot"></div>Focused on process, not money</div>
+          </div>
+          <textarea id="otherHabits" placeholder="Any other good habits? Describe here..." style="margin-top:10px;"></textarea>
+        </div>
       </div>
       <button class="save-trade-btn" onclick="saveTrade()">Save Trade Log</button>
     </div>
@@ -681,6 +743,7 @@ let jData = {};
 let ratings = {}, tradeRatings = {}, selectedBeliefs = new Set();
 let currentMoods = {before:'',during:'',after:''};
 let followedRules = null, deviated = null, editingTradeId = null;
+let selectedMistakes = new Set(), selectedHabits = new Set();
 let saveTimer = null, unsubTrades = null, fbConfig = null;
 let currentWeekOffset = 0;
 let activeFilter = 'all';
@@ -888,6 +951,8 @@ window.saveTrade = async function(){
     beforeNote:document.getElementById('tBeforeNote').value.trim(),
     duringNote:document.getElementById('tDuringNote').value.trim(),
     afterNote:document.getElementById('tAfterNote').value.trim(),
+    mistakes:[...selectedMistakes], otherMistakes:document.getElementById('otherMistakes').value.trim(),
+    habits:[...selectedHabits], otherHabits:document.getElementById('otherHabits').value.trim(),
     date:editingTradeId?trades.find(t=>t.id===editingTradeId)?.date||new Date().toISOString():new Date().toISOString()
   };
   setSyncDot('syncing');
@@ -947,7 +1012,9 @@ function renderTradeList(){
           ${t.moodAfter?`<span class="mood-tag after">${t.moodAfter.replace(/^\S+\s/,'')}</span>`:''}
           <span class="tc-score" style="margin-left:auto">Mind: ${t.overall}%</span>
         </div>
-        ${t.followedRules===false?'<div style="font-size:10px;color:var(--red);margin-top:4px;font-weight:600;">⚠ Rules not followed</div>':''}
+        ${t.followedRules===false?'<div style="font-size:12px;color:var(--red);margin-top:4px;font-weight:600;">⚠ Rules not followed</div>':''}
+        ${t.mistakes&&t.mistakes.length?`<div style="font-size:11px;color:var(--red);margin-top:5px;"><b>Mistakes:</b> ${t.mistakes.join(', ')}${t.otherMistakes?' · '+t.otherMistakes:''}</div>`:''}
+        ${t.habits&&t.habits.length?`<div style="font-size:11px;color:var(--green);margin-top:3px;"><b>Good habits:</b> ${t.habits.join(', ')}${t.otherHabits?' · '+t.otherHabits:''}</div>`:''}
         ${t.beforeNote?`<div style="font-size:11px;color:var(--muted);margin-top:7px;line-height:1.6;border-top:1px solid var(--border);padding-top:7px;">${t.beforeNote.substring(0,100)}${t.beforeNote.length>100?'...':''}</div>`:''}
         <div class="tc-actions"><button class="tc-del" onclick="deleteTrade('${t.id}',event)">Delete</button></div>
       </div>`;
@@ -998,6 +1065,9 @@ window.closeTradeForm=function(){ document.getElementById('tradeOverlay').classL
 function resetTradeForm(){
   ['tPair','tBeforeNote','tDuringNote','tAfterNote','tRR','tTP','tSL','tEntry','tPips'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
   document.getElementById('tDir').value=''; document.getElementById('tOutcome').value='';
+  document.querySelectorAll('.mchip').forEach(c=>c.classList.remove('sel'));
+  ['otherMistakes','otherHabits'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  selectedMistakes=new Set(); selectedHabits=new Set();
   document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel'));
   document.querySelectorAll('#tradeOverlay .rbtn').forEach(b=>b.classList.remove('active'));
   tradeRatings={}; currentMoods={before:'',during:'',after:''}; followedRules=null; deviated=null;
@@ -1012,6 +1082,11 @@ function populateTrade(t){
   if(t.clarityBefore){ tradeRatings['rBefore']=t.clarityBefore; document.querySelectorAll('#rBefore .rbtn')[t.clarityBefore-1]?.classList.add('active'); }
   if(t.reflectionAfter){ tradeRatings['rAfter']=t.reflectionAfter; document.querySelectorAll('#rAfter .rbtn')[t.reflectionAfter-1]?.classList.add('active'); }
   currentMoods={before:t.moodBefore||'',during:t.moodDuring||'',after:t.moodAfter||''};
+  selectedMistakes=new Set(t.mistakes||[]); selectedHabits=new Set(t.habits||[]);
+  document.querySelectorAll('.mchip.mistake').forEach(el=>{ if(selectedMistakes.has(el.textContent.trim())) el.classList.add('sel'); });
+  document.querySelectorAll('.mchip.habit').forEach(el=>{ if(selectedHabits.has(el.textContent.trim())) el.classList.add('sel'); });
+  document.getElementById('otherMistakes').value=t.otherMistakes||'';
+  document.getElementById('otherHabits').value=t.otherHabits||'';
   followedRules=t.followedRules; deviated=t.deviated;
   if(followedRules===true) document.getElementById('ruleYes').classList.add('active');
   if(followedRules===false) document.getElementById('ruleNo').classList.add('active');
@@ -1019,10 +1094,16 @@ function populateTrade(t){
   if(deviated===true) document.getElementById('deviateYes').classList.add('active');
   ['before','during','after'].forEach(phase=>{ const mood=currentMoods[phase]; if(!mood) return; const row=document.getElementById('mood'+phase.charAt(0).toUpperCase()+phase.slice(1)); row?.querySelectorAll('.mood-btn').forEach(b=>{ if(b.textContent.trim()===mood) b.classList.add('sel'); }); });
 }
-window.switchPhase=function(i){ document.querySelectorAll('.phase-content').forEach((p,j)=>p.classList.toggle('active',j===i)); document.querySelectorAll('.ptab').forEach((t,j)=>t.classList.toggle('active',j===i)); };
+window.switchPhase=function(i){ document.querySelectorAll('#tradeOverlay .phase-content').forEach((p,j)=>p.classList.toggle('active',j===i)); document.querySelectorAll('.ptab').forEach((t,j)=>t.classList.toggle('active',j===i)); };
 window.selMood=function(btn,phase){ btn.closest('.mood-row').querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); currentMoods[phase]=btn.textContent.trim(); };
 window.rateT=function(id,btn,val){ document.getElementById(id).querySelectorAll('.rbtn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); tradeRatings[id]=val; };
 window.setRule=function(val){ followedRules=val; document.getElementById('ruleYes').classList.toggle('active',val===true); document.getElementById('ruleNo').classList.toggle('active',val===false); };
+window.toggleChip=function(el,type){
+  el.classList.toggle('sel');
+  const txt=el.textContent.trim();
+  if(type==='mistakes'){ if(el.classList.contains('sel')) selectedMistakes.add(txt); else selectedMistakes.delete(txt); }
+  else { if(el.classList.contains('sel')) selectedHabits.add(txt); else selectedHabits.delete(txt); }
+};
 window.setDeviate=function(val){ deviated=val; document.getElementById('deviateNo').classList.toggle('active',val===false); document.getElementById('deviateYes').classList.toggle('active',val===true); };
 
 // ── JOURNAL NAV ──
@@ -1045,9 +1126,93 @@ function updateMetrics(){
   document.getElementById('mBefore').textContent=avgB+'%'; document.getElementById('mAfter').textContent=avgA+'%';
   if(trades.length>=4){ const h=Math.floor(trades.length/2),f=trades.slice(0,h).reduce((s,t)=>s+(t.overall||50),0)/h,l=trades.slice(h).reduce((s,t)=>s+(t.overall||50),0)/(trades.length-h),tr=document.getElementById('mTrend'); if(l>f+3){tr.textContent='↑ Improving';tr.className='metric-trend up';}else if(l<f-3){tr.textContent='↓ Declining';tr.className='metric-trend down';}else{tr.textContent='→ Stable';tr.className='metric-trend flat';} }
 }
-function drawLine(){ const cv=document.getElementById('lineChart'),ctx=cv.getContext('2d'),w=gw(),h=180; cv.width=w;cv.height=h;ctx.clearRect(0,0,w,h); if(!trades.length){ctx.fillStyle='#8a9bb0';ctx.font='11px DM Sans';ctx.textAlign='center';ctx.fillText('No trade data yet',w/2,h/2);return;} const pts=trades.slice(-20),pad={l:36,r:16,t:16,b:28},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b; [0,25,50,75,100].forEach(v=>{const y=pad.t+ch*(1-v/100);ctx.strokeStyle='#e2e6ea';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillStyle='#8a9bb0';ctx.font='9px DM Sans';ctx.textAlign='right';ctx.fillText(v+'%',pad.l-4,y+3);}); const dl=(data,color,alpha=1)=>{ctx.strokeStyle=color;ctx.lineWidth=2;ctx.globalAlpha=alpha;ctx.beginPath();data.forEach((v,i)=>{const x=pad.l+(i/(Math.max(data.length-1,1)))*cw,y=pad.t+ch*(1-v/100);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();ctx.globalAlpha=1;}; dl(pts.map(t=>t.overall||50),'#1a9e6e'); dl(pts.map(t=>(t.clarityBefore||5)*10),'#2980b9',.7); dl(pts.map(t=>(t.reflectionAfter||5)*10),'#22c48a',.7); pts.forEach((t,i)=>{const x=pad.l+(i/(Math.max(pts.length-1,1)))*cw,y=pad.t+ch*(1-(t.overall||50)/100);ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle='#1a9e6e';ctx.fill();}); }
-function drawBar(){ const cv=document.getElementById('barChart'),ctx=cv.getContext('2d'),w=gw(),h=180; cv.width=w;cv.height=h;ctx.clearRect(0,0,w,h); if(!trades.length){ctx.fillStyle='#8a9bb0';ctx.font='11px DM Sans';ctx.textAlign='center';ctx.fillText('No trade data yet',w/2,h/2);return;} const mc={};trades.forEach(t=>[t.moodBefore,t.moodDuring,t.moodAfter].forEach(m=>{if(m){const k=m.replace(/^\S+\s/,'').trim();mc[k]=(mc[k]||0)+1;}})); const entries=Object.entries(mc).sort((a,b)=>b[1]-a[1]).slice(0,8);if(!entries.length)return; const pad={l:8,r:8,t:16,b:40},bw=(w-pad.l-pad.r)/entries.length,max=Math.max(...entries.map(e=>e[1])),ch=h-pad.t-pad.b; const colors=['#1a9e6e','#2980b9','#e07b1a','#e05252','#8e44ad','#16a085','#e67e22','#2c3e50']; entries.forEach(([mood,count],i)=>{const bh=(count/max)*ch,x=pad.l+i*bw+bw*.15,y=pad.t+ch-bh,bwa=bw*.7;ctx.fillStyle=colors[i%colors.length];ctx.beginPath();ctx.roundRect(x,y,bwa,bh,4);ctx.fill();ctx.fillStyle=colors[i%colors.length];ctx.font='bold 11px DM Sans';ctx.textAlign='center';ctx.fillText(count,x+bwa/2,y-5);ctx.fillStyle='#8a9bb0';ctx.font='9px DM Sans';ctx.save();ctx.translate(x+bwa/2,h-6);ctx.rotate(-0.4);ctx.textAlign='right';ctx.fillText(mood,0,0);ctx.restore();}); }
-function drawDisc(){ const cv=document.getElementById('discChart'),ctx=cv.getContext('2d'),w=gw(),h=160; cv.width=w;cv.height=h;ctx.clearRect(0,0,w,h); const tracked=trades.filter(t=>t.followedRules!==null&&t.followedRules!==undefined); if(tracked.length<2){ctx.fillStyle='#8a9bb0';ctx.font='11px DM Sans';ctx.textAlign='center';ctx.fillText('Log 2+ trades with rule tracking',w/2,h/2);return;} const pts=tracked.slice(-20),pad={l:36,r:16,t:16,b:28},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b; let followed=0; const disc=pts.map((t,i)=>{if(t.followedRules)followed++;return Math.round((followed/(i+1))*100);}); [0,50,100].forEach(v=>{const y=pad.t+ch*(1-v/100);ctx.strokeStyle='#e2e6ea';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillStyle='#8a9bb0';ctx.font='9px DM Sans';ctx.textAlign='right';ctx.fillText(v+'%',pad.l-4,y+3);}); ctx.beginPath();disc.forEach((v,i)=>{const x=pad.l+(i/(Math.max(disc.length-1,1)))*cw,y=pad.t+ch*(1-v/100);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.lineTo(pad.l+cw,pad.t+ch);ctx.lineTo(pad.l,pad.t+ch);ctx.closePath();ctx.fillStyle='rgba(26,158,110,0.08)';ctx.fill(); ctx.strokeStyle='#1a9e6e';ctx.lineWidth=2.5;ctx.beginPath();disc.forEach((v,i)=>{const x=pad.l+(i/(Math.max(disc.length-1,1)))*cw,y=pad.t+ch*(1-v/100);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke(); }
+function drawLine(){
+  const cv=document.getElementById('lineChart'),ctx=cv.getContext('2d'),w=gw(),h=200;
+  cv.width=w;cv.height=h;ctx.clearRect(0,0,w,h);
+  if(!trades.length){ctx.fillStyle='#4a5568';ctx.font='bold 13px DM Sans';ctx.textAlign='center';ctx.fillText('No trade data yet',w/2,h/2);return;}
+  const pts=trades.slice(-20),pad={l:42,r:16,t:20,b:32},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+  [0,25,50,75,100].forEach(v=>{
+    const y=pad.t+ch*(1-v/100);
+    ctx.strokeStyle=v===0||v===100?'#c8d4df':'#e2e6ea';
+    ctx.lineWidth=v===0||v===100?1.5:1;
+    ctx.setLineDash(v===0||v===100?[]:[4,4]);
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#4a5568';ctx.font='bold 11px DM Sans';ctx.textAlign='right';
+    ctx.fillText(v+'%',pad.l-6,y+4);
+  });
+  const dl=(data,color,alpha=1,lw=2.5)=>{
+    ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.globalAlpha=alpha;
+    ctx.beginPath();
+    data.forEach((v,i)=>{const x=pad.l+(i/(Math.max(data.length-1,1)))*cw,y=pad.t+ch*(1-v/100);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+    ctx.stroke();ctx.globalAlpha=1;
+  };
+  dl(pts.map(t=>t.overall||50),'#1a9e6e',1,3);
+  dl(pts.map(t=>(t.clarityBefore||5)*10),'#2980b9',.8);
+  dl(pts.map(t=>(t.reflectionAfter||5)*10),'#22c48a',.8);
+  pts.forEach((t,i)=>{
+    const x=pad.l+(i/(Math.max(pts.length-1,1)))*cw,y=pad.t+ch*(1-(t.overall||50)/100);
+    ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);
+    ctx.fillStyle='#1a9e6e';ctx.fill();
+    ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+    if(pts.length<=10){ctx.fillStyle='#1a2332';ctx.font='bold 10px DM Sans';ctx.textAlign='center';ctx.fillText((t.overall||50)+'%',x,y-10);}
+  });
+}
+function drawBar(){
+  const cv=document.getElementById('barChart'),ctx=cv.getContext('2d'),w=gw(),h=200;
+  cv.width=w;cv.height=h;ctx.clearRect(0,0,w,h);
+  if(!trades.length){ctx.fillStyle='#4a5568';ctx.font='bold 13px DM Sans';ctx.textAlign='center';ctx.fillText('No trade data yet',w/2,h/2);return;}
+  const mc={};trades.forEach(t=>[t.moodBefore,t.moodDuring,t.moodAfter].forEach(m=>{if(m){const k=m.replace(/^\S+\s/,'').trim();mc[k]=(mc[k]||0)+1;}}));
+  const entries=Object.entries(mc).sort((a,b)=>b[1]-a[1]).slice(0,7);if(!entries.length)return;
+  const pad={l:10,r:10,t:24,b:48},bw=(w-pad.l-pad.r)/entries.length,max=Math.max(...entries.map(e=>e[1])),ch=h-pad.t-pad.b;
+  const colors=['#1a9e6e','#2980b9','#e07b1a','#e05252','#8e44ad','#16a085','#e67e22'];
+  entries.forEach(([mood,count],i)=>{
+    const bh=(count/max)*ch,x=pad.l+i*bw+bw*.12,y=pad.t+ch-bh,bwa=bw*.76;
+    ctx.fillStyle=colors[i%colors.length]+'22';
+    ctx.beginPath();ctx.roundRect(x,pad.t,bwa,ch,4);ctx.fill();
+    ctx.fillStyle=colors[i%colors.length];
+    ctx.beginPath();ctx.roundRect(x,y,bwa,bh,4);ctx.fill();
+    ctx.fillStyle='#1a2332';ctx.font='bold 12px DM Sans';ctx.textAlign='center';
+    ctx.fillText(count,x+bwa/2,y-7);
+    ctx.fillStyle='#4a5568';ctx.font='bold 10px DM Sans';
+    ctx.save();ctx.translate(x+bwa/2,h-4);ctx.rotate(-0.45);ctx.textAlign='right';
+    ctx.fillText(mood,0,0);ctx.restore();
+  });
+}
+function drawDisc(){
+  const cv=document.getElementById('discChart'),ctx=cv.getContext('2d'),w=gw(),h=180;
+  cv.width=w;cv.height=h;ctx.clearRect(0,0,w,h);
+  const tracked=trades.filter(t=>t.followedRules!==null&&t.followedRules!==undefined);
+  if(tracked.length<2){ctx.fillStyle='#4a5568';ctx.font='bold 13px DM Sans';ctx.textAlign='center';ctx.fillText('Log 2+ trades with rule tracking',w/2,h/2);return;}
+  const pts=tracked.slice(-20),pad={l:42,r:16,t:20,b:32},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+  let followed=0;
+  const disc=pts.map((t,i)=>{if(t.followedRules)followed++;return Math.round((followed/(i+1))*100);});
+  [0,50,100].forEach(v=>{
+    const y=pad.t+ch*(1-v/100);
+    ctx.strokeStyle=v===100?'#1a9e6e33':'#e2e6ea';ctx.lineWidth=1;
+    ctx.setLineDash(v===50?[4,4]:[]);
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#4a5568';ctx.font='bold 11px DM Sans';ctx.textAlign='right';
+    ctx.fillText(v+'%',pad.l-6,y+4);
+  });
+  const grad=ctx.createLinearGradient(0,pad.t,0,pad.t+ch);
+  grad.addColorStop(0,'rgba(26,158,110,0.18)');grad.addColorStop(1,'rgba(26,158,110,0.02)');
+  ctx.beginPath();
+  disc.forEach((v,i)=>{const x=pad.l+(i/(Math.max(disc.length-1,1)))*cw,y=pad.t+ch*(1-v/100);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.lineTo(pad.l+cw,pad.t+ch);ctx.lineTo(pad.l,pad.t+ch);ctx.closePath();
+  ctx.fillStyle=grad;ctx.fill();
+  ctx.strokeStyle='#1a9e6e';ctx.lineWidth=3;
+  ctx.beginPath();
+  disc.forEach((v,i)=>{const x=pad.l+(i/(Math.max(disc.length-1,1)))*cw,y=pad.t+ch*(1-v/100);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.stroke();
+  disc.forEach((v,i)=>{
+    const x=pad.l+(i/(Math.max(disc.length-1,1)))*cw,y=pad.t+ch*(1-v/100);
+    ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);
+    ctx.fillStyle=v>=75?'#1a9e6e':v>=50?'#e07b1a':'#e05252';ctx.fill();
+    ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+  });
+}
 
 // ── AI ANALYSIS ──
 window.runAI=async function(){
@@ -1071,19 +1236,21 @@ window.runAI=async function(){
       if(t.rr) txt+=` | RR: ${t.rr}`;
       if(t.moodBefore) txt+=` | Before: ${t.moodBefore}(${t.clarityBefore}/10)`;
       if(t.moodAfter) txt+=` | After: ${t.moodAfter}(${t.reflectionAfter}/10)`;
+      if(t.mistakes&&t.mistakes.length) txt+=`\n  Mistakes: ${t.mistakes.join(', ')}`;
+      if(t.habits&&t.habits.length) txt+=`\n  Good habits: ${t.habits.join(', ')}`;
       if(t.beforeNote) txt+=`\n  Pre: ${t.beforeNote.substring(0,80)}`;
       if(t.afterNote) txt+=`\n  Lesson: ${t.afterNote.substring(0,80)}`;
     });
     if(trades.length>=4){ const h=Math.floor(trades.length/2),f=trades.slice(0,h).reduce((s,t)=>s+(t.overall||50),0)/h,l=trades.slice(h).reduce((s,t)=>s+(t.overall||50),0)/(trades.length-h); txt+=`\nPsychology trend: First half avg ${Math.round(f)}% → Recent half ${Math.round(l)}% (${l>f?'IMPROVING':'DECLINING'})`; }
   } else txt+='\n\nTRADE LOG: No trades logged yet.';
-  const sys=`You are an expert forex trading psychology coach. Analyse the trader's weekly journal and trade log. Be specific, honest, and actionable.\n\nFORMATTING: Section headers ALL CAPS + colon. Plain text. Numbered lists for actions. Reference their actual words where relevant.\n\nSTRUCTURE:\nOPENING INSIGHT:\nCORE BELIEF PATTERNS:\nEMOTIONAL TRIGGERS & RISK PROFILE:\n${trades.length>=3?'PSYCHOLOGY PROGRESS ANALYSIS:\n':''}IDENTITY & TRADING CEILING:\nGOALS VS REALITY GAP:\nYOUR THREE PRIORITY ACTIONS:\nCLOSING:\n\nLength: 700-1000 words.`;
+  const sys=`You are an expert forex trading psychology coach. Analyse the trader's weekly journal and trade log. Be specific, honest, and actionable.\n\nFORMATTING: Section headers ALL CAPS + colon. Plain text. Numbered lists for actions. Reference their actual words where relevant.\n\nSTRUCTURE:\nOPENING INSIGHT:\nCORE BELIEF PATTERNS:\nEMOTIONAL TRIGGERS & RISK PROFILE:\n${trades.length>=3?'PSYCHOLOGY PROGRESS ANALYSIS:\n':''}IDENTITY & TRADING CEILING:\nGOALS VS REALITY GAP:\nYOUR THREE PRIORITY ACTIONS:\nCLOSING:\n\nLength: minimum 1200 words. Write every section in FULL. Do not cut off any sentence or section. Complete the entire analysis.`;
   try{
     const GEMINI_KEY = localStorage.getItem('tm_gemini_key');
     if(!GEMINI_KEY){ body.innerHTML='<span style="color:var(--red)">No Gemini API key found.\nGo to Settings (⚙️ on home screen) to add your key.</span>'; stat.textContent='Error'; btn.disabled=false; btn.textContent='✦ Try Again'; return; }
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
     const geminiBody = {
       contents: [{ parts: [{ text: sys + '\n\nAnalyse my TraderMind data:\n\n' + txt }] }],
-      generationConfig: { maxOutputTokens: 1500, temperature: 0.7 }
+      generationConfig: { maxOutputTokens: 3000, temperature: 0.7 }
     };
     const res = await fetch(geminiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(geminiBody) });
     if(!res.ok){
