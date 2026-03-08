@@ -1049,7 +1049,7 @@ window.runAI=async function(){
   } else txt+='\n\nTRADE LOG: No trades logged yet.';
   const sys=`You are an expert forex trading psychology coach. Analyse the trader's weekly journal and trade log. Be specific, honest, and actionable.\n\nFORMATTING: Section headers ALL CAPS + colon. Plain text. Numbered lists for actions. Reference their actual words where relevant.\n\nSTRUCTURE:\nOPENING INSIGHT:\nCORE BELIEF PATTERNS:\nEMOTIONAL TRIGGERS & RISK PROFILE:\n${trades.length>=3?'PSYCHOLOGY PROGRESS ANALYSIS:\n':''}IDENTITY & TRADING CEILING:\nGOALS VS REALITY GAP:\nYOUR THREE PRIORITY ACTIONS:\nCLOSING:\n\nLength: 700-1000 words.`;
   try{
-    const GEMINI_KEY = 'AIzaSyAktR0mtkI3nnJ4WKnvWOv-e3SwWc75TPc';
+    const GEMINI_KEY = 'AIzaSyAK72a5NiJVCAqxCCcfzEkqpccdzjYEV7E';
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
     const geminiBody = {
       contents: [{ parts: [{ text: sys + '\n\nAnalyse my TraderMind data:\n\n' + txt }] }],
