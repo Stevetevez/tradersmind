@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#080808">
+<title>TraderMind</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#c9a84c;--gold-light:#e8c97a;--gold-dim:rgba(201,168,76,0.15);--gold-glow:rgba(201,168,76,0.07);--bg:#080808;--card:#111111;--card2:#181818;--border:#1e1e1e;--border2:#2a2a2a;--text:#ede8df;--muted:#666055;--muted2:#3a3530;--red:#c0392b;--red-dim:rgba(192,57,43,0.12);--green:#27a85f;--green-dim:rgba(39,168,95,0.12);--nav-h:68px;--topbar-h:58px;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',monospace;overflow:hidden;overscroll-behavior:none;-webkit-font-smoothing:antialiased;}
+#app{display:flex;flex-direction:column;height:100%;width:100%;max-width:500px;margin:0 auto;background:var(--bg);position:relative;}
+
+/* ── SETUP SCREEN ── */
+#setupScreen{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;}
+#setupScreen.hidden{display:none;}
+.setup-logo{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:400;margin-bottom:8px;}
+.setup-logo em{color:var(--gold);font-style:italic;}
+.setup-sub{font-size:11px;color:var(--muted);line-height:1.8;max-width:320px;margin-bottom:40px;}
+.setup-card{width:100%;max-width:380px;background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:28px 24px;margin-bottom:20px;}
+.setup-card h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;margin-bottom:8px;color:var(--gold);}
+.setup-card p{font-size:11px;color:var(--muted);line-height:1.8;margin-bottom:20px;}
+.setup-input{width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:12px;padding:13px 14px;line-height:1.7;transition:border-color .2s;-webkit-appearance:none;margin-bottom:10px;}
+.setup-input:focus{outline:none;border-color:var(--gold);}
+.setup-btn{width:100%;padding:15px;background:var(--gold);color:#080808;border:none;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500;margin-top:8px;transition:all .2s;}
+.setup-btn:active{transform:scale(.97);}
+.setup-btn.outline{background:transparent;color:var(--gold);border:1px solid var(--gold-dim);margin-top:6px;}
+.setup-btn:disabled{opacity:.4;cursor:not-allowed;}
+.setup-step{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;}
+.setup-divider{display:flex;align-items:center;gap:12px;margin:14px 0;color:var(--muted);font-size:10px;}
+.setup-divider::before,.setup-divider::after{content:'';flex:1;height:1px;background:var(--border2);}
+.google-btn{width:100%;padding:14px;background:var(--card2);color:var(--text);border:1px solid var(--border2);border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s;}
+.google-btn:active{transform:scale(.97);}
+.google-btn svg{width:18px;height:18px;flex-shrink:0;}
+.config-hint{font-size:10px;color:var(--muted);line-height:1.8;padding:12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;text-align:left;margin-top:12px;}
+.config-hint code{color:var(--gold-light);font-size:10px;}
+#setupError{color:var(--red);font-size:11px;margin-top:10px;display:none;text-align:center;}
+.spinner{width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── SCREENS ── */
+.screen{display:none;flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h) + 20px);}
+.screen.active{display:block;}
+.topbar{height:var(--topbar-h);display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:20;flex-shrink:0;}
+.tbar-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;}
+.tbar-logo em{color:var(--gold);font-style:italic;}
+.tbar-right{display:flex;align-items:center;gap:8px;}
+.tbar-badge{font-size:9px;letter-spacing:2px;color:var(--gold);border:1px solid var(--gold-dim);padding:4px 9px;border-radius:20px;text-transform:uppercase;background:var(--gold-glow);}
+.tbar-avatar{width:32px;height:32px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;overflow:hidden;}
+.tbar-avatar img{width:100%;height:100%;object-fit:cover;}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
+.sync-dot.syncing{background:var(--gold);animation:pulse 1s infinite;}
+.sync-dot.error{background:var(--red);}
+
+/* ── BOTTOM NAV ── */
+.bnav{display:flex;background:var(--card);border-top:1px solid var(--border);height:var(--nav-h);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px);}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;position:relative;padding:8px 0;min-height:48px;}
+.bni .ico{font-size:22px;opacity:.35;transition:opacity .2s;}
+.bni .lbl{font-size:8px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;transition:color .2s;}
+.bni.active .ico{opacity:1;}
+.bni.active .lbl{color:var(--gold);}
+.bni.active::after{content:'';position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--gold);border-radius:0 0 3px 3px;}
+
+/* ── HOME ── */
+.home-hero{padding:28px 18px 22px;background:linear-gradient(170deg,rgba(201,168,76,.05) 0%,transparent 60%);border-bottom:1px solid var(--border);}
+.home-greeting{font-size:10px;color:var(--muted);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:6px;}
+.home-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:400;line-height:1.15;}
+.home-title em{color:var(--gold);font-style:italic;}
+.home-sub{font-size:11px;color:var(--muted);line-height:1.8;margin-top:10px;}
+.stats-row{display:flex;gap:10px;padding:16px 18px;}
+.stat-card{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 12px;text-align:center;}
+.stat-val{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);}
+.stat-lbl{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+.ring-card{margin:0 18px 14px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:16px;}
+.ring-wrap{position:relative;width:60px;height:60px;flex-shrink:0;}
+.ring-wrap svg{transform:rotate(-90deg);}
+.r-bg{fill:none;stroke:var(--border2);stroke-width:5;}
+.r-fill{fill:none;stroke:var(--gold);stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .6s ease;}
+.ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--gold);}
+.ring-info h3{font-size:13px;margin-bottom:4px;}
+.ring-info p{font-size:10px;color:var(--muted);line-height:1.6;}
+.home-section{padding:0 18px 8px;}
+.home-section-title{font-size:9px;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;margin-bottom:10px;padding-top:4px;}
+.hcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px 16px;display:flex;align-items:center;gap:13px;cursor:pointer;transition:background .15s;margin-bottom:9px;}
+.hcard:active{background:var(--card2);}
+.hcard.done{border-color:rgba(201,168,76,.25);}
+.hcard-left{font-size:22px;}
+.hcard-info{flex:1;}
+.hcard-title{font-size:13px;margin-bottom:3px;}
+.hcard-sub{font-size:10px;color:var(--muted);}
+.hcard-right{color:var(--muted2);font-size:18px;}
+.hcard.done .hcard-right{color:var(--green);}
+.cta-btn{display:flex;align-items:center;justify-content:center;gap:8px;margin:4px 18px 20px;padding:16px;background:var(--gold);color:#080808;border:none;border-radius:12px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500;transition:all .2s;width:calc(100% - 36px);}
+.cta-btn:active{transform:scale(.97);}
+.cta-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+
+/* ── JOURNAL ── */
+.sec-tabs{display:flex;overflow-x:auto;scrollbar-width:none;background:var(--card);border-bottom:1px solid var(--border);}
+.sec-tabs::-webkit-scrollbar{display:none;}
+.stab{flex-shrink:0;padding:13px 16px;font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.stab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.scontent{padding:20px;display:none;}
+.scontent.active{display:block;}
+.sec-hdr{margin-bottom:22px;}
+.sec-hdr .snum{font-size:10px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:5px;}
+.sec-hdr h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;line-height:1.2;}
+.sec-hdr p{font-size:11px;color:var(--muted);line-height:1.8;margin-top:8px;border-left:2px solid var(--border2);padding-left:10px;}
+.qb{margin-bottom:22px;}
+.qlbl{display:block;font-size:11px;color:var(--gold);margin-bottom:9px;line-height:1.6;}
+.qlbl .qn{color:var(--muted);font-size:10px;margin-right:4px;}
+textarea,input[type=text],select{width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:12px;padding:13px 14px;line-height:1.7;transition:border-color .2s;-webkit-appearance:none;appearance:none;}
+textarea:focus,input[type=text]:focus,select:focus{outline:none;border-color:var(--gold);}
+textarea{resize:none;min-height:88px;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666055' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+select option{background:var(--card2);}
+.rating-wrap{display:flex;gap:7px;flex-wrap:wrap;}
+.rbtn{min-width:38px;height:40px;background:var(--card2);border:1px solid var(--border2);border-radius:8px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s;padding:0 10px;}
+.rbtn:active{transform:scale(.92);}
+.rbtn.active{background:var(--gold);color:#080808;border-color:var(--gold);font-weight:500;}
+.belief-list{display:flex;flex-direction:column;gap:8px;}
+.bchip{display:flex;align-items:flex-start;gap:10px;padding:13px 14px;background:var(--card2);border:1px solid var(--border2);border-radius:10px;cursor:pointer;font-size:11px;line-height:1.6;transition:all .15s;}
+.bchip:active{transform:scale(.98);}
+.bchip.sel{border-color:var(--red);background:var(--red-dim);}
+.bdot{width:8px;height:8px;border-radius:50%;background:var(--border2);flex-shrink:0;margin-top:4px;transition:background .15s;}
+.bchip.sel .bdot{background:var(--red);}
+.nav-btns{display:flex;gap:10px;margin-top:26px;}
+.nb{flex:1;padding:15px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;border:1px solid;}
+.nb:active{transform:scale(.97);}
+.nb-prev{background:transparent;color:var(--muted);border-color:var(--border2);}
+.nb-next{background:var(--gold);color:#080808;border-color:var(--gold);font-weight:500;}
+.save-indicator{font-size:10px;color:var(--green);letter-spacing:1px;opacity:0;transition:opacity .3s;margin-top:8px;text-align:center;}
+.save-indicator.show{opacity:1;}
+
+/* ── TRADE LOG ── */
+.tlog-actions{display:flex;gap:10px;padding:16px 18px 8px;}
+.tlog-fab{flex:1;padding:14px;background:var(--gold);color:#080808;border:none;border-radius:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px;}
+.tlog-fab:active{transform:scale(.97);}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:100;display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.overlay.open{display:flex;align-items:flex-start;justify-content:center;padding:20px 0 60px;}
+.overlay-card{width:calc(100% - 24px);max-width:480px;background:var(--card);border:1px solid var(--border2);border-radius:16px;overflow:hidden;margin:auto;}
+.overlay-hdr{padding:18px 20px;background:rgba(201,168,76,.06);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.overlay-hdr h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;}
+.overlay-close{width:36px;height:36px;background:var(--card2);border:1px solid var(--border2);border-radius:8px;color:var(--muted);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.overlay-body{padding:20px;}
+.phase-tabs{display:flex;gap:0;border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.ptab{flex:1;padding:11px 6px;text-align:center;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .2s;background:var(--card2);}
+.ptab.active{background:var(--gold);color:#080808;font-weight:500;}
+.phase-content{display:none;}
+.phase-content.active{display:block;}
+.mood-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+.mood-btn{padding:9px 12px;background:var(--card2);border:1px solid var(--border2);border-radius:8px;font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.mood-btn:active{transform:scale(.92);}
+.mood-btn.sel{border-color:var(--gold);background:var(--gold-dim);}
+.save-trade-btn{width:100%;padding:15px;background:var(--gold);color:#080808;border:none;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500;margin-top:20px;}
+.save-trade-btn:active{transform:scale(.97);}
+.tlog-list{padding:0 18px 12px;}
+.tlog-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:12px;line-height:2;}
+.trade-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px 16px;margin-bottom:10px;cursor:pointer;transition:background .15s;}
+.trade-card:active{background:var(--card2);}
+.tc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.tc-pair{font-size:14px;font-weight:500;}
+.tc-date{font-size:10px;color:var(--muted);}
+.tc-phases{display:flex;gap:6px;flex-wrap:wrap;}
+.phase-pill{font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:20px;text-transform:uppercase;}
+.phase-pill.before{background:var(--gold-dim);color:var(--gold);}
+.phase-pill.during{background:rgba(41,128,185,.15);color:#5ba8d4;}
+.phase-pill.after{background:var(--green-dim);color:var(--green);}
+.tc-outcome{display:flex;align-items:center;gap:6px;margin-top:8px;}
+.outcome-dot{width:8px;height:8px;border-radius:50%;}
+.outcome-dot.win{background:var(--green);}
+.outcome-dot.loss{background:var(--red);}
+.outcome-dot.be{background:var(--muted);}
+.tc-score{font-size:11px;color:var(--gold);}
+
+/* ── PROGRESS ── */
+.prog-hero{padding:24px 18px 16px;border-bottom:1px solid var(--border);}
+.prog-hero h2{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:400;}
+.prog-hero h2 em{color:var(--gold);font-style:italic;}
+.prog-hero p{font-size:11px;color:var(--muted);line-height:1.7;margin-top:6px;}
+.chart-card{margin:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;overflow:hidden;}
+.chart-title{font-size:10px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;}
+.chart-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+canvas{display:block;}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted);}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px 14px;}
+.metric-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;}
+.metric-val{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--gold);}
+.metric-lbl{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;line-height:1.4;}
+.metric-trend{font-size:10px;margin-top:6px;}
+.metric-trend.up{color:var(--green);}
+.metric-trend.down{color:var(--red);}
+.metric-trend.flat{color:var(--muted);}
+
+/* ── ANALYSIS ── */
+.analysis-hero{padding:24px 18px 16px;border-bottom:1px solid var(--border);}
+.analysis-hero h2{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:400;}
+.analysis-hero h2 em{color:var(--gold);font-style:italic;}
+.analysis-hero p{font-size:11px;color:var(--muted);line-height:1.7;margin-top:6px;}
+.ai-card{margin:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.ai-card-hdr{padding:14px 16px;background:rgba(201,168,76,.05);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.ai-live-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite;}
+.ai-card-hdr span{font-size:10px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;flex:1;}
+.ai-status{font-size:10px;color:var(--muted);}
+.ai-body{padding:18px;font-size:12px;line-height:1.9;color:var(--text);min-height:80px;white-space:pre-wrap;}
+.ai-stag{display:block;color:var(--gold);font-size:9px;letter-spacing:3px;text-transform:uppercase;margin:18px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.ai-stag:first-child{margin-top:0;}
+.thinking-row{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:11px;letter-spacing:1px;}
+.tdots{display:flex;gap:4px;}
+.tdots span{width:4px;height:4px;border-radius:50%;background:var(--gold);animation:blink 1.4s infinite both;}
+.tdots span:nth-child(2){animation-delay:.2s;}
+.tdots span:nth-child(3){animation-delay:.4s;}
+.cursor{display:inline-block;width:2px;height:13px;background:var(--gold);margin-left:2px;vertical-align:middle;animation:cblink .8s infinite;}
+.note-box{margin:0 18px 14px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:10px;color:var(--muted);line-height:1.8;}
+.note-box strong{color:var(--text);display:block;margin-bottom:3px;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:calc(var(--nav-h) + 12px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--card);border:1px solid var(--gold-dim);color:var(--gold-light);padding:10px 20px;font-size:11px;letter-spacing:1px;border-radius:20px;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes blink{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+@keyframes cblink{0%,100%{opacity:1}50%{opacity:0}}
+</style>
+</head>
+<body>
+
+<!-- ══ FIREBASE SETUP SCREEN ══ -->
+<div id="setupScreen">
+  <div class="setup-logo">Trader<em>Mind</em></div>
+  <div class="setup-sub">Your psychology journal — synced across all your devices in real time.</div>
+
+  <div id="stepConfig" class="setup-card">
+    <div class="setup-step">Step 1 of 2 — Firebase Config</div>
+    <h3>Connect Your Database</h3>
+    <p>Paste your Firebase project config below. This links the app to your personal cloud database so data syncs across all devices.</p>
+    <input class="setup-input" id="cfgApiKey" placeholder="apiKey (e.g. AIzaSy...)">
+    <input class="setup-input" id="cfgAuthDomain" placeholder="authDomain (e.g. myapp.firebaseapp.com)">
+    <input class="setup-input" id="cfgProjectId" placeholder="projectId (e.g. my-tradermind)">
+    <input class="setup-input" id="cfgAppId" placeholder="appId (e.g. 1:123456:web:abcdef)">
+    <button class="setup-btn" onclick="initFirebase()">Connect Firebase →</button>
+    <div class="config-hint">
+      <strong style="color:var(--text);display:block;margin-bottom:6px;">How to get your config:</strong>
+      1. Go to <code>console.firebase.google.com</code><br>
+      2. Create a project (free) → Add Web App<br>
+      3. Copy the config values shown and paste above<br>
+      4. Enable <code>Authentication → Google</code><br>
+      5. Enable <code>Firestore Database</code> (start in test mode)
+    </div>
+    <div id="setupError"></div>
+  </div>
+  <div style="font-size:10px;color:#3a3530;margin-top:8px;cursor:pointer;" onclick="resetConfig()">Reset saved config</div>
+
+  <div id="stepLogin" class="setup-card" style="display:none">
+    <div class="setup-step">Step 2 of 2 — Sign In</div>
+    <h3>Sign In to Sync</h3>
+    <p>Sign in with Google to access your data from any device. Your data is private and only accessible to you.</p>
+    <button class="google-btn" onclick="signInGoogle()">
+      <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Continue with Google
+    </button>
+    <div id="setupError2" style="color:var(--red);font-size:11px;margin-top:10px;display:none;text-align:center;"></div>
+  </div>
+</div>
+
+<!-- ══ MAIN APP ══ -->
+<div id="app" style="display:none">
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="topbar">
+      <div class="tbar-logo">Trader<em>Mind</em></div>
+      <div class="tbar-right">
+        <div class="sync-dot" id="syncDot" title="Sync status"></div>
+        <div class="tbar-avatar" id="userAvatar" onclick="signOutUser()" title="Sign out">👤</div>
+      </div>
+    </div>
+    <div class="home-hero">
+      <div class="home-greeting" id="homeGreeting">Welcome back</div>
+      <div class="home-title">Know <em>Yourself,</em><br>Know the Market</div>
+      <div class="home-sub">Track your psychology before, during &amp; after every trade. Synced across all your devices.</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-val" id="statTrades">0</div><div class="stat-lbl">Trades Logged</div></div>
+      <div class="stat-card"><div class="stat-val" id="statScore">—</div><div class="stat-lbl">Avg Mind Score</div></div>
+      <div class="stat-card"><div class="stat-val" id="statStreak">0</div><div class="stat-lbl">Days Active</div></div>
+    </div>
+    <div class="ring-card">
+      <div class="ring-wrap">
+        <svg width="60" height="60" viewBox="0 0 60 60">
+          <circle class="r-bg" cx="30" cy="30" r="25"/>
+          <circle class="r-fill" id="homeRing" cx="30" cy="30" r="25" stroke-dasharray="157" stroke-dashoffset="157"/>
+        </svg>
+        <div class="ring-pct" id="homeRingPct">0%</div>
+      </div>
+      <div class="ring-info"><h3>Journal Progress</h3><p id="homeRingDesc">Complete your self-discovery journal to unlock full AI analysis.</p></div>
+    </div>
+    <div class="home-section">
+      <div class="home-section-title">Self-Discovery Journal</div>
+      <div class="hcard" id="hc0" onclick="goTo('journal',0)"><div class="hcard-left">🧠</div><div class="hcard-info"><div class="hcard-title">Beliefs About Money</div><div class="hcard-sub">Section 01 · 4 questions</div></div><div class="hcard-right" id="hc0r">›</div></div>
+      <div class="hcard" id="hc1" onclick="goTo('journal',1)"><div class="hcard-left">⚡</div><div class="hcard-info"><div class="hcard-title">Emotional Triggers</div><div class="hcard-sub">Section 02 · 4 questions</div></div><div class="hcard-right" id="hc1r">›</div></div>
+      <div class="hcard" id="hc2" onclick="goTo('journal',2)"><div class="hcard-left">🎯</div><div class="hcard-info"><div class="hcard-title">Goals &amp; Expectations</div><div class="hcard-sub">Section 03 · 4 questions</div></div><div class="hcard-right" id="hc2r">›</div></div>
+      <div class="hcard" id="hc3" onclick="goTo('journal',3)"><div class="hcard-left">🪞</div><div class="hcard-info"><div class="hcard-title">Identity &amp; Self-Image</div><div class="hcard-sub">Section 04 · 4 questions</div></div><div class="hcard-right" id="hc3r">›</div></div>
+      <div class="hcard" id="hc4" onclick="goTo('journal',4)"><div class="hcard-left">📋</div><div class="hcard-info"><div class="hcard-title">Commitments</div><div class="hcard-sub">Section 05 · 3 questions</div></div><div class="hcard-right" id="hc4r">›</div></div>
+    </div>
+    <div class="home-section" style="margin-top:6px;">
+      <div class="home-section-title">Quick Actions</div>
+      <div class="hcard" onclick="goTo('tradelog')"><div class="hcard-left">📈</div><div class="hcard-info"><div class="hcard-title">Log a Trade</div><div class="hcard-sub">Before, during &amp; after psychology</div></div><div class="hcard-right">›</div></div>
+      <div class="hcard" onclick="goTo('progress')"><div class="hcard-left">📊</div><div class="hcard-info"><div class="hcard-title">View Progress</div><div class="hcard-sub">Charts &amp; psychology metrics</div></div><div class="hcard-right">›</div></div>
+    </div>
+    <button class="cta-btn" onclick="goTo('analysis')">✦ Get AI Analysis</button>
+  </div>
+
+  <!-- JOURNAL -->
+  <div class="screen" id="screen-journal">
+    <div class="topbar"><div class="tbar-logo">Trader<em>Mind</em></div><div class="tbar-right"><div class="sync-dot" id="syncDot2"></div><div class="tbar-badge" id="jBadge">01/05</div></div></div>
+    <div class="sec-tabs" id="secTabs">
+      <div class="stab active" onclick="switchSec(0)">01 Beliefs</div>
+      <div class="stab" onclick="switchSec(1)">02 Emotions</div>
+      <div class="stab" onclick="switchSec(2)">03 Goals</div>
+      <div class="stab" onclick="switchSec(3)">04 Identity</div>
+      <div class="stab" onclick="switchSec(4)">05 Commit</div>
+    </div>
+    <div class="scontent active" id="sc0">
+      <div class="sec-hdr"><div class="snum">Section 01</div><h2>Beliefs About<br>Money &amp; Trading</h2><p>Your beliefs are invisible rules your subconscious follows — formed long before you opened a chart.</p></div>
+      <div class="qb"><label class="qlbl"><span class="qn">1.1</span> Complete honestly: "Money is __________"</label><input type="text" id="q1_1" placeholder="hard to keep, freedom, dangerous..." oninput="debounceSave()"></div>
+      <div class="qb"><label class="qlbl"><span class="qn">1.2</span> What did your family teach you about money?</label><textarea id="q1_2" placeholder="Words or behaviour you observed growing up..." oninput="debounceSave()"></textarea></div>
+      <div class="qb"><label class="qlbl"><span class="qn">1.3</span> Do you truly believe you DESERVE consistent profit? (1=No · 10=Absolutely)</label><div class="rating-wrap" id="r1"><button class="rbtn" onclick="rate('r1',this,1)">1</button><button class="rbtn" onclick="rate('r1',this,2)">2</button><button class="rbtn" onclick="rate('r1',this,3)">3</button><button class="rbtn" onclick="rate('r1',this,4)">4</button><button class="rbtn" onclick="rate('r1',this,5)">5</button><button class="rbtn" onclick="rate('r1',this,6)">6</button><button class="rbtn" onclick="rate('r1',this,7)">7</button><button class="rbtn" onclick="rate('r1',this,8)">8</button><button class="rbtn" onclick="rate('r1',this,9)">9</button><button class="rbtn" onclick="rate('r1',this,10)">10</button></div></div>
+      <div class="qb"><label class="qlbl"><span class="qn">1.4</span> Select any limiting beliefs you recognise:</label><div class="belief-list" id="beliefs"><div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>I always lose my profits eventually</div><div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>Trading is just gambling</div><div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>I need to trade every day or I'll miss out</div><div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>I'm not smart enough to be consistently profitable</div><div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>If I make a lot of money, people will judge me</div><div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>I need to recover losses immediately</div><div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>One big trade will fix everything</div><div class="bchip" onclick="toggleB(this)"><div class="bdot"></div>The market is out to get me personally</div></div></div>
+      <div class="save-indicator" id="saveInd">Saved to cloud ✓</div>
+      <div class="nav-btns"><button class="nb nb-prev" onclick="showScreen('home')">← Home</button><button class="nb nb-next" onclick="switchSec(1)">Next →</button></div>
+    </div>
+    <div class="scontent" id="sc1">
+      <div class="sec-hdr"><div class="snum">Section 02</div><h2>Emotional Patterns<br>&amp; Triggers</h2><p>Unexamined emotions drive unplanned trades.</p></div>
+      <div class="qb"><label class="qlbl"><span class="qn">2.1</span> Last time you broke your rules — what were you feeling BEFORE?</label><textarea id="q2_1" placeholder="Fear, boredom, excitement, frustration..." oninput="debounceSave()"></textarea></div>
+      <div class="qb"><label class="qlbl"><span class="qn">2.2</span> After a losing trade, what do you typically do next?</label><textarea id="q2_2" placeholder="Try to win it back, walk away, increase lot size..." oninput="debounceSave()"></textarea></div>
+      <div class="qb"><label class="qlbl"><span class="qn">2.3</span> How much does FOMO affect your trading? (1=Never · 10=Constantly)</label><div class="rating-wrap" id="r2"><button class="rbtn" onclick="rate('r2',this,1)">1</button><button class="rbtn" onclick="rate('r2',this,2)">2</button><button class="rbtn" onclick="rate('r2',this,3)">3</button><button class="rbtn" onclick="rate('r2',this,4)">4</button><button class="rbtn" onclick="rate('r2',this,5)">5</button><button class="rbtn" onclick="rate('r2',this,6)">6</button><button class="rbtn" onclick="rate('r2',this,7)">7</button><button class="rbtn" onclick="rate('r2',this,8)">8</button><button class="rbtn" onclick="rate('r2',this,9)">9</button><button class="rbtn" onclick="rate('r2',this,10)">10</button></div></div>
+      <div class="qb"><label class="qlbl"><span class="qn">2.4</span> What does a WINNING trade make you feel — and do?</label><textarea id="q2_4" placeholder="Overconfidence? Euphoria? Pressure to repeat?" oninput="debounceSave()"></textarea></div>
+      <div class="nav-btns"><button class="nb nb-prev" onclick="switchSec(0)">← Back</button><button class="nb nb-next" onclick="switchSec(2)">Next →</button></div>
+    </div>
+    <div class="scontent" id="sc2">
+      <div class="sec-hdr"><div class="snum">Section 03</div><h2>Goals, Expectations<br>&amp; Reality</h2><p>Misaligned expectations are the #1 source of emotional pain in trading.</p></div>
+      <div class="qb"><label class="qlbl"><span class="qn">3.1</span> Why do you REALLY trade forex?</label><textarea id="q3_1" placeholder="Freedom, prove something, income, escape...?" oninput="debounceSave()"></textarea></div>
+      <div class="qb"><label class="qlbl"><span class="qn">3.2</span> Monthly profit target — realistic or wishful?</label><input type="text" id="q3_2" placeholder="e.g. 20% per month" oninput="debounceSave()"></div>
+      <div class="qb"><label class="qlbl"><span class="qn">3.3</span> Consecutive losing days before emotions take over:</label><div class="rating-wrap" id="r3"><button class="rbtn" onclick="rate('r3',this,1)" style="padding:0 10px">1 day</button><button class="rbtn" onclick="rate('r3',this,2)" style="padding:0 10px">2–3</button><button class="rbtn" onclick="rate('r3',this,3)" style="padding:0 10px">4–5</button><button class="rbtn" onclick="rate('r3',this,4)" style="padding:0 10px">Week+</button></div></div>
+      <div class="qb"><label class="qlbl"><span class="qn">3.4</span> What does success look like in 3 years?</label><textarea id="q3_4" placeholder="Income, lifestyle, freedom — be specific..." oninput="debounceSave()"></textarea></div>
+      <div class="nav-btns"><button class="nb nb-prev" onclick="switchSec(1)">← Back</button><button class="nb nb-next" onclick="switchSec(3)">Next →</button></div>
+    </div>
+    <div class="scontent" id="sc3">
+      <div class="sec-hdr"><div class="snum">Section 04</div><h2>Identity &amp;<br>Self-Image</h2><p>You trade who you are. Your self-image sets the invisible ceiling on your results.</p></div>
+      <div class="qb"><label class="qlbl"><span class="qn">4.1</span> How do you describe yourself as a trader to others?</label><input type="text" id="q4_1" placeholder="'Still learning', 'struggling', 'professional'..." oninput="debounceSave()"></div>
+      <div class="qb"><label class="qlbl"><span class="qn">4.2</span> How does a losing week affect how you see YOURSELF?</label><textarea id="q4_2" placeholder="Shame, worthlessness, failure as a person...?" oninput="debounceSave()"></textarea></div>
+      <div class="qb"><label class="qlbl"><span class="qn">4.3</span> Your relationship with discipline in OTHER life areas:</label><textarea id="q4_3" placeholder="Diet, exercise, deadlines, promises to yourself..." oninput="debounceSave()"></textarea></div>
+      <div class="qb"><label class="qlbl"><span class="qn">4.4</span> Describe the version of you with ZERO psychological barriers:</label><textarea id="q4_4" placeholder="Their habits, mindset, how they handle losses..." oninput="debounceSave()"></textarea></div>
+      <div class="nav-btns"><button class="nb nb-prev" onclick="switchSec(2)">← Back</button><button class="nb nb-next" onclick="switchSec(4)">Next →</button></div>
+    </div>
+    <div class="scontent" id="sc4">
+      <div class="sec-hdr"><div class="snum">Section 05</div><h2>Commitments &amp;<br>Next Steps</h2><p>Insight without action is entertainment.</p></div>
+      <div class="qb"><label class="qlbl"><span class="qn">5.1</span> The ONE pattern you commit to working on first:</label><input type="text" id="q5_1" placeholder="e.g. revenge trading after losses" oninput="debounceSave()"></div>
+      <div class="qb"><label class="qlbl"><span class="qn">5.2</span> The specific rule or ritual you will implement this week:</label><textarea id="q5_2" placeholder="e.g. After any loss, I close the platform for 1 hour and journal." oninput="debounceSave()"></textarea></div>
+      <div class="qb"><label class="qlbl"><span class="qn">5.3</span> Support and accountability plan:</label><textarea id="q5_3" placeholder="Trading journal, mentor, community, weekly reviews..." oninput="debounceSave()"></textarea></div>
+      <div class="nav-btns"><button class="nb nb-prev" onclick="switchSec(3)">← Back</button><button class="nb nb-next" onclick="goTo('tradelog')">Trade Log →</button></div>
+    </div>
+  </div>
+
+  <!-- TRADE LOG -->
+  <div class="screen" id="screen-tradelog">
+    <div class="topbar"><div class="tbar-logo">Trader<em>Mind</em></div><div class="tbar-right"><div class="sync-dot" id="syncDot3"></div><div class="tbar-badge" id="tradeCount">0 trades</div></div></div>
+    <div class="tlog-actions"><button class="tlog-fab" onclick="openTradeForm()">+ Log New Trade</button></div>
+    <div class="tlog-list" id="tradeList"><div class="tlog-empty">No trades logged yet.<br>Tap "+ Log New Trade" to begin<br>tracking your psychology.</div></div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="screen" id="screen-progress">
+    <div class="topbar"><div class="tbar-logo">Trader<em>Mind</em></div><div class="tbar-right"><div class="tbar-badge">Progress</div></div></div>
+    <div class="prog-hero"><h2>Your <em>Growth</em><br>Over Time</h2><p>Psychology scores across trades — tracking real improvement.</p></div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="metric-val" id="mAvg">—</div><div class="metric-lbl">Avg Mind Score</div><div class="metric-trend flat" id="mTrend">No data yet</div></div>
+      <div class="metric-card"><div class="metric-val" id="mWin">—</div><div class="metric-lbl">Discipline Rate</div><div class="metric-trend flat" id="mDisc">Followed plan</div></div>
+      <div class="metric-card"><div class="metric-val" id="mBefore">—</div><div class="metric-lbl">Avg Pre-Trade</div><div class="metric-trend flat">Clarity score</div></div>
+      <div class="metric-card"><div class="metric-val" id="mAfter">—</div><div class="metric-lbl">Avg Post-Trade</div><div class="metric-trend flat">Reflection score</div></div>
+    </div>
+    <div class="chart-card"><div class="chart-title">Psychology Score Per Trade</div><div class="chart-wrap"><canvas id="lineChart" height="180"></canvas></div><div class="legend"><div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Overall</div><div class="legend-item"><div class="legend-dot" style="background:#5ba8d4"></div>Pre-Trade</div><div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Post-Trade</div></div></div>
+    <div class="chart-card"><div class="chart-title">Emotional State Distribution</div><div class="chart-wrap"><canvas id="barChart" height="180"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">Running Discipline Score (%)</div><div class="chart-wrap"><canvas id="discChart" height="160"></canvas></div></div>
+  </div>
+
+  <!-- ANALYSIS -->
+  <div class="screen" id="screen-analysis">
+    <div class="topbar"><div class="tbar-logo">Trader<em>Mind</em></div><div class="tbar-right"><div class="tbar-badge">AI Analysis</div></div></div>
+    <div class="analysis-hero"><h2>Your <em>AI</em><br>Psychology Report</h2><p>Claude reads your journal AND all trade logs to give you a personalised profile and progress measurement.</p></div>
+    <div class="note-box"><strong>How it works</strong>Your journal + every trade log is sent to Claude for analysis. The more trades you log, the more accurate your progress tracking becomes.</div>
+    <button class="cta-btn" id="runAiBtn" onclick="runAI()">✦ Analyse My Psychology</button>
+    <div class="ai-card" id="aiCard" style="display:none">
+      <div class="ai-card-hdr"><div class="ai-live-dot"></div><span>AI Psychological Profile</span><div class="ai-status" id="aiStat">Reading...</div></div>
+      <div class="ai-body" id="aiBody"><div class="thinking-row"><div class="tdots"><span></span><span></span><span></span></div>Reading your data...</div></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bnav">
+    <div class="bni active" id="nav-home" onclick="showScreen('home')"><div class="ico">🏠</div><div class="lbl">Home</div></div>
+    <div class="bni" id="nav-journal" onclick="showScreen('journal')"><div class="ico">📓</div><div class="lbl">Journal</div></div>
+    <div class="bni" id="nav-tradelog" onclick="showScreen('tradelog')"><div class="ico">📈</div><div class="lbl">Trades</div></div>
+    <div class="bni" id="nav-progress" onclick="showScreen('progress');renderCharts()"><div class="ico">📊</div><div class="lbl">Progress</div></div>
+    <div class="bni" id="nav-analysis" onclick="showScreen('analysis')"><div class="ico">✦</div><div class="lbl">Analysis</div></div>
+  </div>
+</div>
+
+<!-- TRADE FORM OVERLAY -->
+<div class="overlay" id="tradeOverlay">
+  <div class="overlay-card">
+    <div class="overlay-hdr"><h3 id="overlayTitle">Log Trade</h3><button class="overlay-close" onclick="closeTradeForm()">✕</button></div>
+    <div class="overlay-body">
+      <div class="qb"><label class="qlbl">Currency Pair</label><input type="text" id="tPair" placeholder="e.g. EUR/USD, GBP/JPY..."></div>
+      <div style="display:flex;gap:10px;" class="qb">
+        <div style="flex:1"><label class="qlbl">Direction</label><select id="tDir"><option value="">Select</option><option>BUY</option><option>SELL</option></select></div>
+        <div style="flex:1"><label class="qlbl">Outcome</label><select id="tOutcome"><option value="">Select</option><option value="win">Win ✓</option><option value="loss">Loss ✗</option><option value="be">Break Even</option><option value="open">Still Open</option></select></div>
+      </div>
+      <div class="phase-tabs">
+        <div class="ptab active" onclick="switchPhase(0)">Before</div>
+        <div class="ptab" onclick="switchPhase(1)">During</div>
+        <div class="ptab" onclick="switchPhase(2)">After</div>
+      </div>
+      <div class="phase-content active" id="ph0">
+        <div class="qb"><label class="qlbl">Emotional state before entry:</label><div class="mood-row" id="moodBefore"><span class="mood-btn" onclick="selMood(this,'before')">😌 Calm</span><span class="mood-btn" onclick="selMood(this,'before')">😤 Frustrated</span><span class="mood-btn" onclick="selMood(this,'before')">😰 Anxious</span><span class="mood-btn" onclick="selMood(this,'before')">🤩 Excited</span><span class="mood-btn" onclick="selMood(this,'before')">😑 Bored</span><span class="mood-btn" onclick="selMood(this,'before')">😤 Revenge</span><span class="mood-btn" onclick="selMood(this,'before')">💪 Confident</span><span class="mood-btn" onclick="selMood(this,'before')">😨 FOMO</span></div></div>
+        <div class="qb"><label class="qlbl">Clarity score (1=Cloudy · 10=Crystal clear)</label><div class="rating-wrap" id="rBefore"><button class="rbtn" onclick="rateT('rBefore',this,1)">1</button><button class="rbtn" onclick="rateT('rBefore',this,2)">2</button><button class="rbtn" onclick="rateT('rBefore',this,3)">3</button><button class="rbtn" onclick="rateT('rBefore',this,4)">4</button><button class="rbtn" onclick="rateT('rBefore',this,5)">5</button><button class="rbtn" onclick="rateT('rBefore',this,6)">6</button><button class="rbtn" onclick="rateT('rBefore',this,7)">7</button><button class="rbtn" onclick="rateT('rBefore',this,8)">8</button><button class="rbtn" onclick="rateT('rBefore',this,9)">9</button><button class="rbtn" onclick="rateT('rBefore',this,10)">10</button></div></div>
+        <div class="qb"><label class="qlbl">Did your setup meet ALL your rules?</label><div class="rating-wrap"><button class="rbtn" id="ruleYes" onclick="setRule(true)" style="padding:0 14px">Yes ✓</button><button class="rbtn" id="ruleNo" onclick="setRule(false)" style="padding:0 14px">No ✗</button></div></div>
+        <div class="qb"><label class="qlbl">Pre-trade notes:</label><textarea id="tBeforeNote" placeholder="What's your reason for this trade? What are you thinking?"></textarea></div>
+      </div>
+      <div class="phase-content" id="ph1">
+        <div class="qb"><label class="qlbl">How did you feel while in the trade?</label><div class="mood-row" id="moodDuring"><span class="mood-btn" onclick="selMood(this,'during')">😌 Calm</span><span class="mood-btn" onclick="selMood(this,'during')">😰 Anxious</span><span class="mood-btn" onclick="selMood(this,'during')">🤩 Euphoric</span><span class="mood-btn" onclick="selMood(this,'during')">😨 Scared</span><span class="mood-btn" onclick="selMood(this,'during')">😑 Impatient</span><span class="mood-btn" onclick="selMood(this,'during')">🧘 Disciplined</span></div></div>
+        <div class="qb"><label class="qlbl">Did you deviate from your plan?</label><div class="rating-wrap"><button class="rbtn" id="deviateNo" onclick="setDeviate(false)" style="padding:0 10px">Stayed on plan</button><button class="rbtn" id="deviateYes" onclick="setDeviate(true)" style="padding:0 10px">Deviated</button></div></div>
+        <div class="qb"><label class="qlbl">During-trade notes:</label><textarea id="tDuringNote" placeholder="What thoughts came up while in the trade?"></textarea></div>
+      </div>
+      <div class="phase-content" id="ph2">
+        <div class="qb"><label class="qlbl">Emotional state after closing:</label><div class="mood-row" id="moodAfter"><span class="mood-btn" onclick="selMood(this,'after')">😌 Peaceful</span><span class="mood-btn" onclick="selMood(this,'after')">😤 Angry</span><span class="mood-btn" onclick="selMood(this,'after')">😔 Disappointed</span><span class="mood-btn" onclick="selMood(this,'after')">🎉 Proud</span><span class="mood-btn" onclick="selMood(this,'after')">😰 Regretful</span><span class="mood-btn" onclick="selMood(this,'after')">🧘 Neutral</span><span class="mood-btn" onclick="selMood(this,'after')">🤯 Overconfident</span></div></div>
+        <div class="qb"><label class="qlbl">Reflection score (1=Emotional chaos · 10=Fully disciplined)</label><div class="rating-wrap" id="rAfter"><button class="rbtn" onclick="rateT('rAfter',this,1)">1</button><button class="rbtn" onclick="rateT('rAfter',this,2)">2</button><button class="rbtn" onclick="rateT('rAfter',this,3)">3</button><button class="rbtn" onclick="rateT('rAfter',this,4)">4</button><button class="rbtn" onclick="rateT('rAfter',this,5)">5</button><button class="rbtn" onclick="rateT('rAfter',this,6)">6</button><button class="rbtn" onclick="rateT('rAfter',this,7)">7</button><button class="rbtn" onclick="rateT('rAfter',this,8)">8</button><button class="rbtn" onclick="rateT('rAfter',this,9)">9</button><button class="rbtn" onclick="rateT('rAfter',this,10)">10</button></div></div>
+        <div class="qb"><label class="qlbl">What did you learn from this trade?</label><textarea id="tAfterNote" placeholder="The lesson, what you'd do differently, how you felt about your discipline..."></textarea></div>
+      </div>
+      <button class="save-trade-btn" onclick="saveTrade()">Save Trade Log</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+// ── STATE ──
+let app, auth, db, currentUser;
+let trades = [];
+let jData = {};
+let ratings = {}, tradeRatings = {}, selectedBeliefs = new Set();
+let currentMoods = {before:'',during:'',after:''};
+let followedRules = null, deviated = null, editingTradeId = null;
+let saveTimer = null, unsubTrades = null;
+let fbConfig = null;
+
+// ── SETUP ──
+window.initFirebase = async function() {
+  const apiKey = document.getElementById('cfgApiKey').value.trim();
+  const authDomain = document.getElementById('cfgAuthDomain').value.trim();
+  const projectId = document.getElementById('cfgProjectId').value.trim();
+  const appId = document.getElementById('cfgAppId').value.trim();
+  const err = document.getElementById('setupError');
+  if (!apiKey || !authDomain || !projectId || !appId) { err.textContent = 'Please fill in all fields.'; err.style.display='block'; return; }
+  err.style.display='none';
+  try {
+    fbConfig = { apiKey, authDomain, projectId, appId };
+    localStorage.setItem('tm_fbconfig', JSON.stringify(fbConfig));
+    app = initializeApp(fbConfig);
+    auth = getAuth(app); db = getFirestore(app);
+    document.getElementById('stepConfig').style.display='none';
+    document.getElementById('stepLogin').style.display='block';
+  } catch(e) {
+    err.textContent = 'Firebase init failed: ' + e.message;
+    err.style.display='block';
+  }
+};
+
+window.signInGoogle = async function() {
+  const err = document.getElementById('setupError2');
+  err.style.display='none';
+  try {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  } catch(e) {
+    err.textContent = 'Sign-in failed: ' + e.message;
+    err.style.display='block';
+  }
+};
+
+window.signOutUser = async function() {
+  if (confirm('Sign out?')) { await signOut(auth); location.reload(); }
+};
+
+// Auto-restore config
+function tryRestoreConfig() {
+  const saved = localStorage.getItem('tm_fbconfig');
+  if (!saved) return false;
+  try {
+    fbConfig = JSON.parse(saved);
+    app = initializeApp(fbConfig);
+    auth = getAuth(app); db = getFirestore(app);
+    return true;
+  } catch(e) { localStorage.removeItem('tm_fbconfig'); return false; }
+}
+
+// Auth state
+function setupAuth() {
+  onAuthStateChanged(auth, async user => {
+    if (user) {
+      currentUser = user;
+      document.getElementById('setupScreen').classList.add('hidden');
+      document.getElementById('app').style.display='flex';
+      const av = document.getElementById('userAvatar');
+      if (user.photoURL) av.innerHTML = `<img src="${user.photoURL}">`;
+      else av.textContent = user.displayName?.[0] || '👤';
+      document.getElementById('homeGreeting').textContent = 'Welcome, ' + (user.displayName?.split(' ')[0] || 'Trader');
+      await loadJournal();
+      listenTrades();
+      updateAll();
+    } else {
+      currentUser = null;
+      document.getElementById('setupScreen').classList.remove('hidden');
+      document.getElementById('app').style.display='none';
+      document.getElementById('stepConfig').style.display = fbConfig ? 'none' : 'block';
+      document.getElementById('stepLogin').style.display = fbConfig ? 'block' : 'none';
+    }
+  });
+}
+
+// ── SYNC INDICATOR ──
+function setSyncDot(state) {
+  ['syncDot','syncDot2','syncDot3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = 'sync-dot' + (state==='syncing'?' syncing':state==='error'?' error':'');
+  });
+}
+
+// ── JOURNAL FIRESTORE ──
+async function loadJournal() {
+  if (!currentUser) return;
+  setSyncDot('syncing');
+  try {
+    const ref = doc(db, 'users', currentUser.uid, 'data', 'journal');
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      jData = snap.data();
+      populateJournalUI(jData);
+    }
+    setSyncDot('synced');
+  } catch(e) { setSyncDot('error'); }
+}
+
+function populateJournalUI(d) {
+  ['q1_1','q1_2','q2_1','q2_2','q2_4','q3_1','q3_2','q3_4','q4_1','q4_2','q4_3','q4_4','q5_1','q5_2','q5_3'].forEach(id => {
+    const el = document.getElementById(id); if (el && d[id]) el.value = d[id];
+  });
+  if (d.ratings) {
+    ratings = d.ratings;
+    Object.entries(ratings).forEach(([gid, val]) => {
+      const grp = document.getElementById(gid); if (!grp) return;
+      grp.querySelectorAll('.rbtn').forEach(b => {
+        const bVal = parseInt(b.textContent);
+        if (bVal === val || b.textContent.includes(['1 day','2–3','4–5','Week+'][val-1]||'')) b.classList.add('active');
+      });
+    });
+  }
+  if (d.beliefs) {
+    selectedBeliefs = new Set(d.beliefs);
+    document.querySelectorAll('.bchip').forEach(el => {
+      if (selectedBeliefs.has(el.textContent.trim())) { el.classList.add('sel'); el.querySelector('.bdot').style.background='var(--red)'; }
+    });
+  }
+}
+
+async function saveJournal() {
+  if (!currentUser) return;
+  setSyncDot('syncing');
+  const fields = ['q1_1','q1_2','q2_1','q2_2','q2_4','q3_1','q3_2','q3_4','q4_1','q4_2','q4_3','q4_4','q5_1','q5_2','q5_3'];
+  const obj = { updatedAt: new Date().toISOString() };
+  fields.forEach(id => { const el = document.getElementById(id); if(el) obj[id] = el.value; });
+  obj.ratings = ratings;
+  obj.beliefs = [...selectedBeliefs];
+  jData = obj;
+  try {
+    const ref = doc(db, 'users', currentUser.uid, 'data', 'journal');
+    await setDoc(ref, obj, {merge:true});
+    setSyncDot('synced');
+    const ind = document.getElementById('saveInd');
+    ind.classList.add('show');
+    setTimeout(() => ind.classList.remove('show'), 2000);
+  } catch(e) { setSyncDot('error'); }
+}
+
+window.debounceSave = function() {
+  updateAll();
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveJournal, 1200);
+};
+
+// ── TRADES FIRESTORE ──
+function listenTrades() {
+  if (!currentUser) return;
+  if (unsubTrades) unsubTrades();
+  const col = collection(db, 'users', currentUser.uid, 'trades');
+  const q = query(col, orderBy('date','asc'));
+  unsubTrades = onSnapshot(q, snap => {
+    trades = snap.docs.map(d => ({id:d.id, ...d.data()}));
+    renderTradeList();
+    updateHomeStats();
+    setSyncDot('synced');
+  }, err => { setSyncDot('error'); });
+}
+
+window.saveTrade = async function() {
+  if (!currentUser) return;
+  const pair = document.getElementById('tPair').value.trim();
+  if (!pair) { showToast('Please enter a currency pair'); return; }
+  const clarityBefore = tradeRatings['rBefore'] || 5;
+  const reflectionAfter = tradeRatings['rAfter'] || 5;
+  const overall = Math.round((clarityBefore + reflectionAfter) / 2 * 10);
+  const trade = {
+    pair, dir: document.getElementById('tDir').value,
+    outcome: document.getElementById('tOutcome').value,
+    moodBefore: currentMoods.before, moodDuring: currentMoods.during, moodAfter: currentMoods.after,
+    clarityBefore, reflectionAfter, overall,
+    followedRules, deviated,
+    beforeNote: document.getElementById('tBeforeNote').value.trim(),
+    duringNote: document.getElementById('tDuringNote').value.trim(),
+    afterNote: document.getElementById('tAfterNote').value.trim(),
+    date: new Date().toISOString()
+  };
+  setSyncDot('syncing');
+  try {
+    const col = collection(db, 'users', currentUser.uid, 'trades');
+    if (editingTradeId) {
+      const ref = doc(db, 'users', currentUser.uid, 'trades', editingTradeId);
+      trade.date = trades.find(t=>t.id===editingTradeId)?.date || trade.date;
+      await updateDoc(ref, trade);
+      showToast('Trade updated ✓');
+    } else {
+      await addDoc(col, trade);
+      showToast('Trade saved ✓');
+    }
+    closeTradeForm();
+  } catch(e) { setSyncDot('error'); showToast('Save failed — check connection'); }
+};
+
+window.deleteTrade = async function(id, e) {
+  e.stopPropagation();
+  if (!confirm('Delete this trade log?')) return;
+  try {
+    await deleteDoc(doc(db, 'users', currentUser.uid, 'trades', id));
+    showToast('Trade deleted');
+  } catch(e) { showToast('Delete failed'); }
+};
+
+// ── NAVIGATION ──
+window.showScreen = function(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.bni').forEach(n => n.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  document.getElementById('screen-'+name).scrollTop = 0;
+  if (name==='progress') renderCharts();
+  if (name==='home') updateHomeStats();
+};
+window.goTo = function(screen, secIdx) { showScreen(screen); if(screen==='journal'&&secIdx!==undefined) switchSec(secIdx); };
+
+// ── JOURNAL UI ──
+window.switchSec = function(i) {
+  document.querySelectorAll('.scontent').forEach((s,j) => s.classList.toggle('active', j===i));
+  document.querySelectorAll('.stab').forEach((t,j) => t.classList.toggle('active', j===i));
+  document.getElementById('jBadge').textContent = '0'+(i+1)+'/05';
+  document.getElementById('screen-journal').scrollTop = 0;
+  document.querySelectorAll('.stab')[i]?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+};
+window.rate = function(id, btn, val) {
+  document.getElementById(id).querySelectorAll('.rbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active'); ratings[id]=val; window.debounceSave();
+};
+window.toggleB = function(el) {
+  el.classList.toggle('sel');
+  const txt = el.textContent.trim();
+  if(el.classList.contains('sel')) { selectedBeliefs.add(txt); el.querySelector('.bdot').style.background='var(--red)'; }
+  else { selectedBeliefs.delete(txt); el.querySelector('.bdot').style.background='var(--border2)'; }
+  window.debounceSave();
+};
+
+function updateAll() {
+  const fields = ['q1_1','q1_2','q2_1','q2_2','q2_4','q3_1','q3_2','q3_4','q4_1','q4_2','q4_3','q4_4','q5_1','q5_2','q5_3'];
+  let filled = fields.filter(id=>(document.getElementById(id)?.value||'').trim().length>3).length;
+  const rf = Object.keys(ratings).length;
+  const total = fields.length+3;
+  const pct = Math.min(100,Math.round(((filled+rf)/total)*100));
+  const circ=157;
+  document.getElementById('homeRing').style.strokeDashoffset=circ-(circ*pct/100);
+  document.getElementById('homeRingPct').textContent=pct+'%';
+  document.getElementById('homeRingDesc').textContent = pct<20?'Start with Section 01 — Beliefs.':pct<60?'Keep going — depth leads to better analysis.':pct<100?'Almost complete!':'Journal complete ✓ Full AI analysis unlocked.';
+  const checks=[['q1_1','q1_2'],['q2_1','q2_2','q2_4'],['q3_1','q3_2','q3_4'],['q4_1','q4_2','q4_3','q4_4'],['q5_1','q5_2','q5_3']];
+  checks.forEach((keys,i)=>{
+    const done=keys.every(k=>(document.getElementById(k)?.value||'').trim().length>3);
+    document.getElementById('hc'+i)?.classList.toggle('done',done);
+    const arr=document.getElementById('hc'+i+'r');
+    if(arr){arr.textContent=done?'✓':'›';arr.style.color=done?'var(--green)':'var(--muted2)';}
+  });
+}
+
+// ── TRADE FORM ──
+window.openTradeForm = function(tradeId) {
+  editingTradeId=tradeId||null;
+  resetTradeForm();
+  if(tradeId){ const t=trades.find(x=>x.id===tradeId); if(t) populateTrade(t); document.getElementById('overlayTitle').textContent='Edit Trade'; }
+  else document.getElementById('overlayTitle').textContent='Log New Trade';
+  document.getElementById('tradeOverlay').classList.add('open');
+};
+window.closeTradeForm = function() { document.getElementById('tradeOverlay').classList.remove('open'); };
+function resetTradeForm() {
+  ['tPair','tBeforeNote','tDuringNote','tAfterNote'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('tDir').value=''; document.getElementById('tOutcome').value='';
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('#tradeOverlay .rbtn').forEach(b=>b.classList.remove('active'));
+  tradeRatings={}; currentMoods={before:'',during:'',after:''}; followedRules=null; deviated=null;
+  ['ruleYes','ruleNo','deviateNo','deviateYes'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  switchPhase(0);
+}
+function populateTrade(t) {
+  document.getElementById('tPair').value=t.pair||''; document.getElementById('tDir').value=t.dir||''; document.getElementById('tOutcome').value=t.outcome||'';
+  document.getElementById('tBeforeNote').value=t.beforeNote||''; document.getElementById('tDuringNote').value=t.duringNote||''; document.getElementById('tAfterNote').value=t.afterNote||'';
+  if(t.clarityBefore){tradeRatings['rBefore']=t.clarityBefore;document.querySelectorAll('#rBefore .rbtn')[t.clarityBefore-1]?.classList.add('active');}
+  if(t.reflectionAfter){tradeRatings['rAfter']=t.reflectionAfter;document.querySelectorAll('#rAfter .rbtn')[t.reflectionAfter-1]?.classList.add('active');}
+  currentMoods={before:t.moodBefore||'',during:t.moodDuring||'',after:t.moodAfter||''};
+  followedRules=t.followedRules; deviated=t.deviated;
+  if(followedRules===true)document.getElementById('ruleYes').classList.add('active');
+  if(followedRules===false)document.getElementById('ruleNo').classList.add('active');
+  if(deviated===false)document.getElementById('deviateNo').classList.add('active');
+  if(deviated===true)document.getElementById('deviateYes').classList.add('active');
+  ['before','during','after'].forEach(phase=>{
+    const mood=currentMoods[phase]; if(!mood) return;
+    const row=document.getElementById('mood'+phase.charAt(0).toUpperCase()+phase.slice(1));
+    row?.querySelectorAll('.mood-btn').forEach(b=>{ if(b.textContent.trim()===mood) b.classList.add('sel'); });
+  });
+}
+window.switchPhase=function(i){
+  document.querySelectorAll('.phase-content').forEach((p,j)=>p.classList.toggle('active',j===i));
+  document.querySelectorAll('.ptab').forEach((t,j)=>t.classList.toggle('active',j===i));
+};
+window.selMood=function(btn,phase){
+  btn.closest('.mood-row').querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel'); currentMoods[phase]=btn.textContent.trim();
+};
+window.rateT=function(id,btn,val){
+  document.getElementById(id).querySelectorAll('.rbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); tradeRatings[id]=val;
+};
+window.setRule=function(val){
+  followedRules=val;
+  document.getElementById('ruleYes').classList.toggle('active',val===true);
+  document.getElementById('ruleNo').classList.toggle('active',val===false);
+};
+window.setDeviate=function(val){
+  deviated=val;
+  document.getElementById('deviateNo').classList.toggle('active',val===false);
+  document.getElementById('deviateYes').classList.toggle('active',val===true);
+};
+
+// ── TRADE LIST ──
+function renderTradeList() {
+  const list=document.getElementById('tradeList');
+  document.getElementById('tradeCount').textContent=trades.length+' trade'+(trades.length!==1?'s':'');
+  if(!trades.length){list.innerHTML='<div class="tlog-empty">No trades logged yet.<br>Tap "+ Log New Trade" to begin.</div>';return;}
+  list.innerHTML=[...trades].reverse().map(t=>`
+    <div class="trade-card" onclick="openTradeForm('${t.id}')">
+      <div class="tc-top"><div class="tc-pair">${t.pair} ${t.dir?'<span style="font-size:11px;color:var(--muted)">· '+t.dir+'</span>':''}</div>
+      <div style="display:flex;gap:8px;align-items:center"><div class="tc-date">${fmtDate(t.date)}</div><button onclick="deleteTrade('${t.id}',event)" style="background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:4px;">✕</button></div></div>
+      <div class="tc-phases">
+        ${t.moodBefore?`<span class="phase-pill before">${t.moodBefore.replace(/^\S+\s/,'')}</span>`:''}
+        ${t.moodDuring?`<span class="phase-pill during">${t.moodDuring.replace(/^\S+\s/,'')}</span>`:''}
+        ${t.moodAfter?`<span class="phase-pill after">${t.moodAfter.replace(/^\S+\s/,'')}</span>`:''}
+      </div>
+      <div class="tc-outcome">
+        ${t.outcome?`<div class="outcome-dot ${t.outcome}"></div><span class="outcome-lbl">${{win:'Win',loss:'Loss',be:'Break Even',open:'Open'}[t.outcome]||t.outcome}</span>`:''}
+        <span style="flex:1"></span><span class="tc-score">Mind Score: ${t.overall}%</span>
+      </div>
+      ${t.followedRules===false?'<div style="font-size:10px;color:var(--red);margin-top:6px;">⚠ Rules not followed</div>':''}
+      ${t.beforeNote?`<div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6;border-top:1px solid var(--border);padding-top:8px;">${t.beforeNote.substring(0,100)}${t.beforeNote.length>100?'...':''}</div>`:''}
+    </div>`).join('');
+}
+
+function fmtDate(iso){ try{return new Date(iso).toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});}catch(e){return iso;} }
+
+// ── HOME STATS ──
+function updateHomeStats() {
+  document.getElementById('statTrades').textContent=trades.length;
+  document.getElementById('statScore').textContent=trades.length?Math.round(trades.reduce((s,t)=>s+(t.overall||50),0)/trades.length)+'%':'—';
+  document.getElementById('statStreak').textContent=new Set(trades.map(t=>new Date(t.date).toDateString())).size;
+}
+
+// ── CHARTS ──
+window.renderCharts=function(){updateMetrics();drawLine();drawBar();drawDisc();};
+function gw(){return Math.min(window.innerWidth-68,432);}
+function updateMetrics(){
+  if(!trades.length)return;
+  const avg=Math.round(trades.reduce((s,t)=>s+(t.overall||50),0)/trades.length);
+  const tracked=trades.filter(t=>t.followedRules!==null&&t.followedRules!==undefined);
+  const disc=tracked.length?Math.round(tracked.filter(t=>t.followedRules===true).length/tracked.length*100):0;
+  const avgB=Math.round(trades.reduce((s,t)=>s+(t.clarityBefore||5),0)/trades.length*10);
+  const avgA=Math.round(trades.reduce((s,t)=>s+(t.reflectionAfter||5),0)/trades.length*10);
+  document.getElementById('mAvg').textContent=avg+'%';
+  document.getElementById('mWin').textContent=tracked.length?disc+'%':'—';
+  document.getElementById('mBefore').textContent=avgB+'%';
+  document.getElementById('mAfter').textContent=avgA+'%';
+  if(trades.length>=4){const h=Math.floor(trades.length/2),f=trades.slice(0,h).reduce((s,t)=>s+(t.overall||50),0)/h,l=trades.slice(h).reduce((s,t)=>s+(t.overall||50),0)/(trades.length-h),tr=document.getElementById('mTrend');if(l>f+3){tr.textContent='↑ Improving';tr.className='metric-trend up';}else if(l<f-3){tr.textContent='↓ Declining';tr.className='metric-trend down';}else{tr.textContent='→ Stable';tr.className='metric-trend flat';}}
+}
+function drawLine(){
+  const cv=document.getElementById('lineChart'),ctx=cv.getContext('2d'),w=gw(),h=180;
+  cv.width=w;cv.height=h;ctx.clearRect(0,0,w,h);
+  if(!trades.length){ctx.fillStyle='#444';ctx.font='11px IBM Plex Mono';ctx.textAlign='center';ctx.fillText('No trade data yet',w/2,h/2);return;}
+  const pts=trades.slice(-20),pad={l:36,r:16,t:16,b:28},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+  [0,25,50,75,100].forEach(v=>{const y=pad.t+ch*(1-v/100);ctx.strokeStyle='#1e1e1e';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillStyle='#444';ctx.font='9px IBM Plex Mono';ctx.textAlign='right';ctx.fillText(v+'%',pad.l-4,y+3);});
+  const dl=(data,color,alpha=1)=>{ctx.strokeStyle=color;ctx.lineWidth=2;ctx.globalAlpha=alpha;ctx.beginPath();data.forEach((v,i)=>{const x=pad.l+(i/(Math.max(data.length-1,1)))*cw,y=pad.t+ch*(1-v/100);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();ctx.globalAlpha=1;};
+  dl(pts.map(t=>t.overall||50),'#c9a84c');
+  dl(pts.map(t=>(t.clarityBefore||5)*10),'#5ba8d4',.7);
+  dl(pts.map(t=>(t.reflectionAfter||5)*10),'#27a85f',.7);
+  pts.forEach((t,i)=>{const x=pad.l+(i/(Math.max(pts.length-1,1)))*cw,y=pad.t+ch*(1-(t.overall||50)/100);ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle='#c9a84c';ctx.fill();if(pts.length<=10){ctx.fillStyle='#444';ctx.font='9px IBM Plex Mono';ctx.textAlign='center';ctx.fillText(t.pair?.substring(0,6)||'',x,h-4);}});
+}
+function drawBar(){
+  const cv=document.getElementById('barChart'),ctx=cv.getContext('2d'),w=gw(),h=180;
+  cv.width=w;cv.height=h;ctx.clearRect(0,0,w,h);
+  if(!trades.length){ctx.fillStyle='#444';ctx.font='11px IBM Plex Mono';ctx.textAlign='center';ctx.fillText('No trade data yet',w/2,h/2);return;}
+  const mc={};trades.forEach(t=>[t.moodBefore,t.moodDuring,t.moodAfter].forEach(m=>{if(m){const k=m.replace(/^\S+\s/,'').trim();mc[k]=(mc[k]||0)+1;}}));
+  const entries=Object.entries(mc).sort((a,b)=>b[1]-a[1]).slice(0,8);if(!entries.length)return;
+  const pad={l:8,r:8,t:16,b:40},bw=(w-pad.l-pad.r)/entries.length,max=Math.max(...entries.map(e=>e[1])),ch=h-pad.t-pad.b;
+  const colors=['#c9a84c','#e8c97a','#5ba8d4','#27a85f','#c0392b','#8e44ad','#e67e22','#16a085'];
+  entries.forEach(([mood,count],i)=>{
+    const bh=(count/max)*ch,x=pad.l+i*bw+bw*.15,y=pad.t+ch-bh,bwa=bw*.7;
+    ctx.fillStyle=colors[i%colors.length];ctx.beginPath();ctx.roundRect(x,y,bwa,bh,4);ctx.fill();
+    ctx.fillStyle='#c9a84c';ctx.font='bold 11px IBM Plex Mono';ctx.textAlign='center';ctx.fillText(count,x+bwa/2,y-5);
+    ctx.fillStyle='#666055';ctx.font='9px IBM Plex Mono';ctx.save();ctx.translate(x+bwa/2,h-6);ctx.rotate(-0.4);ctx.textAlign='right';ctx.fillText(mood,0,0);ctx.restore();
+  });
+}
+function drawDisc(){
+  const cv=document.getElementById('discChart'),ctx=cv.getContext('2d'),w=gw(),h=160;
+  cv.width=w;cv.height=h;ctx.clearRect(0,0,w,h);
+  const tracked=trades.filter(t=>t.followedRules!==null&&t.followedRules!==undefined);
+  if(tracked.length<2){ctx.fillStyle='#444';ctx.font='11px IBM Plex Mono';ctx.textAlign='center';ctx.fillText('Log 2+ trades with rule tracking',w/2,h/2);return;}
+  const pts=tracked.slice(-20),pad={l:36,r:16,t:16,b:28},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+  let followed=0;
+  const disc=pts.map((t,i)=>{if(t.followedRules)followed++;return Math.round((followed/(i+1))*100);});
+  [0,50,100].forEach(v=>{const y=pad.t+ch*(1-v/100);ctx.strokeStyle='#1e1e1e';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillStyle='#444';ctx.font='9px IBM Plex Mono';ctx.textAlign='right';ctx.fillText(v+'%',pad.l-4,y+3);});
+  ctx.beginPath();disc.forEach((v,i)=>{const x=pad.l+(i/(Math.max(disc.length-1,1)))*cw,y=pad.t+ch*(1-v/100);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.lineTo(pad.l+cw,pad.t+ch);ctx.lineTo(pad.l,pad.t+ch);ctx.closePath();ctx.fillStyle='rgba(201,168,76,0.08)';ctx.fill();
+  ctx.strokeStyle='#c9a84c';ctx.lineWidth=2.5;ctx.beginPath();disc.forEach((v,i)=>{const x=pad.l+(i/(Math.max(disc.length-1,1)))*cw,y=pad.t+ch*(1-v/100);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();
+}
+
+// ── AI ANALYSIS ──
+window.runAI=async function(){
+  const btn=document.getElementById('runAiBtn'),card=document.getElementById('aiCard'),body=document.getElementById('aiBody'),stat=document.getElementById('aiStat');
+  btn.disabled=true;btn.textContent='⏳ Analysing...';card.style.display='block';card.scrollIntoView({behavior:'smooth',block:'start'});
+  body.innerHTML='<div class="thinking-row"><div class="tdots"><span></span><span></span><span></span></div>Reading your journal and trade history...</div>';stat.textContent='Reading...';
+  const g=id=>(jData[id]||'').trim()||'(not answered)';
+  const lm={1:'1 day',2:'2-3 days',3:'4-5 days',4:'A week+'};const jr=jData.ratings||{};
+  let txt=`JOURNAL\nBeliefs: Money is: ${g('q1_1')} | Family: ${g('q1_2')} | Self-worth: ${jr.r1||'—'}/10 | Limiting beliefs: ${(jData.beliefs||[]).join('; ')||'none'}\nEmotions: Before rules broken: ${g('q2_1')} | After losses: ${g('q2_2')} | FOMO: ${jr.r2||'—'}/10 | Win effect: ${g('q2_4')}\nGoals: Real reason: ${g('q3_1')} | Target: ${g('q3_2')} | Loss tolerance: ${lm[jr.r3]||'—'} | 3yr vision: ${g('q3_4')}\nIdentity: Self-describe: ${g('q4_1')} | Losing week effect: ${g('q4_2')} | Discipline elsewhere: ${g('q4_3')} | Ideal self: ${g('q4_4')}\nCommitments: Focus: ${g('q5_1')} | Rule: ${g('q5_2')} | Support: ${g('q5_3')}`;
+  if(trades.length){
+    const avg=Math.round(trades.reduce((s,t)=>s+(t.overall||50),0)/trades.length);
+    const disc=trades.filter(t=>t.followedRules===true).length,broken=trades.filter(t=>t.followedRules===false).length;
+    const moods={};trades.forEach(t=>[t.moodBefore,t.moodDuring,t.moodAfter].forEach(m=>{if(m)moods[m]=(moods[m]||0)+1;}));
+    txt+=`\n\nTRADE LOG (${trades.length} trades) — Avg score: ${avg}% | Rules followed: ${disc}x | Broken: ${broken}x\nTop moods: ${Object.entries(moods).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([m,c])=>`${m}(${c}x)`).join(', ')}\n`;
+    trades.slice(-10).forEach((t,i)=>{txt+=`\nTrade ${i+1}: ${t.pair} ${t.dir||''} | ${t.outcome||'?'} | Score: ${t.overall}% | Rules: ${t.followedRules===true?'Yes':t.followedRules===false?'No':'N/A'}`;if(t.moodBefore)txt+=` | Before: ${t.moodBefore}(${t.clarityBefore}/10)`;if(t.moodAfter)txt+=` | After: ${t.moodAfter}(${t.reflectionAfter}/10)`;if(t.beforeNote)txt+=`\n  Pre-note: ${t.beforeNote.substring(0,100)}`;if(t.afterNote)txt+=`\n  Lesson: ${t.afterNote.substring(0,100)}`;});
+    if(trades.length>=4){const h=Math.floor(trades.length/2),f=trades.slice(0,h).reduce((s,t)=>s+(t.overall||50),0)/h,l=trades.slice(h).reduce((s,t)=>s+(t.overall||50),0)/(trades.length-h);txt+=`\nTrend: First half avg ${Math.round(f)}% → Recent half avg ${Math.round(l)}% (${l>f?'IMPROVING':'DECLINING'})`;}
+  }else{txt+='\n\nTRADE LOG: No trades logged yet.';}
+  const sys=`You are an expert forex trading psychology coach. Analyse the trader's journal and trade log data. Deliver a personalised, honest, actionable report.\n\nFORMATTING: Section headers ALL CAPS + colon. Plain text only. Numbered lists for actions. Be specific to their data.\n\nSTRUCTURE:\nOPENING INSIGHT:\nCORE BELIEF PATTERNS:\nEMOTIONAL TRIGGERS & RISK PROFILE:\n${trades.length>=3?'PSYCHOLOGY PROGRESS ANALYSIS:\n':''}IDENTITY & TRADING CEILING:\nGOALS VS REALITY GAP:\nYOUR THREE PRIORITY ACTIONS:\nCLOSING:\n\nLength: 700-1000 words.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,stream:true,system:sys,messages:[{role:'user',content:`Here is my TraderMind data. Give me a deep, personalised psychological analysis:\n\n${txt}`}]})});
+    if(!res.ok)throw new Error('API error '+res.status);
+    body.innerHTML='';stat.textContent='Writing...';
+    const reader=res.body.getReader(),dec=new TextDecoder();let full='',buf='';
+    const cur=document.createElement('span');cur.className='cursor';
+    while(true){const{done,value}=await reader.read();if(done)break;buf+=dec.decode(value,{stream:true});const lines=buf.split('\n');buf=lines.pop();for(const line of lines){if(!line.startsWith('data: '))continue;const d=line.slice(6).trim();if(d==='[DONE]')continue;try{const p=JSON.parse(d);if(p.type==='content_block_delta'&&p.delta?.text){full+=p.delta.text;body.innerHTML=fmtAI(full);body.appendChild(cur);}}catch(e){}}}
+    body.innerHTML=fmtAI(full);stat.textContent='Complete ✓';btn.textContent='✦ Re-Analyse';btn.disabled=false;
+  }catch(e){body.innerHTML=`<span style="color:var(--red)">Analysis failed. Check your connection.\n${e.message}</span>`;stat.textContent='Error';btn.textContent='✦ Try Again';btn.disabled=false;}
+};
+function fmtAI(t){return t.replace(/^([A-Z][A-Z\s&':]+):$/gm,'<span class="ai-stag">$1</span>').replace(/"([^"]+)"/g,'<b style="color:var(--gold-light)">"$1"</b>');}
+
+// ── TOAST ──
+window.showToast=function(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);};
+
+// ── RESET (clears saved config so setup screen shows again) ──
+window.resetConfig = function() {
+  localStorage.removeItem('tm_fbconfig');
+  location.reload();
+};
+
+// ── INIT ──
+// Always validate saved config has real Firebase values before skipping setup
+const saved = localStorage.getItem('tm_fbconfig');
+let validConfig = false;
+if (saved) {
+  try {
+    const c = JSON.parse(saved);
+    // Must have all 4 real fields and apiKey must start with AIza (real Firebase keys do)
+    validConfig = c.apiKey && c.apiKey.startsWith('AIza') && c.authDomain && c.projectId && c.appId;
+  } catch(e) { validConfig = false; }
+}
+
+if (validConfig && tryRestoreConfig()) {
+  setupAuth();
+} else {
+  // Clear any bad saved config
+  localStorage.removeItem('tm_fbconfig');
+  document.getElementById('setupScreen').classList.remove('hidden');
+  document.getElementById('app').style.display = 'none';
+}
+</script>
+</body>
+</html>
