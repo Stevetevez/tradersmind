@@ -1049,20 +1049,31 @@ window.runAI=async function(){
   } else txt+='\n\nTRADE LOG: No trades logged yet.';
   const sys=`You are an expert forex trading psychology coach. Analyse the trader's weekly journal and trade log. Be specific, honest, and actionable.\n\nFORMATTING: Section headers ALL CAPS + colon. Plain text. Numbered lists for actions. Reference their actual words where relevant.\n\nSTRUCTURE:\nOPENING INSIGHT:\nCORE BELIEF PATTERNS:\nEMOTIONAL TRIGGERS & RISK PROFILE:\n${trades.length>=3?'PSYCHOLOGY PROGRESS ANALYSIS:\n':''}IDENTITY & TRADING CEILING:\nGOALS VS REALITY GAP:\nYOUR THREE PRIORITY ACTIONS:\nCLOSING:\n\nLength: 700-1000 words.`;
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,stream:true,system:sys,messages:[{role:'user',content:`Analyse my TraderMind data:\n\n${txt}`}]})});
-    if(!res.ok) throw new Error('API error '+res.status);
-    body.innerHTML=''; stat.textContent='Writing...';
-    const reader=res.body.getReader(),dec=new TextDecoder(); let full='',buf='';
-    const cur=document.createElement('span'); cur.className='cursor';
-    while(true){ const{done,value}=await reader.read(); if(done) break; buf+=dec.decode(value,{stream:true}); const lines=buf.split('\n'); buf=lines.pop(); for(const line of lines){ if(!line.startsWith('data: ')) continue; const d=line.slice(6).trim(); if(d==='[DONE]') continue; try{ const p=JSON.parse(d); if(p.type==='content_block_delta'&&p.delta?.text){ full+=p.delta.text; body.innerHTML=fmtAI(full); body.appendChild(cur); } }catch(e){} } }
+    const GEMINI_KEY = 'AIzaSyAktR0mtkI3nnJ4WKnvWOv-e3SwWc75TPc';
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+    const geminiBody = {
+      contents: [{ parts: [{ text: sys + '\n\nAnalyse my TraderMind data:\n\n' + txt }] }],
+      generationConfig: { maxOutputTokens: 1500, temperature: 0.7 }
+    };
+    const res = await fetch(geminiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(geminiBody) });
+    if(!res.ok){ const err=await res.text(); throw new Error('Gemini API error '+res.status+': '+err.substring(0,100)); }
+    const data = await res.json();
+    const full = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response received.';
     body.innerHTML=fmtAI(full); stat.textContent='Complete ✓'; btn.textContent='✦ Re-Analyse'; btn.disabled=false;
     // Save snippet for home screen
     const snippet={text:full,date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short'})};
     localStorage.setItem('tm_last_insight',JSON.stringify(snippet));
     showInsightSnippet(full,snippet.date);
-  }catch(e){ body.innerHTML=`<span style="color:var(--red)">Analysis failed.\n${e.message}</span>`; stat.textContent='Error'; btn.textContent='✦ Try Again'; btn.disabled=false; }
+  }catch(e){ console.error('AI error:',e); body.innerHTML=`<span style="color:var(--red)">Analysis failed.\n${e.message}</span>`; stat.textContent='Error'; btn.textContent='✦ Try Again'; btn.disabled=false; }
 };
-function fmtAI(t){ return t.replace(/^([A-Z][A-Z\s&':]+):$/gm,'<span class="ai-stag">$1</span>').replace(/"([^"]+)"/g,'<b style="color:var(--green)">"$1"</b>'); }
+function fmtAI(t){
+  return t
+    .replace(/^#{1,3}\s+(.+)$/gm,'<span class="ai-stag">$1</span>')
+    .replace(/^([A-Z][A-Z\s&':]{4,}):$/gm,'<span class="ai-stag">$1</span>')
+    .replace(/\*\*([^*]+)\*\*/g,'<b style="color:var(--text)">$1</b>')
+    .replace(/\*([^*]+)\*/g,'<em>$1</em>')
+    .replace(/"([^"]+)"/g,'<b style="color:var(--green)">"$1"</b>');
+}
 
 // ── TOAST ──
 window.showToast=function(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); };
