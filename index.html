@@ -960,7 +960,6 @@ function initHomeUI(user){
   document.getElementById('firstName').textContent=user.displayName?.split(' ')[0]||'Trader';
   const now=new Date();
   document.getElementById('homeDate').textContent=now.toLocaleDateString('en-GB',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
-  document.getElementById('weekLabel').textContent=fmtWeekLabel(0);
   document.getElementById('remindSub').innerHTML=`Week of <span id="weekLabel">${fmtWeekLabel(0)}</span>`;
   // Load last AI insight from localStorage
   const si=localStorage.getItem('tm_last_insight');
