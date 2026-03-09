@@ -956,20 +956,20 @@ function setupAuth(){
 function initHomeUI(user){
   const h=new Date().getHours();
   const greet=h<12?'morning':h<17?'afternoon':'evening';
-  document.getElementById('timeGreet').textContent=greet;
-  document.getElementById('firstName').textContent=user.displayName?.split(' ')[0]||'Trader';
+  const safe=(id,fn)=>{ const el=document.getElementById(id); if(el) fn(el); };
+  safe('timeGreet', el=>el.textContent=greet);
+  safe('firstName', el=>el.textContent=user.displayName?.split(' ')[0]||'Trader');
   const now=new Date();
-  document.getElementById('homeDate').textContent=now.toLocaleDateString('en-GB',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
-  document.getElementById('remindSub').innerHTML=`Week of <span id="weekLabel">${fmtWeekLabel(0)}</span>`;
+  safe('homeDate', el=>el.textContent=now.toLocaleDateString('en-GB',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}));
+  safe('remindSub', el=>el.innerHTML=`Week of <span id="weekLabel">${fmtWeekLabel(0)}</span>`);
   // Load last AI insight from localStorage
   const si=localStorage.getItem('tm_last_insight');
   if(si){ try{ const p=JSON.parse(si); showInsightSnippet(p.text,p.date); }catch(e){} }
 }
 function showInsightSnippet(text,date){
   const el=document.getElementById('insightSnippet');
-  el.className='insight-txt';
-  el.textContent=text.substring(0,200)+(text.length>200?'...':'');
-  document.getElementById('insightDate').textContent=date||'';
+  if(el){ el.className='insight-txt'; el.textContent=text.substring(0,200)+(text.length>200?'...':''); }
+  const di=document.getElementById('insightDate'); if(di) di.textContent=date||'';
 }
 function updateHomeHighlights(){
   // Mind score this week
@@ -1050,7 +1050,9 @@ window.debounceSave=function(){ clearTimeout(saveTimer); saveTimer=setTimeout(sa
 function listenTrades(){
   if(!currentUser) return;
   if(unsubTrades) unsubTrades();
-  unsubTrades=db.collection('users').doc(currentUser.uid).collection('trades').onSnapshot(snap=>{ trades=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.date)-new Date(b.date)); renderTradeList(); updateHomeHighlights(); setSyncDot('synced'); },err=>{ setSyncDot('error'); console.error('Trades listener error:',err); });
+  try{
+    unsubTrades=db.collection('users').doc(currentUser.uid).collection('trades').onSnapshot(snap=>{ trades=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.date)-new Date(b.date)); renderTradeList(); updateHomeHighlights(); setSyncDot('synced'); },err=>{ setSyncDot('error'); console.error('Trades listener error:',err); });
+  }catch(e){ setSyncDot('error'); console.error('listenTrades error:',e); }
 }
 window.saveTrade = async function(){
   if(!currentUser) return;
