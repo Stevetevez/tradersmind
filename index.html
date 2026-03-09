@@ -1051,7 +1051,7 @@ window.debounceSave=function(){ clearTimeout(saveTimer); saveTimer=setTimeout(sa
 function listenTrades(){
   if(!currentUser) return;
   if(unsubTrades) unsubTrades();
-  unsubTrades=db.collection('users').doc(currentUser.uid).collection('trades').orderBy('date','asc').onSnapshot(snap=>{ trades=snap.docs.map(d=>({id:d.id,...d.data()})); renderTradeList(); updateHomeHighlights(); setSyncDot('synced'); },err=>setSyncDot('error'));
+  unsubTrades=db.collection('users').doc(currentUser.uid).collection('trades').onSnapshot(snap=>{ trades=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.date)-new Date(b.date)); renderTradeList(); updateHomeHighlights(); setSyncDot('synced'); },err=>{ setSyncDot('error'); console.error('Trades listener error:',err); });
 }
 window.saveTrade = async function(){
   if(!currentUser) return;
@@ -1137,7 +1137,7 @@ function renderTradeList(){
         ${t.habits&&t.habits.length?`<div style="font-size:11px;color:var(--green);margin-top:3px;"><b>Good habits:</b> ${t.habits.join(', ')}${t.otherHabits?' · '+t.otherHabits:''}</div>`:''}
         ${t.beforeNote?`<div style="font-size:11px;color:var(--muted);margin-top:7px;line-height:1.6;border-top:1px solid var(--border);padding-top:7px;">${t.beforeNote.substring(0,100)}${t.beforeNote.length>100?'...':''}</div>`:''}
         <div class="tc-actions"><button class="tc-del" onclick="deleteTrade('${t.id}',event)">Delete</button></div>
-      </div>`;
+      </div></div>`;
     });
     html+='</div>';
   });
