@@ -71,8 +71,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 /* ── HOME ── */
 .home-hero{padding:22px 18px 18px;background:linear-gradient(160deg,rgba(26,158,110,0.08) 0%,transparent 55%);border-bottom:1px solid var(--border);}
 .home-date{font-size:12px;color:#4a5568;font-weight:600;margin-bottom:4px;}
-.home-greeting{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:400;line-height:1.2;}
-.home-greeting em{color:var(--gold);font-style:italic;}
+.home-mantra{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;line-height:1.3;color:var(--text);margin-top:4px;}
+.home-mantra em{color:var(--gold);font-style:normal;font-weight:800;}
 .home-sub{font-size:13px;color:#4a5568;font-weight:500;line-height:1.6;margin-top:6px;}
 
 /* Highlight cards row */
@@ -365,6 +365,47 @@ canvas{display:block;}
 .checkin-saved{font-size:11px;color:var(--gold-light);text-align:center;margin-top:6px;opacity:0;transition:opacity .3s;font-weight:600;}
 .checkin-saved.show{opacity:1;}
 
+
+/* ── PREP QUESTIONS ── */
+.prep-q{margin-bottom:16px;}
+.prep-qlbl{font-size:13px;font-weight:700;color:#e8f5ee;margin-bottom:8px;line-height:1.5;}
+.prep-opts{display:flex;gap:8px;flex-wrap:wrap;}
+.prep-opt{padding:10px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;font-size:13px;cursor:pointer;color:#c8e8d8;transition:all .15s;font-weight:600;}
+.prep-opt:active{transform:scale(.95);}
+.prep-opt.sel-yes{border-color:#1a9e6e;background:rgba(26,158,110,0.25);color:#ffffff;}
+.prep-opt.sel-no{border-color:#e05252;background:rgba(224,82,82,0.2);color:#ffcccc;}
+
+
+/* ── PRE-TRADE CHECKLIST ── */
+.pcheck{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--card2);border:1px solid var(--border2);border-radius:10px;cursor:pointer;transition:all .15s;}
+.pcheck:active{transform:scale(.98);}
+.pcheck.checked{background:rgba(26,158,110,0.08);border-color:var(--green);}
+.pcheck-box{font-size:16px;flex-shrink:0;line-height:1.4;transition:all .2s;}
+.pcheck-txt{font-size:13px;font-weight:600;color:var(--text);line-height:1.5;}
+.pcheck.checked .pcheck-txt{color:var(--green);}
+
+/* ── ENTRY CHIPS ── */
+.entry-chip{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card2);border:2px solid var(--border2);border-radius:12px;cursor:pointer;transition:all .15s;}
+.entry-chip:active{transform:scale(.98);}
+.entry-chip.sel{border-color:var(--gold);background:var(--gold-dim);}
+.entry-chip-dot{width:10px;height:10px;border-radius:50%;background:var(--border2);flex-shrink:0;transition:background .15s;}
+.entry-chip.sel .entry-chip-dot{background:var(--gold);}
+.entry-chip-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.entry-chip.sel .entry-chip-title{color:var(--gold);}
+.entry-chip-sub{font-size:11px;color:var(--muted);font-weight:500;}
+
+/* ── ALARM POPUP ── */
+.alarm-popup{position:fixed;inset:0;background:rgba(10,20,10,0.85);backdrop-filter:blur(8px);z-index:999;display:none;align-items:center;justify-content:center;padding:24px;}
+.alarm-popup.open{display:flex;}
+.alarm-popup-card{background:linear-gradient(135deg,#0f1e14,#162819);border:2px solid rgba(26,158,110,0.5);border-radius:20px;padding:32px 24px;text-align:center;max-width:340px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.alarm-popup-ico{font-size:52px;margin-bottom:12px;}
+.alarm-popup-msg{font-size:16px;font-weight:900;color:#ffffff;letter-spacing:1px;line-height:1.6;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-bottom:20px;}
+.alarm-popup-msg em{color:var(--gold-light);font-style:normal;display:block;font-size:13px;margin-top:8px;letter-spacing:2px;}
+.alarm-popup-btn{padding:14px 32px;background:var(--gold);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:1px;}
+
+/* ── OTHER MOOD BTN ── */
+.other-mood-btn{background:var(--card2);border:1px dashed var(--border2);color:var(--muted);font-style:italic;}
+
 /* ── TOAST ── */
 .toast{position:fixed;bottom:calc(var(--nav-h) + 14px);left:50%;transform:translateX(-50%) translateY(20px);background:#1a2332;color:#fff;padding:11px 22px;font-size:12px;font-weight:500;border-radius:20px;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none;box-shadow:0 4px 20px rgba(26,45,80,0.25);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -428,8 +469,7 @@ canvas{display:block;}
     <!-- Hero -->
     <div class="home-hero">
       <div class="home-date" id="homeDate"></div>
-      <div class="home-greeting">Good <em id="timeGreet">morning</em>,<br><span id="firstName">Trader</span></div>
-      <div class="home-sub" id="homeSub">Here's your trading mind at a glance.</div>
+      <div class="home-mantra">Following your rules is <em>&gt;</em> than P&amp;L</div>
     </div>
 
     <!-- Highlights -->
@@ -652,58 +692,84 @@ canvas{display:block;}
     </div>
   </div>
 
-  <!-- CREED SCREEN -->
+  <!-- PREP SCREEN -->
   <div class="screen" id="screen-creed">
     <div class="topbar" style="background:#0f1e14;border-bottom:1px solid rgba(26,158,110,0.3);">
       <div class="tbar-logo" style="color:#ffffff;">Trader<em>Mind</em></div>
-      <div class="tbar-right"><div class="tbar-badge" style="color:var(--gold-light);border-color:rgba(26,158,110,0.4);background:rgba(26,158,110,0.1);">My Creed</div></div>
-    </div>
-    <div class="creed-hero">
-      <div class="creed-hero-label">Pre-Trade Ritual</div>
-      <div class="creed-hero-title">My Trader's<br><em>Creed</em></div>
-      <div class="creed-hero-sub">Read before every session. Absorb every word.<br>These are the truths that set you free.</div>
-    </div>
-    <div class="creed-list" id="creedList">
-      <!-- filled by JS -->
-    </div>
-    <div style="padding:0 18px;">
-      <button class="creed-add-btn" onclick="addCreedPrompt()">+ Add New Affirmation</button>
+      <div class="tbar-right"><div class="tbar-badge" style="color:var(--gold-light);border-color:rgba(26,158,110,0.4);background:rgba(26,158,110,0.1);">Prep</div></div>
     </div>
 
-    <!-- Daily Check-In -->
-    <div class="checkin-card">
-      <div class="checkin-title">📍 Today's Check-In</div>
-      <div class="checkin-label">How am I feeling right now?</div>
-      <div class="checkin-moods">
-        <span class="checkin-mood" onclick="selCheckinMood(this)">😌 Calm</span>
-        <span class="checkin-mood" onclick="selCheckinMood(this)">💪 Confident</span>
-        <span class="checkin-mood" onclick="selCheckinMood(this)">😰 Anxious</span>
-        <span class="checkin-mood" onclick="selCheckinMood(this)">😤 Frustrated</span>
-        <span class="checkin-mood" onclick="selCheckinMood(this)">🤩 Excited</span>
-        <span class="checkin-mood" onclick="selCheckinMood(this)">😔 Low energy</span>
-        <span class="checkin-mood" onclick="selCheckinMood(this)">🧘 Neutral</span>
-        <span class="checkin-mood" onclick="selCheckinMood(this)">😨 Fearful</span>
+    <!-- Warning banner -->
+    <div style="background:linear-gradient(135deg,#7a1a1a,#5a0f0f);padding:14px 18px;border-bottom:2px solid rgba(224,82,82,0.4);text-align:center;">
+      <div style="font-size:12px;font-weight:900;color:#ffcccc;letter-spacing:1.5px;line-height:1.7;font-family:'IBM Plex Mono',monospace;">
+        ⚠️ NO MARKET PREPARATION, NOT TRADING.<br>IT COSTS $1000 TO IGNORE IT!!!
       </div>
-      <div class="checkin-label">Mental clarity right now (1 = foggy · 10 = crystal clear)</div>
-      <input type="range" class="checkin-slider" id="claritySlider" min="1" max="10" value="7" oninput="document.getElementById('clarityVal').textContent=this.value">
-      <div class="checkin-slider-labels"><span>1 — Foggy</span><span id="clarityVal" style="color:var(--gold-light);font-size:12px;font-weight:800;">7</span><span>10 — Clear</span></div>
-      <div class="checkin-label">Am I in the right mindset to trade today?</div>
-      <div style="display:flex;gap:8px;margin-bottom:10px;">
-        <span class="checkin-mood" id="ciYes" onclick="selCheckinReady('yes')" style="flex:1;justify-content:center;display:flex;">✅ Yes — I am ready</span>
-        <span class="checkin-mood" id="ciNo" onclick="selCheckinReady('no')" style="flex:1;justify-content:center;display:flex;">⛔ Not today</span>
-      </div>
-      <button class="checkin-save-btn" onclick="saveCheckin()">Save Today's Check-In</button>
-      <div class="checkin-saved" id="checkinSaved">✓ Check-in saved</div>
     </div>
 
-    <!-- Pre-trade notes -->
+    <!-- Section 1: Psychology check -->
+    <div class="checkin-card" style="margin-top:14px;">
+      <div class="checkin-title">🧠 Psychology Check</div>
+      <div class="checkin-label" style="margin-bottom:10px;">Answer honestly — these determine if you should trade today.</div>
+
+      <div class="prep-q">
+        <div class="prep-qlbl">1. Did you get enough sleep last night?</div>
+        <div class="prep-opts">
+          <span class="prep-opt" data-q="sleep" data-v="yes" onclick="selPrepOpt(this)">✅ Yes</span>
+          <span class="prep-opt" data-q="sleep" data-v="no" onclick="selPrepOpt(this)">❌ No</span>
+        </div>
+      </div>
+      <div class="prep-q">
+        <div class="prep-qlbl">2. Are you feeling stressed or emotionally unsettled right now?</div>
+        <div class="prep-opts">
+          <span class="prep-opt" data-q="stress" data-v="no" onclick="selPrepOpt(this)">✅ No — I'm calm</span>
+          <span class="prep-opt" data-q="stress" data-v="yes" onclick="selPrepOpt(this)">❌ Yes — stressed</span>
+        </div>
+      </div>
+      <div class="prep-q">
+        <div class="prep-qlbl">3. Are you distracted by anything outside of trading right now?</div>
+        <div class="prep-opts">
+          <span class="prep-opt" data-q="distracted" data-v="no" onclick="selPrepOpt(this)">✅ Fully focused</span>
+          <span class="prep-opt" data-q="distracted" data-v="yes" onclick="selPrepOpt(this)">❌ Yes — distracted</span>
+        </div>
+      </div>
+      <div class="prep-q">
+        <div class="prep-qlbl">4. Are you emotionally attached to a specific outcome on this trade?</div>
+        <div class="prep-opts">
+          <span class="prep-opt" data-q="attached" data-v="no" onclick="selPrepOpt(this)">✅ No — I'm neutral</span>
+          <span class="prep-opt" data-q="attached" data-v="yes" onclick="selPrepOpt(this)">❌ Yes — attached</span>
+        </div>
+      </div>
+      <div class="prep-q">
+        <div class="prep-qlbl">5. How is your mental clarity right now?</div>
+        <input type="range" class="checkin-slider" id="claritySlider" min="1" max="10" value="7" oninput="document.getElementById('clarityVal').textContent=this.value;calcReadiness()">
+        <div class="checkin-slider-labels"><span>1 — Foggy</span><span id="clarityVal" style="color:var(--gold-light);font-size:12px;font-weight:800;">7</span><span>10 — Clear</span></div>
+      </div>
+
+      <!-- Readiness result — AI-driven from answers -->
+      <div id="readinessResult" style="margin-top:14px;padding:14px;border-radius:12px;display:none;font-size:13px;font-weight:700;line-height:1.6;text-align:center;"></div>
+    </div>
+
+    <!-- Section 2: Pre-trade notes -->
     <div class="creed-notes-wrap">
       <div class="creed-notes-title">✍️ My Thoughts Before Trading</div>
       <textarea class="creed-notes-area" id="creedNotes" placeholder="What's on your mind today? Any concerns, plans, or intentions for this session...&#10;&#10;Write freely. This is your space." oninput="debounceSaveCreedNotes()"></textarea>
       <div class="checkin-saved" id="notesSaved">✓ Notes saved</div>
     </div>
 
-    <button class="creed-ritual-btn" onclick="markRitualDone()">✦ I Am Ready To Trade</button>
+    <!-- Section 3: Trader's Creed (shown after prep) -->
+    <div id="creedSection" style="margin-top:4px;">
+      <div style="padding:14px 18px 6px;">
+        <div style="font-size:11px;font-weight:800;letter-spacing:2px;color:var(--gold-light);text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-bottom:4px;">✦ Trader's Creed</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);font-weight:500;">Read every word. Let it sink in.</div>
+      </div>
+      <div class="creed-list" id="creedList"></div>
+      <div style="padding:0 18px;">
+        <button class="creed-add-btn" onclick="addCreedPrompt()">+ Add New Affirmation</button>
+      </div>
+    </div>
+
+    <button class="creed-ritual-btn" id="prepReadyBtn" onclick="markRitualDone()" style="display:none;">✦ I Am Ready To Trade</button>
+    <div style="height:20px;"></div>
   </div>
 
   <!-- BOTTOM NAV -->
@@ -711,7 +777,7 @@ canvas{display:block;}
     <div class="bni active" id="nav-home" onclick="showScreen('home')"><div class="ico">🏠</div><div class="lbl">Home</div></div>
     <div class="bni" id="nav-journal" onclick="showScreen('journal')"><div class="ico">📓</div><div class="lbl">Journal</div></div>
     <div class="bni" id="nav-tradelog" onclick="showScreen('tradelog')"><div class="ico">📈</div><div class="lbl">Trades</div></div>
-    <div class="bni" id="nav-creed" onclick="showScreen('creed')"><div class="ico">🔥</div><div class="lbl">Creed</div></div>
+    <div class="bni" id="nav-creed" onclick="showScreen('creed')"><div class="ico">🔥</div><div class="lbl">Prep</div></div>
     <div class="bni" id="nav-analysis" onclick="showScreen('analysis')"><div class="ico">🤖</div><div class="lbl">Analysis</div></div>
   </div>
 </div>
@@ -747,18 +813,88 @@ canvas{display:block;}
         <div class="ptab" onclick="switchPhase(3)">Review</div>
       </div>
       <div class="phase-content active" id="ph0">
-        <div class="qb"><label class="qlbl">Emotional state before entry:</label><div class="mood-row" id="moodBefore"><span class="mood-btn" onclick="selMood(this,'before')">😌 Calm</span><span class="mood-btn" onclick="selMood(this,'before')">😤 Frustrated</span><span class="mood-btn" onclick="selMood(this,'before')">😰 Anxious</span><span class="mood-btn" onclick="selMood(this,'before')">🤩 Excited</span><span class="mood-btn" onclick="selMood(this,'before')">😑 Bored</span><span class="mood-btn" onclick="selMood(this,'before')">😤 Revenge</span><span class="mood-btn" onclick="selMood(this,'before')">💪 Confident</span><span class="mood-btn" onclick="selMood(this,'before')">😨 FOMO</span></div></div>
+        <!-- PRE-TRADE CHECKLIST -->
+        <div class="qb">
+          <label class="qlbl" style="color:var(--gold);font-size:14px;font-weight:800;">📋 Pre-Trade Checklist</label>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6;">All boxes must be ✅ before entering a trade.</p>
+          <div style="display:flex;flex-direction:column;gap:8px;" id="preCheckList">
+            <div class="pcheck" onclick="toggleCheck(this)"><div class="pcheck-box">☐</div><div class="pcheck-txt">PDH, PDL and key levels marked clearly on D1 and H4</div></div>
+            <div class="pcheck" onclick="toggleCheck(this)"><div class="pcheck-box">☐</div><div class="pcheck-txt">Market structure is clear</div></div>
+            <div class="pcheck" onclick="toggleCheck(this)"><div class="pcheck-box">☐</div><div class="pcheck-txt">I am objectively reading the market — not being emotionally biased</div></div>
+            <div class="pcheck" onclick="toggleCheck(this)"><div class="pcheck-box">☐</div><div class="pcheck-txt">Pullback has completed to my marked zone</div></div>
+            <div class="pcheck" onclick="toggleCheck(this)"><div class="pcheck-box">☐</div><div class="pcheck-txt">I am risking less than 1.5% on this trade</div></div>
+            <div class="pcheck" onclick="toggleCheck(this)"><div class="pcheck-box">☐</div><div class="pcheck-txt">This is a risk I have accepted fully</div></div>
+            <div class="pcheck" onclick="toggleCheck(this)"><div class="pcheck-box">☐</div><div class="pcheck-txt">I am trading within my trading window</div></div>
+            <div class="pcheck" onclick="toggleCheck(this)"><div class="pcheck-box">☐</div><div class="pcheck-txt">I have set alerts at the levels / zones marked</div></div>
+          </div>
+          <div id="checklistWarning" style="display:none;margin-top:10px;padding:10px 14px;background:var(--red-dim);border:1px solid var(--red);border-radius:8px;font-size:12px;color:var(--red);font-weight:700;line-height:1.6;">
+            ⚠️ Not all boxes checked. Are you sure you want to proceed?
+          </div>
+        </div>
+        <!-- EMOTIONAL STATE -->
+        <div class="qb"><label class="qlbl">Emotional state before entry:</label>
+          <div class="mood-row" id="moodBefore">
+            <span class="mood-btn" onclick="selMood(this,'before')">😌 Calm</span>
+            <span class="mood-btn" onclick="selMood(this,'before')">😤 Frustrated</span>
+            <span class="mood-btn" onclick="selMood(this,'before')">😰 Anxious</span>
+            <span class="mood-btn" onclick="selMood(this,'before')">🤩 Excited</span>
+            <span class="mood-btn" onclick="selMood(this,'before')">😑 Bored</span>
+            <span class="mood-btn" onclick="selMood(this,'before')">😤 Revenge</span>
+            <span class="mood-btn" onclick="selMood(this,'before')">💪 Confident</span>
+            <span class="mood-btn" onclick="selMood(this,'before')">😨 FOMO</span>
+            <span class="mood-btn other-mood-btn" onclick="addOtherMood('before')">✏️ Other...</span>
+          </div>
+        </div>
         <div class="qb"><label class="qlbl">Clarity score (1=Cloudy · 10=Crystal clear)</label><div class="rating-wrap" id="rBefore"><button class="rbtn" onclick="rateT('rBefore',this,1)">1</button><button class="rbtn" onclick="rateT('rBefore',this,2)">2</button><button class="rbtn" onclick="rateT('rBefore',this,3)">3</button><button class="rbtn" onclick="rateT('rBefore',this,4)">4</button><button class="rbtn" onclick="rateT('rBefore',this,5)">5</button><button class="rbtn" onclick="rateT('rBefore',this,6)">6</button><button class="rbtn" onclick="rateT('rBefore',this,7)">7</button><button class="rbtn" onclick="rateT('rBefore',this,8)">8</button><button class="rbtn" onclick="rateT('rBefore',this,9)">9</button><button class="rbtn" onclick="rateT('rBefore',this,10)">10</button></div></div>
         <div class="qb"><label class="qlbl">Did your setup meet ALL your rules?</label><div class="rating-wrap"><button class="rbtn" id="ruleYes" onclick="setRule(true)" style="padding:0 14px">Yes ✓</button><button class="rbtn" id="ruleNo" onclick="setRule(false)" style="padding:0 14px">No ✗</button></div></div>
         <div class="qb"><label class="qlbl">Pre-trade notes:</label><textarea id="tBeforeNote" placeholder="What's your reason for this trade? What are you thinking?"></textarea></div>
       </div>
       <div class="phase-content" id="ph1">
-        <div class="qb"><label class="qlbl">How did you feel while in the trade?</label><div class="mood-row" id="moodDuring"><span class="mood-btn" onclick="selMood(this,'during')">😌 Calm</span><span class="mood-btn" onclick="selMood(this,'during')">😰 Anxious</span><span class="mood-btn" onclick="selMood(this,'during')">🤩 Euphoric</span><span class="mood-btn" onclick="selMood(this,'during')">😨 Scared</span><span class="mood-btn" onclick="selMood(this,'during')">😑 Impatient</span><span class="mood-btn" onclick="selMood(this,'during')">🧘 Disciplined</span></div></div>
+        <!-- ENTRY REASON -->
+        <div class="qb">
+          <label class="qlbl" style="color:var(--gold);font-size:14px;font-weight:800;">🎯 Why am I entering this trade?</label>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6;">Select your entry signal — this must be rule-based, not a gut decision.</p>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div class="entry-chip" id="ec0" onclick="selEntry(0)">
+              <div class="entry-chip-dot"></div>
+              <div><div class="entry-chip-title">📌 Pin Bar — as per the rules</div><div class="entry-chip-sub">Rejection candle at my marked zone</div></div>
+            </div>
+            <div class="entry-chip" id="ec1" onclick="selEntry(1)">
+              <div class="entry-chip-dot"></div>
+              <div><div class="entry-chip-title">🕯️ Engulfing Candle — as per the rules</div><div class="entry-chip-sub">Full engulfing at my marked zone</div></div>
+            </div>
+            <div class="entry-chip" id="ec2" onclick="selEntry(2)">
+              <div class="entry-chip-dot"></div>
+              <div><div class="entry-chip-title">🔁 Retest — as per the rules</div><div class="entry-chip-sub">Confirmed retest of my marked zone</div></div>
+            </div>
+          </div>
+        </div>
+        <!-- ALARM CHECKLIST -->
+        <div class="qb">
+          <label class="qlbl" style="color:var(--gold);font-size:14px;font-weight:800;">🔔 Alarm Checklist</label>
+          <div style="display:flex;flex-direction:column;gap:8px;" id="alarmChecklist">
+            <div class="pcheck" onclick="toggleCheck(this);checkAlarmDone()"><div class="pcheck-box">☐</div><div class="pcheck-txt">Alarm set at Stop Loss (SL)</div></div>
+            <div class="pcheck" onclick="toggleCheck(this);checkAlarmDone()"><div class="pcheck-box">☐</div><div class="pcheck-txt">Alarm set at Break Even (BE)</div></div>
+            <div class="pcheck" onclick="toggleCheck(this);checkAlarmDone()"><div class="pcheck-box">☐</div><div class="pcheck-txt">Alarm set at Take Profit (TP)</div></div>
+          </div>
+        </div>
+        <!-- DURING MOOD -->
+        <div class="qb"><label class="qlbl">How did you feel while in the trade?</label>
+          <div class="mood-row" id="moodDuring">
+            <span class="mood-btn" onclick="selMood(this,'during')">😌 Calm</span>
+            <span class="mood-btn" onclick="selMood(this,'during')">😰 Anxious</span>
+            <span class="mood-btn" onclick="selMood(this,'during')">🤩 Euphoric</span>
+            <span class="mood-btn" onclick="selMood(this,'during')">😨 Scared</span>
+            <span class="mood-btn" onclick="selMood(this,'during')">😑 Impatient</span>
+            <span class="mood-btn" onclick="selMood(this,'during')">🧘 Disciplined</span>
+            <span class="mood-btn other-mood-btn" onclick="addOtherMood('during')">✏️ Other...</span>
+          </div>
+        </div>
         <div class="qb"><label class="qlbl">Did you deviate from your plan?</label><div class="rating-wrap"><button class="rbtn" id="deviateNo" onclick="setDeviate(false)" style="padding:0 10px">Stayed on plan</button><button class="rbtn" id="deviateYes" onclick="setDeviate(true)" style="padding:0 10px">Deviated</button></div></div>
         <div class="qb"><label class="qlbl">During-trade notes:</label><textarea id="tDuringNote" placeholder="What thoughts came up while in the trade?"></textarea></div>
       </div>
       <div class="phase-content" id="ph2">
-        <div class="qb"><label class="qlbl">Emotional state after closing:</label><div class="mood-row" id="moodAfter"><span class="mood-btn" onclick="selMood(this,'after')">😌 Peaceful</span><span class="mood-btn" onclick="selMood(this,'after')">😤 Angry</span><span class="mood-btn" onclick="selMood(this,'after')">😔 Disappointed</span><span class="mood-btn" onclick="selMood(this,'after')">🎉 Proud</span><span class="mood-btn" onclick="selMood(this,'after')">😰 Regretful</span><span class="mood-btn" onclick="selMood(this,'after')">🧘 Neutral</span><span class="mood-btn" onclick="selMood(this,'after')">🤯 Overconfident</span></div></div>
+        <div class="qb"><label class="qlbl">Emotional state after closing:</label><div class="mood-row" id="moodAfter"><span class="mood-btn" onclick="selMood(this,'after')">😌 Peaceful</span><span class="mood-btn" onclick="selMood(this,'after')">😤 Angry</span><span class="mood-btn" onclick="selMood(this,'after')">😔 Disappointed</span><span class="mood-btn" onclick="selMood(this,'after')">🎉 Proud</span><span class="mood-btn" onclick="selMood(this,'after')">😰 Regretful</span><span class="mood-btn" onclick="selMood(this,'after')">🧘 Neutral</span><span class="mood-btn" onclick="selMood(this,'after')">🤯 Overconfident</span><span class="mood-btn other-mood-btn" onclick="addOtherMood('after')">✏️ Other...</span></div></div>
         <div class="qb"><label class="qlbl">Reflection score (1=Emotional chaos · 10=Fully disciplined)</label><div class="rating-wrap" id="rAfter"><button class="rbtn" onclick="rateT('rAfter',this,1)">1</button><button class="rbtn" onclick="rateT('rAfter',this,2)">2</button><button class="rbtn" onclick="rateT('rAfter',this,3)">3</button><button class="rbtn" onclick="rateT('rAfter',this,4)">4</button><button class="rbtn" onclick="rateT('rAfter',this,5)">5</button><button class="rbtn" onclick="rateT('rAfter',this,6)">6</button><button class="rbtn" onclick="rateT('rAfter',this,7)">7</button><button class="rbtn" onclick="rateT('rAfter',this,8)">8</button><button class="rbtn" onclick="rateT('rAfter',this,9)">9</button><button class="rbtn" onclick="rateT('rAfter',this,10)">10</button></div></div>
         <div class="qb"><label class="qlbl">What did you learn from this trade?</label><textarea id="tAfterNote" placeholder="The lesson, what you'd do differently..."></textarea></div>
       </div>
@@ -847,6 +983,14 @@ canvas{display:block;}
 </div>
 
 <div class="toast" id="toast"></div>
+<!-- ALARM POPUP -->
+<div class="alarm-popup" id="alarmPopup">
+  <div class="alarm-popup-card">
+    <div class="alarm-popup-ico">🔔</div>
+    <div class="alarm-popup-msg">NOW CLOSE THE CHARTS AND LET THE TRADE RUN.<em>YOUR WORK IS DONE!!!</em></div>
+    <button class="alarm-popup-btn" onclick="document.getElementById('alarmPopup').classList.remove('open')">Got it — closing charts</button>
+  </div>
+</div>
 
 <!-- Firebase compat SDKs (work with onclick handlers) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -954,22 +1098,19 @@ function setupAuth(){
 
 // ── HOME UI ──
 function initHomeUI(user){
-  const h=new Date().getHours();
-  const greet=h<12?'morning':h<17?'afternoon':'evening';
-  const safe=(id,fn)=>{ const el=document.getElementById(id); if(el) fn(el); };
-  safe('timeGreet', el=>el.textContent=greet);
-  safe('firstName', el=>el.textContent=user.displayName?.split(' ')[0]||'Trader');
   const now=new Date();
-  safe('homeDate', el=>el.textContent=now.toLocaleDateString('en-GB',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}));
-  safe('remindSub', el=>el.innerHTML=`Week of <span id="weekLabel">${fmtWeekLabel(0)}</span>`);
+  document.getElementById('homeDate').textContent=now.toLocaleDateString('en-GB',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  document.getElementById('weekLabel').textContent=fmtWeekLabel(0);
+  document.getElementById('remindSub').innerHTML=`Week of <span id="weekLabel">${fmtWeekLabel(0)}</span>`;
   // Load last AI insight from localStorage
   const si=localStorage.getItem('tm_last_insight');
   if(si){ try{ const p=JSON.parse(si); showInsightSnippet(p.text,p.date); }catch(e){} }
 }
 function showInsightSnippet(text,date){
   const el=document.getElementById('insightSnippet');
-  if(el){ el.className='insight-txt'; el.textContent=text.substring(0,200)+(text.length>200?'...':''); }
-  const di=document.getElementById('insightDate'); if(di) di.textContent=date||'';
+  el.className='insight-txt';
+  el.textContent=text.substring(0,200)+(text.length>200?'...':'');
+  document.getElementById('insightDate').textContent=date||'';
 }
 function updateHomeHighlights(){
   // Mind score this week
@@ -1050,9 +1191,7 @@ window.debounceSave=function(){ clearTimeout(saveTimer); saveTimer=setTimeout(sa
 function listenTrades(){
   if(!currentUser) return;
   if(unsubTrades) unsubTrades();
-  try{
-    unsubTrades=db.collection('users').doc(currentUser.uid).collection('trades').onSnapshot(snap=>{ trades=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.date)-new Date(b.date)); renderTradeList(); updateHomeHighlights(); setSyncDot('synced'); },err=>{ setSyncDot('error'); console.error('Trades listener error:',err); });
-  }catch(e){ setSyncDot('error'); console.error('listenTrades error:',e); }
+  unsubTrades=db.collection('users').doc(currentUser.uid).collection('trades').orderBy('date','asc').onSnapshot(snap=>{ trades=snap.docs.map(d=>({id:d.id,...d.data()})); renderTradeList(); updateHomeHighlights(); setSyncDot('synced'); },err=>setSyncDot('error'));
 }
 window.saveTrade = async function(){
   if(!currentUser) return;
@@ -1072,6 +1211,7 @@ window.saveTrade = async function(){
     beforeNote:document.getElementById('tBeforeNote').value.trim(),
     duringNote:document.getElementById('tDuringNote').value.trim(),
     afterNote:document.getElementById('tAfterNote').value.trim(),
+    entryType:selectedEntry,
     mistakes:[...selectedMistakes], otherMistakes:document.getElementById('otherMistakes').value.trim(),
     habits:[...selectedHabits], otherHabits:document.getElementById('otherHabits').value.trim(),
     date:editingTradeId?trades.find(t=>t.id===editingTradeId)?.date||new Date().toISOString():new Date().toISOString()
@@ -1138,7 +1278,7 @@ function renderTradeList(){
         ${t.habits&&t.habits.length?`<div style="font-size:11px;color:var(--green);margin-top:3px;"><b>Good habits:</b> ${t.habits.join(', ')}${t.otherHabits?' · '+t.otherHabits:''}</div>`:''}
         ${t.beforeNote?`<div style="font-size:11px;color:var(--muted);margin-top:7px;line-height:1.6;border-top:1px solid var(--border);padding-top:7px;">${t.beforeNote.substring(0,100)}${t.beforeNote.length>100?'...':''}</div>`:''}
         <div class="tc-actions"><button class="tc-del" onclick="deleteTrade('${t.id}',event)">Delete</button></div>
-      </div></div>`;
+      </div>`;
     });
     html+='</div>';
   });
@@ -1188,7 +1328,9 @@ function resetTradeForm(){
   document.getElementById('tDir').value=''; document.getElementById('tOutcome').value='';
   document.querySelectorAll('.mchip').forEach(c=>c.classList.remove('sel'));
   ['otherMistakes','otherHabits'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  selectedMistakes=new Set(); selectedHabits=new Set();
+  selectedMistakes=new Set(); selectedHabits=new Set(); selectedEntry='';
+  [0,1,2].forEach(j=>{ const el=document.getElementById('ec'+j); if(el) el.classList.remove('sel'); });
+  document.querySelectorAll('.pcheck').forEach(c=>{ c.classList.remove('checked'); c.querySelector('.pcheck-box').textContent='☐'; });
   document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel'));
   document.querySelectorAll('#tradeOverlay .rbtn').forEach(b=>b.classList.remove('active'));
   tradeRatings={}; currentMoods={before:'',during:'',after:''}; followedRules=null; deviated=null;
@@ -1509,6 +1651,89 @@ function loadCreedNotes(){
   const el=document.getElementById('creedNotes');
   if(el&&saved) el.value=saved;
 }
+
+// ── PRE-TRADE CHECKLIST ──
+window.toggleCheck=function(el){
+  el.classList.toggle('checked');
+  el.querySelector('.pcheck-box').textContent=el.classList.contains('checked')?'✅':'☐';
+  const wrap=el.closest('[id]');
+  const warn=document.getElementById('checklistWarning');
+  if(warn){ const all=document.querySelectorAll('#preCheckList .pcheck'); const allChecked=[...all].every(c=>c.classList.contains('checked')); warn.style.display=allChecked?'none':'block'; }
+};
+
+// ── ENTRY TYPE SELECTION ──
+let selectedEntry='';
+window.selEntry=function(i){
+  const labels=['📌 Pin Bar — as per the rules','🕯️ Engulfing Candle — as per the rules','🔁 Retest — as per the rules'];
+  [0,1,2].forEach(j=>{ const el=document.getElementById('ec'+j); if(el) el.classList.toggle('sel',j===i); });
+  selectedEntry=labels[i];
+};
+
+// ── ALARM CHECKLIST → POPUP ──
+window.checkAlarmDone=function(){
+  const items=document.querySelectorAll('#alarmChecklist .pcheck');
+  const allDone=[...items].every(i=>i.classList.contains('checked'));
+  if(allDone) setTimeout(()=>document.getElementById('alarmPopup').classList.add('open'),400);
+};
+
+// ── OTHER MOOD ──
+window.addOtherMood=function(phase){
+  const text=prompt('Type your emotion:');
+  if(!text||!text.trim()) return;
+  const rowId=phase==='before'?'moodBefore':phase==='during'?'moodDuring':'moodAfter';
+  const row=document.getElementById(rowId);
+  if(!row) return;
+  const btn=document.createElement('span');
+  btn.className='mood-btn sel';
+  btn.textContent='✏️ '+text.trim();
+  btn.onclick=function(){ this.classList.toggle('sel'); if(this.classList.contains('sel')) currentMoods[phase]=this.textContent; };
+  const otherBtn=row.querySelector('.other-mood-btn');
+  row.insertBefore(btn,otherBtn);
+  // auto-select it
+  document.querySelectorAll('#'+rowId+' .mood-btn').forEach(b=>{ if(b!==btn&&!b.classList.contains('other-mood-btn')) b.classList.remove('sel'); });
+  btn.classList.add('sel');
+  currentMoods[phase]=btn.textContent;
+};
+
+// ── PREP PSYCHOLOGY QUESTIONS ──
+let prepAnswers={sleep:null,stress:null,distracted:null,attached:null};
+window.selPrepOpt=function(el){
+  const q=el.dataset.q, v=el.dataset.v;
+  prepAnswers[q]=v;
+  el.closest('.prep-opts').querySelectorAll('.prep-opt').forEach(o=>o.classList.remove('sel-yes','sel-no'));
+  el.classList.add(v==='yes'?'sel-yes':'sel-no');
+  calcReadiness();
+};
+function calcReadiness(){
+  const allAnswered=Object.values(prepAnswers).every(v=>v!==null);
+  if(!allAnswered) return;
+  const clarity=parseInt(document.getElementById('claritySlider')?.value||7);
+  const redFlags=[ prepAnswers.sleep==='no', prepAnswers.stress==='yes', prepAnswers.distracted==='yes', prepAnswers.attached==='yes', clarity<5 ];
+  const flagCount=redFlags.filter(Boolean).length;
+  const result=document.getElementById('readinessResult');
+  const btn=document.getElementById('prepReadyBtn');
+  if(!result) return;
+  result.style.display='block';
+  if(flagCount===0){
+    result.style.background='rgba(26,158,110,0.15)'; result.style.border='1px solid rgba(26,158,110,0.4)'; result.style.color='#1a9e6e';
+    result.innerHTML='✅ You are in the right mindset to trade today.<br><span style="font-size:11px;font-weight:500;opacity:0.8;">All psychological checks passed. Trade with discipline.</span>';
+    if(btn) btn.style.display='flex';
+  } else if(flagCount===1){
+    result.style.background='rgba(224,123,26,0.12)'; result.style.border='1px solid rgba(224,123,26,0.4)'; result.style.color='var(--orange)';
+    result.innerHTML='⚠️ Proceed with caution — 1 concern flagged.<br><span style="font-size:11px;font-weight:500;opacity:0.8;">Be extra disciplined today. Stick strictly to your rules.</span>';
+    if(btn) btn.style.display='flex';
+  } else {
+    result.style.background='rgba(224,82,82,0.1)'; result.style.border='1px solid rgba(224,82,82,0.4)'; result.style.color='var(--red)';
+    result.innerHTML='⛔ You are NOT in the right mindset to trade today.<br><span style="font-size:11px;font-weight:500;opacity:0.8;">' + flagCount + ' concerns flagged. The market will be there tomorrow. Protect your capital.</span>';
+    if(btn) btn.style.display='none';
+  }
+}
+window.markRitualDone=function(){
+  const btn=document.getElementById('prepReadyBtn');
+  if(btn){ btn.textContent='✦ Ritual Complete — Trade With Clarity'; btn.style.opacity='0.7'; }
+  showToast('Pre-trade ritual complete ✦');
+  setTimeout(()=>{ if(btn){ btn.textContent='✦ I Am Ready To Trade'; btn.style.opacity='1'; }},3000);
+};
 // ── TOAST ──
 window.showToast=function(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); };
 
