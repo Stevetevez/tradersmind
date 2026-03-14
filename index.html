@@ -406,6 +406,11 @@ canvas{display:block;}
 /* ── OTHER MOOD BTN ── */
 .other-mood-btn{background:var(--card2);border:1px dashed var(--border2);color:var(--muted);font-style:italic;}
 
+
+/* ── PHASE SAVE BUTTON ── */
+.phase-save-btn{width:100%;padding:13px;background:var(--card2);color:var(--green);border:1.5px solid var(--green);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:14px;margin-bottom:4px;transition:all .2s;letter-spacing:0.5px;}
+.phase-save-btn:active{transform:scale(.97);background:var(--green-dim);}
+
 /* ── TOAST ── */
 .toast{position:fixed;bottom:calc(var(--nav-h) + 14px);left:50%;transform:translateX(-50%) translateY(20px);background:#1a2332;color:#fff;padding:11px 22px;font-size:12px;font-weight:500;border-radius:20px;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none;box-shadow:0 4px 20px rgba(26,45,80,0.25);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -789,21 +794,10 @@ canvas{display:block;}
     <div class="overlay-body">
       <!-- Auto timestamp -->
       <div class="timestamp-badge"><span>🕐</span><span id="tradeTimestamp">—</span></div>
-      <!-- Pair + Direction + Outcome -->
+      <!-- Pair + Direction only at top -->
       <div class="field-row">
         <div class="field"><label>Currency Pair</label><input type="text" id="tPair" placeholder="EUR/USD, GBP/JPY..."></div>
         <div class="field"><label>Direction</label><select id="tDir"><option value="">Select</option><option>BUY</option><option>SELL</option></select></div>
-      </div>
-      <div class="field-row">
-        <div class="field"><label>Outcome</label><select id="tOutcome"><option value="">Select</option><option value="tp">✅ Take Profit (TP)</option><option value="sl">❌ Stop Loss (SL)</option><option value="be">➡️ Break Even (BE)</option><option value="open">🔵 Still Open</option></select></div>
-        <div class="field"><label>RR Gained</label><input type="number" id="tRR" placeholder="e.g. 2.5" step="0.1" min="0"></div>
-      </div>
-      <!-- TP / SL / Result -->
-      <div class="result-grid">
-        <div class="result-item"><label>TP Price</label><input type="number" id="tTP" placeholder="e.g. 1.0850" step="0.0001"></div>
-        <div class="result-item"><label>SL Price</label><input type="number" id="tSL" placeholder="e.g. 1.0800" step="0.0001"></div>
-        <div class="result-item"><label>Entry Price</label><input type="number" id="tEntry" placeholder="e.g. 1.0820" step="0.0001"></div>
-        <div class="result-item"><label>Pips / Points</label><input type="number" id="tPips" placeholder="e.g. 30" step="1"></div>
       </div>
       <!-- Psychology phases -->
       <div class="phase-tabs">
@@ -848,8 +842,26 @@ canvas{display:block;}
         <div class="qb"><label class="qlbl">Clarity score (1=Cloudy · 10=Crystal clear)</label><div class="rating-wrap" id="rBefore"><button class="rbtn" onclick="rateT('rBefore',this,1)">1</button><button class="rbtn" onclick="rateT('rBefore',this,2)">2</button><button class="rbtn" onclick="rateT('rBefore',this,3)">3</button><button class="rbtn" onclick="rateT('rBefore',this,4)">4</button><button class="rbtn" onclick="rateT('rBefore',this,5)">5</button><button class="rbtn" onclick="rateT('rBefore',this,6)">6</button><button class="rbtn" onclick="rateT('rBefore',this,7)">7</button><button class="rbtn" onclick="rateT('rBefore',this,8)">8</button><button class="rbtn" onclick="rateT('rBefore',this,9)">9</button><button class="rbtn" onclick="rateT('rBefore',this,10)">10</button></div></div>
         <div class="qb"><label class="qlbl">Did your setup meet ALL your rules?</label><div class="rating-wrap"><button class="rbtn" id="ruleYes" onclick="setRule(true)" style="padding:0 14px">Yes ✓</button><button class="rbtn" id="ruleNo" onclick="setRule(false)" style="padding:0 14px">No ✗</button></div></div>
         <div class="qb"><label class="qlbl">Pre-trade notes:</label><textarea id="tBeforeNote" placeholder="What's your reason for this trade? What are you thinking?"></textarea></div>
+        <!-- AI ENTRY DECISION -->
+        <div id="beforeAiResult" style="display:none;margin:8px 0 4px;padding:14px;border-radius:12px;font-size:13px;font-weight:700;line-height:1.6;"></div>
+        <!-- SAVE BEFORE -->
+        <button class="phase-save-btn" onclick="savePhase('before')">💾 Save — Before Trade</button>
       </div>
       <div class="phase-content" id="ph1">
+        <!-- TRADE DETAILS (filled during/after) -->
+        <div class="qb trade-details-block">
+          <label class="qlbl" style="color:var(--gold);font-size:14px;font-weight:800;">📊 Trade Details</label>
+          <div class="field-row" style="margin-bottom:10px;">
+            <div class="field"><label>Outcome</label><select id="tOutcome" onchange="syncTradeDetails()"><option value="">Select</option><option value="tp">✅ Take Profit (TP)</option><option value="sl">❌ Stop Loss (SL)</option><option value="be">➡️ Break Even (BE)</option><option value="open">🔵 Still Open</option></select></div>
+            <div class="field"><label>RR Gained</label><input type="number" id="tRR" placeholder="e.g. 2.5" step="0.1" min="0" oninput="syncTradeDetails()"></div>
+          </div>
+          <div class="result-grid" style="margin-bottom:0;">
+            <div class="result-item"><label>TP Price</label><input type="number" id="tTP" placeholder="e.g. 1.0850" step="0.0001" oninput="syncTradeDetails()"></div>
+            <div class="result-item"><label>SL Price</label><input type="number" id="tSL" placeholder="e.g. 1.0800" step="0.0001" oninput="syncTradeDetails()"></div>
+            <div class="result-item"><label>Entry Price</label><input type="number" id="tEntry" placeholder="e.g. 1.0820" step="0.0001" oninput="syncTradeDetails()"></div>
+            <div class="result-item"><label>Pips / Points</label><input type="number" id="tPips" placeholder="e.g. 30" step="1" oninput="syncTradeDetails()"></div>
+          </div>
+        </div>
         <!-- ENTRY REASON -->
         <div class="qb">
           <label class="qlbl" style="color:var(--gold);font-size:14px;font-weight:800;">🎯 Why am I entering this trade?</label>
@@ -869,13 +881,11 @@ canvas{display:block;}
             </div>
           </div>
         </div>
-        <!-- ALARM CHECKLIST -->
+        <!-- ALARM CHECKLIST — single line -->
         <div class="qb">
-          <label class="qlbl" style="color:var(--gold);font-size:14px;font-weight:800;">🔔 Alarm Checklist</label>
-          <div style="display:flex;flex-direction:column;gap:8px;" id="alarmChecklist">
-            <div class="pcheck" onclick="toggleCheck(this);checkAlarmDone()"><div class="pcheck-box">☐</div><div class="pcheck-txt">Alarm set at Stop Loss (SL)</div></div>
-            <div class="pcheck" onclick="toggleCheck(this);checkAlarmDone()"><div class="pcheck-box">☐</div><div class="pcheck-txt">Alarm set at Break Even (BE)</div></div>
-            <div class="pcheck" onclick="toggleCheck(this);checkAlarmDone()"><div class="pcheck-box">☐</div><div class="pcheck-txt">Alarm set at Take Profit (TP)</div></div>
+          <label class="qlbl" style="color:var(--gold);font-size:14px;font-weight:800;">🔔 Alarm Set</label>
+          <div id="alarmChecklist">
+            <div class="pcheck" onclick="toggleCheck(this);checkAlarmDone()"><div class="pcheck-box">☐</div><div class="pcheck-txt">I have set alarms at my SL, BE and TP levels</div></div>
           </div>
         </div>
         <!-- DURING MOOD -->
@@ -892,11 +902,31 @@ canvas{display:block;}
         </div>
         <div class="qb"><label class="qlbl">Did you deviate from your plan?</label><div class="rating-wrap"><button class="rbtn" id="deviateNo" onclick="setDeviate(false)" style="padding:0 10px">Stayed on plan</button><button class="rbtn" id="deviateYes" onclick="setDeviate(true)" style="padding:0 10px">Deviated</button></div></div>
         <div class="qb"><label class="qlbl">During-trade notes:</label><textarea id="tDuringNote" placeholder="What thoughts came up while in the trade?"></textarea></div>
+        <!-- AI DURING DECISION -->
+        <div id="duringAiResult" style="display:none;margin:8px 0 4px;padding:14px;border-radius:12px;font-size:13px;font-weight:700;line-height:1.6;"></div>
+        <!-- SAVE DURING -->
+        <button class="phase-save-btn" onclick="savePhase('during')">💾 Save — During Trade</button>
       </div>
       <div class="phase-content" id="ph2">
+        <!-- TRADE DETAILS mirror (auto-filled from During tab) -->
+        <div class="qb trade-details-block">
+          <label class="qlbl" style="color:var(--gold);font-size:14px;font-weight:800;">📊 Trade Details</label>
+          <div class="field-row" style="margin-bottom:10px;">
+            <div class="field"><label>Outcome</label><select id="tOutcome2" onchange="syncTradeDetails2()"><option value="">Select</option><option value="tp">✅ Take Profit (TP)</option><option value="sl">❌ Stop Loss (SL)</option><option value="be">➡️ Break Even (BE)</option><option value="open">🔵 Still Open</option></select></div>
+            <div class="field"><label>RR Gained</label><input type="number" id="tRR2" placeholder="e.g. 2.5" step="0.1" min="0" oninput="syncTradeDetails2()"></div>
+          </div>
+          <div class="result-grid" style="margin-bottom:0;">
+            <div class="result-item"><label>TP Price</label><input type="number" id="tTP2" placeholder="e.g. 1.0850" step="0.0001" oninput="syncTradeDetails2()"></div>
+            <div class="result-item"><label>SL Price</label><input type="number" id="tSL2" placeholder="e.g. 1.0800" step="0.0001" oninput="syncTradeDetails2()"></div>
+            <div class="result-item"><label>Entry Price</label><input type="number" id="tEntry2" placeholder="e.g. 1.0820" step="0.0001" oninput="syncTradeDetails2()"></div>
+            <div class="result-item"><label>Pips / Points</label><input type="number" id="tPips2" placeholder="e.g. 30" step="1" oninput="syncTradeDetails2()"></div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:8px;font-weight:600;">↕ Synced with During tab</div>
+        </div>
         <div class="qb"><label class="qlbl">Emotional state after closing:</label><div class="mood-row" id="moodAfter"><span class="mood-btn" onclick="selMood(this,'after')">😌 Peaceful</span><span class="mood-btn" onclick="selMood(this,'after')">😤 Angry</span><span class="mood-btn" onclick="selMood(this,'after')">😔 Disappointed</span><span class="mood-btn" onclick="selMood(this,'after')">🎉 Proud</span><span class="mood-btn" onclick="selMood(this,'after')">😰 Regretful</span><span class="mood-btn" onclick="selMood(this,'after')">🧘 Neutral</span><span class="mood-btn" onclick="selMood(this,'after')">🤯 Overconfident</span><span class="mood-btn other-mood-btn" onclick="addOtherMood('after')">✏️ Other...</span></div></div>
         <div class="qb"><label class="qlbl">Reflection score (1=Emotional chaos · 10=Fully disciplined)</label><div class="rating-wrap" id="rAfter"><button class="rbtn" onclick="rateT('rAfter',this,1)">1</button><button class="rbtn" onclick="rateT('rAfter',this,2)">2</button><button class="rbtn" onclick="rateT('rAfter',this,3)">3</button><button class="rbtn" onclick="rateT('rAfter',this,4)">4</button><button class="rbtn" onclick="rateT('rAfter',this,5)">5</button><button class="rbtn" onclick="rateT('rAfter',this,6)">6</button><button class="rbtn" onclick="rateT('rAfter',this,7)">7</button><button class="rbtn" onclick="rateT('rAfter',this,8)">8</button><button class="rbtn" onclick="rateT('rAfter',this,9)">9</button><button class="rbtn" onclick="rateT('rAfter',this,10)">10</button></div></div>
         <div class="qb"><label class="qlbl">What did you learn from this trade?</label><textarea id="tAfterNote" placeholder="The lesson, what you'd do differently..."></textarea></div>
+        <button class="phase-save-btn" onclick="savePhase('after')">💾 Save — After Trade</button>
       </div>
       <div class="phase-content" id="ph3">
         <div class="qb">
@@ -949,7 +979,8 @@ canvas{display:block;}
           <textarea id="otherHabits" placeholder="Any other good habits? Describe here..." style="margin-top:10px;"></textarea>
         </div>
       </div>
-      <button class="save-trade-btn" onclick="saveTrade()">Save Trade Log</button>
+      <button class="phase-save-btn" onclick="savePhase('review')">💾 Save — Review</button>
+      <button class="save-trade-btn" onclick="saveTrade()">✅ Save Complete Trade Log</button>
     </div>
   </div>
 </div>
@@ -1200,7 +1231,7 @@ window.saveTrade = async function(){
   const clarityBefore=tradeRatings['rBefore']||5, reflectionAfter=tradeRatings['rAfter']||5;
   const overall=Math.round((clarityBefore+reflectionAfter)/2*10);
   const trade={
-    pair, dir:document.getElementById('tDir').value, outcome:document.getElementById('tOutcome').value,
+    pair, dir:document.getElementById('tDir').value, outcome:document.getElementById('tOutcome')?.value||document.getElementById('tOutcome2')?.value||'',
     rr:parseFloat(document.getElementById('tRR').value)||null,
     tp:parseFloat(document.getElementById('tTP').value)||null,
     sl:parseFloat(document.getElementById('tSL').value)||null,
@@ -1325,10 +1356,11 @@ window.openTradeForm=function(tradeId){
 window.closeTradeForm=function(){ document.getElementById('tradeOverlay').classList.remove('open'); };
 function resetTradeForm(){
   ['tPair','tBeforeNote','tDuringNote','tAfterNote','tRR','tTP','tSL','tEntry','tPips'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
-  document.getElementById('tDir').value=''; document.getElementById('tOutcome').value='';
+  document.getElementById('tDir').value=''; ['tOutcome','tOutcome2','tRR','tRR2','tTP','tTP2','tSL','tSL2','tEntry','tEntry2','tPips','tPips2'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.querySelectorAll('.mchip').forEach(c=>c.classList.remove('sel'));
   ['otherMistakes','otherHabits'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   selectedMistakes=new Set(); selectedHabits=new Set(); selectedEntry='';
+  ['beforeAiResult','duringAiResult'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
   [0,1,2].forEach(j=>{ const el=document.getElementById('ec'+j); if(el) el.classList.remove('sel'); });
   document.querySelectorAll('.pcheck').forEach(c=>{ c.classList.remove('checked'); c.querySelector('.pcheck-box').textContent='☐'; });
   document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel'));
@@ -1360,14 +1392,14 @@ function populateTrade(t){
 window.switchPhase=function(i){ document.querySelectorAll('#tradeOverlay .phase-content').forEach((p,j)=>p.classList.toggle('active',j===i)); document.querySelectorAll('.ptab').forEach((t,j)=>t.classList.toggle('active',j===i)); };
 window.selMood=function(btn,phase){ btn.closest('.mood-row').querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); currentMoods[phase]=btn.textContent.trim(); };
 window.rateT=function(id,btn,val){ document.getElementById(id).querySelectorAll('.rbtn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); tradeRatings[id]=val; };
-window.setRule=function(val){ followedRules=val; document.getElementById('ruleYes').classList.toggle('active',val===true); document.getElementById('ruleNo').classList.toggle('active',val===false); };
+window.setRule=function(val){ followedRules=val; document.getElementById('ruleYes').classList.toggle('active',val===true); document.getElementById('ruleNo').classList.toggle('active',val===false); calcBeforeAI(); };
 window.toggleChip=function(el,type){
   el.classList.toggle('sel');
   const txt=el.textContent.trim();
   if(type==='mistakes'){ if(el.classList.contains('sel')) selectedMistakes.add(txt); else selectedMistakes.delete(txt); }
   else { if(el.classList.contains('sel')) selectedHabits.add(txt); else selectedHabits.delete(txt); }
 };
-window.setDeviate=function(val){ deviated=val; document.getElementById('deviateNo').classList.toggle('active',val===false); document.getElementById('deviateYes').classList.toggle('active',val===true); };
+window.setDeviate=function(val){ deviated=val; document.getElementById('deviateNo').classList.toggle('active',val===false); document.getElementById('deviateYes').classList.toggle('active',val===true); calcDuringAI(); };
 
 // ── JOURNAL NAV ──
 window.showScreen=function(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.bni').forEach(n=>n.classList.remove('active')); document.getElementById('screen-'+name).classList.add('active'); const ni=document.getElementById('nav-'+name); if(ni) ni.classList.add('active'); document.getElementById('screen-'+name).scrollTop=0; if(name==='progress') renderCharts(); if(name==='home') updateHomeHighlights(); if(name==='creed'){ renderCreedScreen(); renderCreedTicker(); loadCreedNotes(); } };
@@ -1656,6 +1688,7 @@ function loadCreedNotes(){
 window.toggleCheck=function(el){
   el.classList.toggle('checked');
   el.querySelector('.pcheck-box').textContent=el.classList.contains('checked')?'✅':'☐';
+  calcBeforeAI();
   const wrap=el.closest('[id]');
   const warn=document.getElementById('checklistWarning');
   if(warn){ const all=document.querySelectorAll('#preCheckList .pcheck'); const allChecked=[...all].every(c=>c.classList.contains('checked')); warn.style.display=allChecked?'none':'block'; }
@@ -1666,7 +1699,7 @@ let selectedEntry='';
 window.selEntry=function(i){
   const labels=['📌 Pin Bar — as per the rules','🕯️ Engulfing Candle — as per the rules','🔁 Retest — as per the rules'];
   [0,1,2].forEach(j=>{ const el=document.getElementById('ec'+j); if(el) el.classList.toggle('sel',j===i); });
-  selectedEntry=labels[i];
+  selectedEntry=labels[i]; calcDuringAI();
 };
 
 // ── ALARM CHECKLIST → POPUP ──
@@ -1734,6 +1767,129 @@ window.markRitualDone=function(){
   showToast('Pre-trade ritual complete ✦');
   setTimeout(()=>{ if(btn){ btn.textContent='✦ I Am Ready To Trade'; btn.style.opacity='1'; }},3000);
 };
+
+// ── SYNC TRADE DETAILS between During and After tabs ──
+window.syncTradeDetails=function(){
+  // During → After
+  const fields=[['tOutcome','tOutcome2'],['tRR','tRR2'],['tTP','tTP2'],['tSL','tSL2'],['tEntry','tEntry2'],['tPips','tPips2']];
+  fields.forEach(([src,dst])=>{
+    const s=document.getElementById(src), d=document.getElementById(dst);
+    if(s&&d){ if(s.tagName==='SELECT'){ d.value=s.value; } else { d.value=s.value; } }
+  });
+  calcDuringAI();
+};
+window.syncTradeDetails2=function(){
+  // After → During
+  const fields=[['tOutcome2','tOutcome'],['tRR2','tRR'],['tTP2','tTP'],['tSL2','tSL'],['tEntry2','tEntry'],['tPips2','tPips']];
+  fields.forEach(([src,dst])=>{
+    const s=document.getElementById(src), d=document.getElementById(dst);
+    if(s&&d){ d.value=s.value; }
+  });
+};
+
+// ── PER-PHASE SAVE (saves to Firestore, keeps form open) ──
+window.savePhase=async function(phase){
+  if(!currentUser){ showToast('Not signed in'); return; }
+  const pair=document.getElementById('tPair').value.trim();
+  if(!pair){ showToast('Please enter a currency pair first'); return; }
+  // Build partial trade object from what's filled so far
+  const clarityBefore=tradeRatings['rBefore']||5, reflectionAfter=tradeRatings['rAfter']||5;
+  const overall=Math.round((clarityBefore+reflectionAfter)/2*10);
+  const trade={
+    pair, dir:document.getElementById('tDir').value,
+    outcome:document.getElementById('tOutcome').value||document.getElementById('tOutcome2')?.value||'',
+    rr:parseFloat(document.getElementById('tRR').value)||null,
+    tp:parseFloat(document.getElementById('tTP').value)||null,
+    sl:parseFloat(document.getElementById('tSL').value)||null,
+    entry:parseFloat(document.getElementById('tEntry').value)||null,
+    pips:parseFloat(document.getElementById('tPips').value)||null,
+    moodBefore:currentMoods.before, moodDuring:currentMoods.during, moodAfter:currentMoods.after,
+    clarityBefore, reflectionAfter, overall, followedRules, deviated,
+    beforeNote:document.getElementById('tBeforeNote')?.value.trim()||'',
+    duringNote:document.getElementById('tDuringNote')?.value.trim()||'',
+    afterNote:document.getElementById('tAfterNote')?.value.trim()||'',
+    entryType:selectedEntry,
+    mistakes:[...selectedMistakes], otherMistakes:document.getElementById('otherMistakes')?.value.trim()||'',
+    habits:[...selectedHabits], otherHabits:document.getElementById('otherHabits')?.value.trim()||'',
+    savedPhase:phase,
+    date:editingTradeId?trades.find(t=>t.id===editingTradeId)?.date||new Date().toISOString():new Date().toISOString()
+  };
+  setSyncDot('syncing');
+  try{
+    if(editingTradeId){
+      await db.collection('users').doc(currentUser.uid).collection('trades').doc(editingTradeId).update(trade);
+    } else {
+      const ref = await db.collection('users').doc(currentUser.uid).collection('trades').add(trade);
+      editingTradeId = ref.id; // remember so subsequent saves update the same doc
+    }
+    setSyncDot('synced');
+    showToast('✓ ' + phase.charAt(0).toUpperCase()+phase.slice(1) + ' phase saved');
+  } catch(e){ setSyncDot('error'); showToast('Save failed: '+e.message.substring(0,40)); }
+};
+
+// ── AI DECISION — BEFORE phase ──
+function calcBeforeAI(){
+  const checks=document.querySelectorAll('#preCheckList .pcheck');
+  const checkedCount=[...checks].filter(c=>c.classList.contains('checked')).length;
+  const total=checks.length;
+  const clarity=tradeRatings['rBefore']||0;
+  const rulesOk=followedRules===true;
+  const mood=currentMoods.before||'';
+  const badMoods=['Frustrated','Revenge','Anxious','FOMO'];
+  const hasBadMood=badMoods.some(m=>mood.includes(m));
+
+  const result=document.getElementById('beforeAiResult');
+  if(!result||(!checkedCount&&!clarity&&!mood)) return;
+
+  let flags=[];
+  if(checkedCount<total) flags.push(`${total-checkedCount} checklist item${total-checkedCount>1?'s':''} not ticked`);
+  if(clarity>0&&clarity<6) flags.push(`clarity score is low (${clarity}/10)`);
+  if(hasBadMood) flags.push(`emotional state is ${mood.replace(/^\S+\s/,'')}`);
+  if(followedRules===false) flags.push('setup does not meet all rules');
+
+  result.style.display='block';
+  if(flags.length===0&&checkedCount===total&&clarity>=7&&rulesOk){
+    result.style.background='rgba(26,158,110,0.08)'; result.style.border='1px solid rgba(26,158,110,0.3)'; result.style.color='var(--green)';
+    result.innerHTML='✅ Setup looks good — you are clear to enter this trade.<br><span style="font-size:11px;font-weight:500;opacity:0.8;">All checklist items ticked, clarity is high, rules followed. Trust your edge.</span>';
+  } else if(flags.length<=1){
+    result.style.background='rgba(224,123,26,0.08)'; result.style.border='1px solid rgba(224,123,26,0.3)'; result.style.color='var(--orange)';
+    result.innerHTML='⚠️ Proceed carefully — ' + flags.join(' and ') + '.<br><span style="font-size:11px;font-weight:500;opacity:0.8;">Be extra disciplined. Only enter if this is truly your setup.</span>';
+  } else {
+    result.style.background='rgba(224,82,82,0.08)'; result.style.border='1px solid rgba(224,82,82,0.3)'; result.style.color='var(--red)';
+    result.innerHTML='⛔ Do not enter this trade — ' + flags.join(', ') + '.<br><span style="font-size:11px;font-weight:500;opacity:0.8;">Your conditions are not met. Wait for a cleaner setup.</span>';
+  }
+}
+
+// ── AI DECISION — DURING phase ──
+function calcDuringAI(){
+  const result=document.getElementById('duringAiResult');
+  if(!result) return;
+  const hasEntry=selectedEntry!=='';
+  const mood=currentMoods.during||'';
+  const devOk=deviated===false;
+  const badMoods=['Anxious','Scared','Impatient','Euphoric'];
+  const hasBadMood=badMoods.some(m=>mood.includes(m));
+
+  if(!hasEntry&&!mood) return;
+
+  let flags=[];
+  if(!hasEntry) flags.push('no rule-based entry selected');
+  if(hasBadMood) flags.push(`feeling ${mood.replace(/^\S+\s/,'')}`);
+  if(deviated===true) flags.push('you deviated from your plan');
+
+  result.style.display='block';
+  if(flags.length===0&&hasEntry&&devOk){
+    result.style.background='rgba(26,158,110,0.08)'; result.style.border='1px solid rgba(26,158,110,0.3)'; result.style.color='var(--green)';
+    result.innerHTML='✅ You entered as per your rules — well done.<br><span style="font-size:11px;font-weight:500;opacity:0.8;">Now close the charts and let the trade run. Your work is done.</span>';
+  } else if(flags.length===1){
+    result.style.background='rgba(224,123,26,0.08)'; result.style.border='1px solid rgba(224,123,26,0.3)'; result.style.color='var(--orange)';
+    result.innerHTML='⚠️ Monitor closely — ' + flags.join(', ') + '.<br><span style="font-size:11px;font-weight:500;opacity:0.8;">Keep your hands off the trade. Stick to the plan.</span>';
+  } else {
+    result.style.background='rgba(224,82,82,0.08)'; result.style.border='1px solid rgba(224,82,82,0.3)'; result.style.color='var(--red)';
+    result.innerHTML='⛔ Concern flagged — ' + flags.join(', ') + '.<br><span style="font-size:11px;font-weight:500;opacity:0.8;">Do not add to position or move SL. Let the original plan play out.</span>';
+  }
+}
+
 // ── TOAST ──
 window.showToast=function(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); };
 
