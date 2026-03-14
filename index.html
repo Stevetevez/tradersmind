@@ -411,6 +411,47 @@ canvas{display:block;}
 .phase-save-btn{width:100%;padding:13px;background:var(--card2);color:var(--green);border:1.5px solid var(--green);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:14px;margin-bottom:4px;transition:all .2s;letter-spacing:0.5px;}
 .phase-save-btn:active{transform:scale(.97);background:var(--green-dim);}
 
+
+/* ── ANALYSIS TABS ── */
+.an-tabs{display:flex;border-bottom:2px solid var(--border);background:var(--card);position:sticky;top:var(--topbar-h);z-index:10;}
+.an-tab{flex:1;padding:14px 10px;text-align:center;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;}
+.an-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.an-content{display:none;}
+.an-content.active{display:block;}
+
+/* ── PERFORMANCE DASHBOARD ── */
+.perf-section-title{font-size:10px;font-weight:800;letter-spacing:2px;color:var(--gold);text-transform:uppercase;padding:16px 18px 8px;}
+.perf-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px 4px;}
+.perf-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.perf-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0;}
+.perf-card.green::before{background:var(--green);}
+.perf-card.red::before{background:var(--red);}
+.perf-card.blue::before{background:var(--blue);}
+.perf-card.orange::before{background:var(--orange);}
+.perf-card.gold::before{background:var(--gold);}
+.perf-val{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;line-height:1;margin-bottom:4px;}
+.perf-val.green{color:var(--green);}
+.perf-val.red{color:var(--red);}
+.perf-val.blue{color:var(--blue);}
+.perf-val.orange{color:var(--orange);}
+.perf-val.gold{color:var(--gold);}
+.perf-lbl{font-size:10px;font-weight:700;color:#3a4a5c;text-transform:uppercase;letter-spacing:0.5px;}
+.perf-sub{font-size:10px;color:var(--muted);margin-top:2px;font-weight:500;}
+.perf-list{padding:0 18px 4px;display:flex;flex-direction:column;gap:7px;}
+.perf-list-item{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);}
+.perf-list-rank{font-size:11px;font-weight:800;color:var(--muted);width:20px;flex-shrink:0;font-family:'IBM Plex Mono',monospace;}
+.perf-list-bar-wrap{flex:1;}
+.perf-list-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.3;}
+.perf-list-bar{height:5px;border-radius:3px;transition:width .4s;}
+.perf-list-count{font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0;font-family:'IBM Plex Mono',monospace;}
+.perf-notable{padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;box-shadow:var(--shadow);}
+.perf-notable-label{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.perf-notable-label.win{color:var(--green);}
+.perf-notable-label.loss{color:var(--red);}
+.perf-notable-val{font-size:14px;font-weight:700;color:var(--text);}
+.perf-notable-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.perf-empty{text-align:center;padding:20px;color:var(--muted);font-size:13px;font-weight:500;}
+
 /* ── TOAST ── */
 .toast{position:fixed;bottom:calc(var(--nav-h) + 14px);left:50%;transform:translateX(-50%) translateY(20px);background:#1a2332;color:#fff;padding:11px 22px;font-size:12px;font-weight:500;border-radius:20px;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none;box-shadow:0 4px 20px rgba(26,45,80,0.25);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -687,13 +728,69 @@ canvas{display:block;}
 
   <!-- ANALYSIS -->
   <div class="screen" id="screen-analysis">
-    <div class="topbar"><div class="tbar-logo">Trader<em>Mind</em></div><div class="tbar-right"><div class="tbar-badge">AI Analysis</div></div></div>
-    <div class="analysis-hero"><h2>Your <em>AI</em><br>Psychology Report</h2><p>Claude reads your journal AND all trade logs for a personalised, evolving report.</p></div>
-    <div class="note-box"><strong>How it works</strong>Your weekly journal + every trade log is sent to Claude. The more you log, the deeper and more accurate your analysis becomes.</div>
-    <button class="cta-btn" id="runAiBtn" onclick="runAI()">✦ Analyse My Psychology</button>
-    <div class="ai-card" id="aiCard" style="display:none">
-      <div class="ai-card-hdr"><div class="ai-live-dot"></div><span>AI Psychological Profile</span><div class="ai-status" id="aiStat">Reading...</div></div>
-      <div class="ai-body" id="aiBody"><div class="thinking-row"><div class="tdots"><span></span><span></span><span></span></div> Reading your data...</div></div>
+    <div class="topbar"><div class="tbar-logo">Trader<em>Mind</em></div><div class="tbar-right"><div class="tbar-badge">Analysis</div></div></div>
+
+    <!-- Analysis tab switcher -->
+    <div class="an-tabs">
+      <div class="an-tab active" id="anTab0" onclick="switchAnTab(0)">🧠 Psychology</div>
+      <div class="an-tab" id="anTab1" onclick="switchAnTab(1)">📊 Performance</div>
+    </div>
+
+    <!-- ── PSYCHOLOGY TAB ── -->
+    <div class="an-content active" id="anContent0">
+      <div class="analysis-hero"><h2>Psychology<br><em>Analysis</em></h2><p>AI reads your weekly journal and trade psychology to give you a deep personal insight.</p></div>
+      <div class="note-box"><strong>How it works</strong> Your journal answers + emotional data from every trade are sent to Gemini. The more you log, the more accurate it becomes.</div>
+      <button class="cta-btn" id="runAiBtn" onclick="runAI()">🧠 Analyse My Psychology</button>
+      <div class="ai-card" id="aiCard" style="display:none">
+        <div class="ai-card-hdr"><div class="ai-live-dot"></div><span>AI Psychological Profile</span><div class="ai-status" id="aiStat">Reading...</div></div>
+        <div class="ai-body" id="aiBody"><div class="thinking-row"><div class="tdots"><span></span><span></span><span></span></div> Reading your data...</div></div>
+      </div>
+    </div>
+
+    <!-- ── PERFORMANCE TAB ── -->
+    <div class="an-content" id="anContent1">
+      <div class="analysis-hero"><h2>Performance<br><em>Dashboard</em></h2><p>Your complete trading statistics — calculated instantly from your trade log.</p></div>
+      <button class="cta-btn" onclick="renderPerformance()" style="margin-bottom:4px;">📊 Calculate Performance</button>
+      <div id="perfDashboard" style="display:none;padding:0 0 20px;">
+
+        <!-- This week -->
+        <div class="perf-section-title">This Week</div>
+        <div class="perf-grid" id="perfWeekGrid"></div>
+
+        <!-- All time -->
+        <div class="perf-section-title">All Time</div>
+        <div class="perf-grid" id="perfAllGrid"></div>
+
+        <!-- Key ratios -->
+        <div class="perf-section-title">Key Ratios</div>
+        <div class="perf-grid" id="perfRatioGrid"></div>
+
+        <!-- Streaks -->
+        <div class="perf-section-title">Streaks & Extremes</div>
+        <div class="perf-grid" id="perfStreakGrid"></div>
+
+        <!-- Top behaviors -->
+        <div class="perf-section-title">Top 5 Good Habits</div>
+        <div id="perfHabits" class="perf-list"></div>
+
+        <div class="perf-section-title">Top 5 Mistakes</div>
+        <div id="perfMistakes" class="perf-list"></div>
+
+        <div class="perf-section-title">Top 5 Emotions</div>
+        <div id="perfEmotions" class="perf-list"></div>
+
+        <!-- Best/worst trades -->
+        <div class="perf-section-title">Notable Trades</div>
+        <div id="perfNotable" class="perf-list"></div>
+
+        <!-- AI Performance insight -->
+        <div class="perf-section-title">AI Performance Insight</div>
+        <button class="cta-btn" id="runPerfAiBtn" onclick="runPerfAI()" style="margin:0 18px 10px;width:calc(100% - 36px);">✦ Get AI Performance Insight</button>
+        <div class="ai-card" id="perfAiCard" style="display:none;margin:0 18px 14px;">
+          <div class="ai-card-hdr"><div class="ai-live-dot"></div><span>Performance Coach</span><div class="ai-status" id="perfAiStat">Reading...</div></div>
+          <div class="ai-body" id="perfAiBody"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1516,16 +1613,141 @@ function drawDisc(){
   });
 }
 
-// ── AI ANALYSIS ──
+// ── ANALYSIS TAB SWITCHER ──
+window.switchAnTab=function(i){
+  document.querySelectorAll('.an-tab').forEach((t,j)=>t.classList.toggle('active',j===i));
+  document.querySelectorAll('.an-content').forEach((c,j)=>c.classList.toggle('active',j===i));
+};
+
+// ── SHARED STATS BUILDER ──
+function buildTradeStats(){
+  const weekTrades=trades.filter(t=>isThisWeek(t.date));
+  const sorted=[...trades].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const tpAll=trades.filter(t=>t.outcome==='tp'), slAll=trades.filter(t=>t.outcome==='sl');
+  const tpW=weekTrades.filter(t=>t.outcome==='tp'), slW=weekTrades.filter(t=>t.outcome==='sl');
+  const rrTrades=trades.filter(t=>t.rr&&t.rr>0);
+  const winRR=tpAll.filter(t=>t.rr).reduce((s,t)=>s+(t.rr||0),0);
+  const lossRR=slAll.filter(t=>t.rr).reduce((s,t)=>s+(t.rr||0),0);
+  const profitFactor=lossRR>0?(winRR/lossRR):winRR>0?999:0;
+  const avgWinRR=tpAll.filter(t=>t.rr).length?winRR/tpAll.filter(t=>t.rr).length:0;
+  const avgLossRR=slAll.filter(t=>t.rr).length?lossRR/slAll.filter(t=>t.rr).length:0;
+  const expectancy=((tpAll.length/(tpAll.length+slAll.length||1))*avgWinRR)-((slAll.length/(tpAll.length+slAll.length||1))*avgLossRR);
+  const avgRR=rrTrades.length?rrTrades.reduce((s,t)=>s+(t.rr||0),0)/rrTrades.length:0;
+  const winRate=Math.round(tpAll.length/(tpAll.length+slAll.length||1)*100);
+  const winRateW=Math.round(tpW.length/(tpW.length+slW.length||1)*100);
+  const avgRRW=weekTrades.filter(t=>t.rr).length?weekTrades.filter(t=>t.rr).reduce((s,t)=>s+(t.rr||0),0)/weekTrades.filter(t=>t.rr).length:0;
+  let maxCW=0,maxCL=0,curCW=0,curCL=0,curW2=0,curL2=0;
+  sorted.forEach(t=>{
+    if(t.outcome==='tp'){curCW++;curCL=0;maxCW=Math.max(maxCW,curCW);curW2++;curL2=0;}
+    else if(t.outcome==='sl'){curCL++;curCW=0;maxCL=Math.max(maxCL,curCL);curL2++;curW2=0;}
+  });
+  const curStreak=curW2>0?curW2+'W':curL2>0?curL2+'L':'—';
+  const wins=trades.filter(t=>t.outcome==='tp'&&t.rr);
+  const losses=trades.filter(t=>t.outcome==='sl'&&t.rr);
+  const bestWin=wins.length?wins.reduce((a,b)=>b.rr>a.rr?b:a):null;
+  const worstLoss=losses.length?losses.reduce((a,b)=>b.rr>a.rr?b:a):null;
+  const avgMind=trades.length?Math.round(trades.reduce((s,t)=>s+(t.overall||50),0)/trades.length):0;
+  const ruleTracked=trades.filter(t=>t.followedRules!==null&&t.followedRules!==undefined);
+  const disciplineRate=ruleTracked.length?Math.round(trades.filter(t=>t.followedRules===true).length/ruleTracked.length*100):0;
+  const moods={};
+  trades.forEach(t=>[t.moodBefore,t.moodDuring,t.moodAfter].forEach(m=>{
+    if(!m) return;
+    m.split(', ').forEach(s=>{ s=s.trim().replace(/\S+\s/,''); if(s) moods[s]=(moods[s]||0)+1; });
+  }));
+  const habitC={},mistakeC={};
+  trades.forEach(t=>{ (t.habits||[]).forEach(h=>{ habitC[h]=(habitC[h]||0)+1; }); (t.mistakes||[]).forEach(m=>{ mistakeC[m]=(mistakeC[m]||0)+1; }); });
+  return {weekTrades,tpAll,slAll,tpW,slW,winRate,winRateW,avgRR,avgRRW,profitFactor,avgWinRR,avgLossRR,expectancy,maxCW,maxCL,curStreak,bestWin,worstLoss,avgMind,disciplineRate,moods,habitC,mistakeC};
+}
+
+// ── PERFORMANCE DASHBOARD (instant — no AI needed) ──
+window.renderPerformance=function(){
+  if(!trades.length){ showToast('No trades logged yet'); return; }
+  const s=buildTradeStats();
+  document.getElementById('perfDashboard').style.display='block';
+  const card=(val,lbl,sub,colour)=>`<div class="perf-card ${colour}"><div class="perf-val ${colour}">${val}</div><div class="perf-lbl">${lbl}</div>${sub?`<div class="perf-sub">${sub}</div>`:''}</div>`;
+  document.getElementById('perfWeekGrid').innerHTML=
+    card(s.weekTrades.length,'Trades','This week','blue')+
+    card(s.winRateW+'%','Win Rate','This week',s.winRateW>=50?'green':'red')+
+    card(s.tpW.length+'W / '+s.slW.length+'L','Result','TP / SL',s.tpW.length>=s.slW.length?'green':'red')+
+    card(s.avgRRW.toFixed(2)+'R','Avg RR','This week',s.avgRRW>=1?'green':'orange');
+  document.getElementById('perfAllGrid').innerHTML=
+    card(trades.length,'Total Trades','All time','blue')+
+    card(s.winRate+'%','Win Rate','All time',s.winRate>=50?'green':'red')+
+    card(s.avgRR.toFixed(2)+'R','Avg RR','All time',s.avgRR>=1?'green':'orange')+
+    card(s.avgMind+'%','Mind Score','Avg psychology','gold');
+  const pfC=s.profitFactor>=1.5?'green':s.profitFactor>=1?'orange':'red';
+  const expC=s.expectancy>=0.2?'green':s.expectancy>=0?'orange':'red';
+  document.getElementById('perfRatioGrid').innerHTML=
+    card(s.profitFactor>=999?'∞':s.profitFactor.toFixed(2),'Profit Factor','Gross wins ÷ gross losses',pfC)+
+    card(s.expectancy.toFixed(2)+'R','Expectancy','Expected R per trade',expC)+
+    card(s.avgWinRR.toFixed(2)+'R','Avg Win RR','Per winning trade','green')+
+    card(s.avgLossRR.toFixed(2)+'R','Avg Loss RR','Per losing trade','red')+
+    card(s.disciplineRate+'%','Discipline','Trades following rules',s.disciplineRate>=70?'green':s.disciplineRate>=50?'orange':'red')+
+    card(s.curStreak,'Current Streak','Active run',s.curStreak.includes('W')?'green':'red');
+  document.getElementById('perfStreakGrid').innerHTML=
+    card(s.maxCW,'Max Consec. Wins','All time','green')+
+    card(s.maxCL,'Max Consec. Losses','All time','red')+
+    card(s.bestWin?s.bestWin.pair+' +'+s.bestWin.rr+'R':'—','Best Win','Highest RR','green')+
+    card(s.worstLoss?s.worstLoss.pair+' -'+s.worstLoss.rr+'R':'—','Worst Loss','Highest loss','red');
+  const renderList=(entries,maxVal,colour)=>entries.length?entries.map(([n,c],i)=>`<div class="perf-list-item"><div class="perf-list-rank">#${i+1}</div><div class="perf-list-bar-wrap"><div class="perf-list-name">${n}</div><div class="perf-list-bar" style="width:${Math.round(c/maxVal*100)}%;background:var(--${colour});"></div></div><div class="perf-list-count">${c}x</div></div>`).join(''):'<div class="perf-empty">None logged yet</div>';
+  const hE=Object.entries(s.habitC).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const mE=Object.entries(s.mistakeC).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const eE=Object.entries(s.moods).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  document.getElementById('perfHabits').innerHTML=renderList(hE,hE[0]?.[1]||1,'green');
+  document.getElementById('perfMistakes').innerHTML=renderList(mE,mE[0]?.[1]||1,'red');
+  document.getElementById('perfEmotions').innerHTML=renderList(eE,eE[0]?.[1]||1,'blue');
+  let notable='';
+  if(s.bestWin) notable+=`<div class="perf-notable"><div class="perf-notable-label win">🏆 Best Win</div><div class="perf-notable-val">${s.bestWin.pair} ${s.bestWin.dir||''} — +${s.bestWin.rr}R</div><div class="perf-notable-sub">${new Date(s.bestWin.date).toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric'})}</div></div>`;
+  if(s.worstLoss) notable+=`<div class="perf-notable"><div class="perf-notable-label loss">💔 Worst Loss</div><div class="perf-notable-val">${s.worstLoss.pair} ${s.worstLoss.dir||''} — -${s.worstLoss.rr}R</div><div class="perf-notable-sub">${new Date(s.worstLoss.date).toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric'})}</div></div>`;
+  document.getElementById('perfNotable').innerHTML=notable||'<div class="perf-empty">Log trades with RR to see notable trades</div>';
+  document.getElementById('perfDashboard').scrollIntoView({behavior:'smooth',block:'start'});
+};
+
+// ── PERFORMANCE AI INSIGHT ──
+window.runPerfAI=async function(){
+  const btn=document.getElementById('runPerfAiBtn'),card=document.getElementById('perfAiCard'),body=document.getElementById('perfAiBody'),stat=document.getElementById('perfAiStat');
+  btn.disabled=true; btn.textContent='⏳ Analysing...'; card.style.display='block';
+  const s=buildTradeStats();
+  const perfTxt=`Trades: ${trades.length} | Win rate: ${s.winRate}% | Avg RR: ${s.avgRR.toFixed(2)} | Profit factor: ${s.profitFactor>=999?'infinity':s.profitFactor.toFixed(2)} | Expectancy: ${s.expectancy.toFixed(2)}R | Avg win: ${s.avgWinRR.toFixed(2)}R | Avg loss: ${s.avgLossRR.toFixed(2)}R | Max consec wins: ${s.maxCW} | Max consec losses: ${s.maxCL} | Discipline rate: ${s.disciplineRate}% | This week: ${s.weekTrades.length} trades ${s.winRateW}% win rate ${s.avgRRW.toFixed(2)}R avg | Best win: ${s.bestWin?s.bestWin.pair+' +'+s.bestWin.rr+'R':'none'} | Worst loss: ${s.worstLoss?s.worstLoss.pair+' -'+s.worstLoss.rr+'R':'none'} | Top mistakes: ${Object.entries(s.mistakeC).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([m,c])=>m+' ('+c+'x)').join(', ')||'none'} | Top habits: ${Object.entries(s.habitC).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([h,c])=>h+' ('+c+'x)').join(', ')||'none'}`;
+  const perfSys=`You are a professional forex trading performance coach. Analyse the trader's statistics and give sharp, direct feedback. Plain text only. No markdown, no asterisks, no bullet points. Section headers ALL CAPS + colon on their own line. Maximum 350 words. Be direct and specific.\n\nSECTIONS:\nPERFORMANCE VERDICT:\nWHAT THE NUMBERS TELL YOU:\nBIGGEST PERFORMANCE LEAK:\nTWO ADJUSTMENTS THIS WEEK:`;
+  try{
+    const GEMINI_KEY=localStorage.getItem('tm_gemini_key');
+    if(!GEMINI_KEY){ body.innerHTML='<span style="color:var(--red)">No Gemini API key. Go to Settings.</span>'; stat.textContent='Error'; btn.disabled=false; btn.textContent='✦ Try Again'; return; }
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:perfSys+'\n\nDATA:\n'+perfTxt}]}],generationConfig:{maxOutputTokens:700,temperature:0.65}})});
+    if(!res.ok){ const e=await res.text(); let m=''; try{m=JSON.parse(e).error?.message||e;}catch(x){m=e;} throw new Error(res.status+': '+m.substring(0,150)); }
+    const data=await res.json();
+    body.innerHTML=fmtAI(data.candidates?.[0]?.content?.parts?.[0]?.text||'No response.'); stat.textContent='Complete ✓'; btn.textContent='✦ Re-Analyse'; btn.disabled=false;
+  }catch(e){ body.innerHTML=`<span style="color:var(--red)">Failed: ${e.message}</span>`; stat.textContent='Error'; btn.textContent='✦ Try Again'; btn.disabled=false; }
+};
+
+// ── PSYCHOLOGY AI ──
 window.runAI=async function(){
   const btn=document.getElementById('runAiBtn'),card=document.getElementById('aiCard'),body=document.getElementById('aiBody'),stat=document.getElementById('aiStat');
   btn.disabled=true; btn.textContent='⏳ Analysing...'; card.style.display='block'; card.scrollIntoView({behavior:'smooth',block:'start'});
-  body.innerHTML='<div class="thinking-row"><div class="tdots"><span></span><span></span><span></span></div> Reading your journal and trade history...</div>'; stat.textContent='Reading...';
-  // Read journal directly from both form fields AND saved jData (whichever has content)
+  body.innerHTML='<div class="thinking-row"><div class="tdots"><span></span><span></span><span></span></div> Reading your journal...</div>'; stat.textContent='Reading...';
   const gField=id=>{ const el=document.getElementById(id); return (el&&el.value.trim())||(jData[id]||'').trim()||'(not answered)'; };
   const g=gField;
   const lm={1:'1 day',2:'2-3 days',3:'4-5 days',4:'A week+'};const jr=jData.ratings||ratings||{};
-  let txt=`WEEKLY JOURNAL (${jData.weekLabel||'current week'})\nBeliefs: Money=${g('q1_1')} | Family=${g('q1_2')} | Self-worth=${jr.r1||'—'}/10 | Limiting beliefs: ${(jData.beliefs||[]).join('; ')||'none'}\nEmotions: Before rules broken=${g('q2_1')} | After losses=${g('q2_2')} | FOMO=${jr.r2||'—'}/10 | Win effect=${g('q2_4')}\nGoals: Real reason=${g('q3_1')} | Target=${g('q3_2')} | Loss tolerance=${lm[jr.r3]||'—'} | 3yr vision=${g('q3_4')}\nIdentity: Self-describe=${g('q4_1')} | Losing week=${g('q4_2')} | Discipline=${g('q4_3')} | Ideal self=${g('q4_4')}\nCommitments: Focus=${g('q5_1')} | Rule=${g('q5_2')} | Last week review=${g('q5_3')}`;
+  let txt=`WEEKLY JOURNAL (${jData.weekLabel||'current week'})
+Beliefs about money: ${g('q1_1')}
+Family money lessons: ${g('q1_2')}
+Self-worth score: ${jr.r1||'—'}/10
+Limiting beliefs: ${(jData.beliefs||[]).join('; ')||'none'}
+What triggers rule-breaking: ${g('q2_1')}
+After a loss I typically: ${g('q2_2')}
+FOMO score: ${jr.r2||'—'}/10
+After a win I: ${g('q2_4')}
+Why I really trade: ${g('q3_1')}
+Monthly target: ${g('q3_2')}
+Loss tolerance: ${lm[jr.r3]||'—'}
+3 year vision: ${g('q3_4')}
+How I describe myself: ${g('q4_1')}
+Losing week effect on me: ${g('q4_2')}
+Discipline in life: ${g('q4_3')}
+Ideal self: ${g('q4_4')}
+This week focus: ${g('q5_1')}
+Rule commitment: ${g('q5_2')}
+Last week review: ${g('q5_3')}`;
   if(trades.length){
     // ── Basic stats ──
     const weekTrades=trades.filter(t=>isThisWeek(t.date));
@@ -1535,90 +1757,56 @@ window.runAI=async function(){
     const winRate=Math.round(tpCount/(tpCount+slCount||1)*100);
     const avg=Math.round(trades.reduce((s,t)=>s+(t.overall||50),0)/trades.length);
 
-    // ── Best win / worst loss ──
-    const wins=trades.filter(t=>t.outcome==='tp'&&t.rr);
-    const losses=trades.filter(t=>t.outcome==='sl'&&t.rr);
-    const bestWin=wins.length?wins.reduce((a,b)=>b.rr>a.rr?b:a):null;
-    const worstLoss=losses.length?losses.reduce((a,b)=>b.rr>a.rr?b:a):null;
-
-    // ── Consecutive wins/losses ──
-    let maxConsecW=0,maxConsecL=0,curW=0,curL=0;
-    [...trades].sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(t=>{
-      if(t.outcome==='tp'){curW++;curL=0;maxConsecW=Math.max(maxConsecW,curW);}
-      else if(t.outcome==='sl'){curL++;curW=0;maxConsecL=Math.max(maxConsecL,curL);}
+    const s2=buildTradeStats();
+    txt+=`\nTRADE PSYCHOLOGY (${trades.length} trades | avg mind score: ${s2.avgMind}% | discipline: ${s2.disciplineRate}%)`;
+    txt+=`\nTop emotions: ${Object.entries(s2.moods).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([m,c])=>m+'('+c+'x)').join(', ')||'none'}`;
+    txt+=`\nTop mistakes: ${Object.entries(s2.mistakeC).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([m,c])=>m+'('+c+'x)').join(', ')||'none'}`;
+    txt+=`\nTop habits: ${Object.entries(s2.habitC).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([h,c])=>h+'('+c+'x)').join(', ')||'none'}`;
+    trades.slice(-6).forEach((t,i)=>{
+      txt+=`\nTrade ${i+1}: ${t.pair} ${t.outcome?.toUpperCase()||'?'} | Rules:${t.followedRules===true?'Yes':'No'} | Before:${t.moodBefore||'—'} | After:${t.moodAfter||'—'}`;
+      if(t.beforeNote) txt+=` | Pre: ${t.beforeNote.substring(0,60)}`;
+      if(t.afterNote) txt+=` | Lesson: ${t.afterNote.substring(0,60)}`;
     });
+  } else txt+='\nNo trades logged yet.';
+  const sys=`You are a sharp, direct forex trading psychology coach. Give a clear, complete psychological analysis. Be honest, specific, constructive. Reference the trader's exact words where possible.
 
-    // ── Top moods (all values, comma-joined) ──
-    const moods={};
-    trades.forEach(t=>{
-      [t.moodBefore,t.moodDuring,t.moodAfter].forEach(m=>{
-        if(!m) return;
-        m.split(', ').forEach(single=>{ single=single.trim().replace(/^\S+\s/,''); if(single) moods[single]=(moods[single]||0)+1; });
-      });
-    });
-    const topMoods=Object.entries(moods).sort((a,b)=>b[1]-a[1]).slice(0,5);
+STRICT RULES:
+- Plain paragraphs only. No bullet points. No asterisks. No markdown.
+- Section headers ALL CAPS + colon, on their own line.
+- Every section fully written — do not stop mid-sentence.
+- 500 words maximum. Be concise but complete. Every sentence must add value.
+- The response must end with a complete sentence. Do not cut off.
 
-    // ── Top habits & mistakes ──
-    const habitCounts={}, mistakeCounts={};
-    trades.forEach(t=>{
-      (t.habits||[]).forEach(h=>{ habitCounts[h]=(habitCounts[h]||0)+1; });
-      (t.mistakes||[]).forEach(m=>{ mistakeCounts[m]=(mistakeCounts[m]||0)+1; });
-    });
-    const top5Habits=Object.entries(habitCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
-    const top5Mistakes=Object.entries(mistakeCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+WRITE EXACTLY THESE 5 SECTIONS IN ORDER:
 
-    // ── This week summary ──
-    const wTP=weekTrades.filter(t=>t.outcome==='tp').length;
-    const wSL=weekTrades.filter(t=>t.outcome==='sl').length;
-    const wRR=weekTrades.filter(t=>t.rr).reduce((s,t)=>s+(t.rr||0),0)/(weekTrades.filter(t=>t.rr).length||1);
+WHAT I SEE:
+Two sentences maximum. The single most important psychological pattern in this data.
 
-    txt+=`\n\nTRADE LOG SUMMARY (all time: ${trades.length} trades)`;
-    txt+=`\nWin Rate: ${winRate}% | TP: ${tpCount} | SL: ${slCount} | Avg RR: ${avgRR.toFixed(2)} | Avg Mind Score: ${avg}%`;
-    txt+=`\nBest Win: ${bestWin?bestWin.pair+' +'+bestWin.rr+'R ('+new Date(bestWin.date).toLocaleDateString('en-GB')+')'  :'n/a'}`;
-    txt+=`\nWorst Loss: ${worstLoss?worstLoss.pair+' -'+worstLoss.rr+'R ('+new Date(worstLoss.date).toLocaleDateString('en-GB')+')':'n/a'}`;
-    txt+=`\nMax Consecutive Wins: ${maxConsecW} | Max Consecutive Losses: ${maxConsecL}`;
-    txt+=`\nThis Week: ${weekTrades.length} trades | ${wTP}W ${wSL}L | Avg RR: ${wRR.toFixed(2)}`;
-    txt+=`\nTop 5 Emotions: ${topMoods.map(([m,c])=>m+'('+c+'x)').join(', ')||'none logged'}`;
-    txt+=`\nTop 5 Good Habits: ${top5Habits.map(([h,c])=>h+'('+c+'x)').join(', ')||'none logged'}`;
-    txt+=`\nTop 5 Mistakes: ${top5Mistakes.map(([m,c])=>m+'('+c+'x)').join(', ')||'none logged'}`;
-    txt+=`\n`;
+BELIEF AND IDENTITY:
+What core beliefs are shaping this trader's decisions? Connect journal answers to trading behaviour directly.
 
-    trades.slice(-15).forEach((t,i)=>{
-      txt+=`\nTrade ${i+1}: ${t.pair} ${t.dir||''} | ${t.outcome?.toUpperCase()||'?'} | Score: ${t.overall}% | Rules: ${t.followedRules===true?'Yes':t.followedRules===false?'No':'N/A'}`;
-      if(t.rr) txt+=` | RR: ${t.rr}`;
-      if(t.moodBefore) txt+=` | Before: ${t.moodBefore}`;
-      if(t.moodAfter) txt+=` | After: ${t.moodAfter}`;
-      if(t.mistakes&&t.mistakes.length) txt+=`\n  Mistakes: ${t.mistakes.join(', ')}`;
-      if(t.habits&&t.habits.length) txt+=`\n  Habits: ${t.habits.join(', ')}`;
-      if(t.beforeNote) txt+=`\n  Pre: ${t.beforeNote.substring(0,100)}`;
-      if(t.afterNote) txt+=`\n  Lesson: ${t.afterNote.substring(0,100)}`;
-    });
-    if(trades.length>=4){ const h=Math.floor(trades.length/2),f=trades.slice(0,h).reduce((s,t)=>s+(t.overall||50),0)/h,l=trades.slice(h).reduce((s,t)=>s+(t.overall||50),0)/(trades.length-h); txt+=`\nPsychology trend: First half avg ${Math.round(f)}% → Recent half ${Math.round(l)}% (${l>f?'IMPROVING':'DECLINING'})`; }
-  } else txt+='\n\nTRADE LOG: No trades logged yet.';
-  const sys=`You are an expert forex trading psychology coach AND performance analyst. Analyse BOTH the trader's psychology AND their trading track record. Be specific, honest, and actionable. Reference their actual data.\n\nFORMATTING: Section headers ALL CAPS + colon. Plain text only. Numbered lists for action points. No markdown bold or asterisks.\n\nSTRUCTURE (write every section in full, do not skip any):\n\nOPENING INSIGHT:\n(1-2 sentences summarising the most important thing you see across psychology and performance)\n\nTRADE RECORD SUMMARY:\n(Summarise this week's trades and all-time stats. Comment on win rate, RR, consecutive wins/losses, best win, worst loss. Be analytical.)\n\nTOP 5 GOOD BEHAVIORS THIS WEEK:\n(List the top 5 most frequent good habits from the trade log data. For each, comment on its impact on performance.)\n\nTOP 5 BAD BEHAVIORS THIS WEEK:\n(List the top 5 most frequent mistakes from the trade log data. For each, explain the psychological root cause.)\n\nTOP 5 EMOTIONS THIS WEEK:\n(List the top 5 most frequent emotions logged. Analyse what each says about the trader's current psychological state.)\n\nCORE BELIEF PATTERNS:\n(Based on journal entries, identify deep-seated beliefs affecting trading decisions.)\n\nEMOTIONAL TRIGGERS & RISK PROFILE:\n(Connect specific emotions to specific trading behaviours shown in the data.)\n\n${trades.length>=3?'PSYCHOLOGY PROGRESS ANALYSIS:\n(Is the trader improving or declining? Reference specific data points.)\n\n':''}IDENTITY & TRADING CEILING:\n(What self-image patterns are limiting this trader's growth?)\n\nYOUR THREE PRIORITY ACTIONS:\n(The 3 most important things to work on this week, specific and measurable.)\n\nCLOSING:\n(One powerful motivating statement tailored to this trader.)\n\nLength: minimum 1400 words. Complete every section fully. Do not truncate.`;
+EMOTIONAL TRIGGERS:
+Which emotions are driving which specific behaviours? Name them clearly.
+
+YOUR EDGE AND YOUR ENEMY:
+One paragraph on what this trader does well psychologically. One paragraph on what is holding them back most.
+
+THREE ACTIONS THIS WEEK:
+1. (specific and measurable)
+2. (specific and measurable)
+3. (specific and measurable)`;
   try{
-    const GEMINI_KEY = localStorage.getItem('tm_gemini_key');
-    if(!GEMINI_KEY){ body.innerHTML='<span style="color:var(--red)">No Gemini API key found.\nGo to Settings (⚙️ on home screen) to add your key.</span>'; stat.textContent='Error'; btn.disabled=false; btn.textContent='✦ Try Again'; return; }
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
-    const geminiBody = {
-      contents: [{ parts: [{ text: sys + '\n\nAnalyse my TraderMind data:\n\n' + txt }] }],
-      generationConfig: { maxOutputTokens: 4000, temperature: 0.7 }
-    };
-    const res = await fetch(geminiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(geminiBody) });
-    if(!res.ok){
-      const errText=await res.text();
-      let errMsg='';
-      try{ const errJson=JSON.parse(errText); errMsg=errJson.error?.message||errText; }catch(e){ errMsg=errText; }
-      throw new Error('Gemini error '+res.status+': '+errMsg.substring(0,200));
-    }
-    const data = await res.json();
-    const full = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response received.';
-    body.innerHTML=fmtAI(full); stat.textContent='Complete ✓'; btn.textContent='✦ Re-Analyse'; btn.disabled=false;
-    // Save snippet for home screen
+    const GEMINI_KEY=localStorage.getItem('tm_gemini_key');
+    if(!GEMINI_KEY){ body.innerHTML='<span style="color:var(--red)">No Gemini API key. Go to ⚙️ Settings on the home screen.</span>'; stat.textContent='Error'; btn.disabled=false; btn.textContent='🧠 Try Again'; return; }
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:sys+'\n\nTRADER DATA:\n\n'+txt}]}],generationConfig:{maxOutputTokens:900,temperature:0.65,topP:0.9}})});
+    if(!res.ok){ const e=await res.text(); let m=''; try{m=JSON.parse(e).error?.message||e;}catch(x){m=e;} throw new Error('Gemini '+res.status+': '+m.substring(0,200)); }
+    const data=await res.json();
+    const full=data.candidates?.[0]?.content?.parts?.[0]?.text||'No response received.';
+    body.innerHTML=fmtAI(full); stat.textContent='Complete ✓'; btn.textContent='🧠 Re-Analyse'; btn.disabled=false;
     const snippet={text:full,date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short'})};
     localStorage.setItem('tm_last_insight',JSON.stringify(snippet));
     showInsightSnippet(full,snippet.date);
-  }catch(e){ console.error('AI error:',e); body.innerHTML=`<span style="color:var(--red)">Analysis failed.\n${e.message}</span>`; stat.textContent='Error'; btn.textContent='✦ Try Again'; btn.disabled=false; }
+  }catch(e){ console.error('AI error:',e); body.innerHTML=`<span style="color:var(--red)">Analysis failed: ${e.message}</span>`; stat.textContent='Error'; btn.textContent='🧠 Try Again'; btn.disabled=false; }
 };
 function fmtAI(t){
   return t
