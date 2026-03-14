@@ -285,8 +285,8 @@ canvas{display:block;}
 .ai-live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
 .ai-card-hdr span{font-size:10px;letter-spacing:1.5px;color:var(--green);text-transform:uppercase;flex:1;font-weight:600;}
 .ai-status{font-size:10px;color:var(--muted);}
-.ai-body{padding:16px;font-size:14px;line-height:2.0;color:var(--text);min-height:80px;white-space:pre-wrap;}
-.ai-stag{display:block;color:var(--green);font-size:9px;letter-spacing:2px;text-transform:uppercase;margin:16px 0 6px;padding-bottom:5px;border-bottom:1px solid var(--border);font-weight:700;}
+.ai-body{padding:16px;font-size:14px;line-height:2.0;color:var(--text);min-height:80px;}
+.ai-stag{display:block;color:var(--green);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin:18px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--border);font-weight:800;}
 .ai-stag:first-child{margin-top:0;}
 .thinking-row{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;}
 .tdots{display:flex;gap:4px;}
@@ -1713,7 +1713,7 @@ window.runPerfAI=async function(){
   try{
     const GEMINI_KEY=localStorage.getItem('tm_gemini_key');
     if(!GEMINI_KEY){ body.innerHTML='<span style="color:var(--red)">No Gemini API key. Go to Settings.</span>'; stat.textContent='Error'; btn.disabled=false; btn.textContent='✦ Try Again'; return; }
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:perfSys+'\n\nDATA:\n'+perfTxt}]}],generationConfig:{maxOutputTokens:700,temperature:0.65}})});
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:perfSys+'\n\nDATA:\n'+perfTxt}]}],generationConfig:{maxOutputTokens:1000,temperature:0.65}})});
     if(!res.ok){ const e=await res.text(); let m=''; try{m=JSON.parse(e).error?.message||e;}catch(x){m=e;} throw new Error(res.status+': '+m.substring(0,150)); }
     const data=await res.json();
     body.innerHTML=fmtAI(data.candidates?.[0]?.content?.parts?.[0]?.text||'No response.'); stat.textContent='Complete ✓'; btn.textContent='✦ Re-Analyse'; btn.disabled=false;
@@ -1798,7 +1798,7 @@ THREE ACTIONS THIS WEEK:
   try{
     const GEMINI_KEY=localStorage.getItem('tm_gemini_key');
     if(!GEMINI_KEY){ body.innerHTML='<span style="color:var(--red)">No Gemini API key. Go to ⚙️ Settings on the home screen.</span>'; stat.textContent='Error'; btn.disabled=false; btn.textContent='🧠 Try Again'; return; }
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:sys+'\n\nTRADER DATA:\n\n'+txt}]}],generationConfig:{maxOutputTokens:900,temperature:0.65,topP:0.9}})});
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:sys+'\n\nTRADER DATA:\n\n'+txt}]}],generationConfig:{maxOutputTokens:1400,temperature:0.65,topP:0.9}})});
     if(!res.ok){ const e=await res.text(); let m=''; try{m=JSON.parse(e).error?.message||e;}catch(x){m=e;} throw new Error('Gemini '+res.status+': '+m.substring(0,200)); }
     const data=await res.json();
     const full=data.candidates?.[0]?.content?.parts?.[0]?.text||'No response received.';
@@ -1809,12 +1809,31 @@ THREE ACTIONS THIS WEEK:
   }catch(e){ console.error('AI error:',e); body.innerHTML=`<span style="color:var(--red)">Analysis failed: ${e.message}</span>`; stat.textContent='Error'; btn.textContent='🧠 Try Again'; btn.disabled=false; }
 };
 function fmtAI(t){
+  if(!t) return '';
   return t
-    .replace(/^#{1,3}\s+(.+)$/gm,'<span class="ai-stag">$1</span>')
-    .replace(/^([A-Z][A-Z\s&':]{4,}):$/gm,'<span class="ai-stag">$1</span>')
-    .replace(/\*\*([^*]+)\*\*/g,'<b style="color:var(--text)">$1</b>')
-    .replace(/\*([^*]+)\*/g,'<em>$1</em>')
-    .replace(/"([^"]+)"/g,'<b style="color:var(--green)">"$1"</b>');
+    // Normalize line endings
+    .replace(/\r\n/g,'\n')
+    // Section headers: ALL CAPS line ending with colon (with or without trailing text)
+    .replace(/^([A-Z][A-Z\s&':\/\-]{3,}):\s*$/gm,'<div class="ai-stag">$1</div>')
+    // Section headers with content on same line — split them
+    .replace(/^([A-Z][A-Z\s&':\/\-]{3,}):\s+(.+)$/gm,'<div class="ai-stag">$1</div><p>$2</p>')
+    // Markdown headers
+    .replace(/^#{1,3}\s+(.+)$/gm,'<div class="ai-stag">$1</div>')
+    // Bold text
+    .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    // Italic
+    .replace(/\*([^*\n]+)\*/g,'<em>$1</em>')
+    // Quoted words — highlight in green
+    .replace(/"([^"\n]{2,50})"/g,'<b style="color:var(--green)">"$1"</b>')
+    // Numbered list items
+    .replace(/^(\d+)\.\s+(.+)$/gm,'<div style="display:flex;gap:8px;margin:6px 0;"><span style="font-weight:800;color:var(--gold);min-width:20px;">$1.</span><span>$2</span></div>')
+    // Convert double newlines to paragraph breaks
+    .replace(/\n\n+/g,'</p><p style="margin:10px 0;">')
+    // Convert remaining single newlines to line breaks
+    .replace(/\n/g,'<br>')
+    // Wrap everything in a paragraph
+    .replace(/^(.)/,'<p style="margin:0 0 10px 0;">$1')
+    + '</p>';
 }
 
 
