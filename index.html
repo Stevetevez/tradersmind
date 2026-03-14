@@ -62,8 +62,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 /* ── BOTTOM NAV ── */
 .bnav{display:flex;background:var(--card);border-top:2px solid var(--border2);height:var(--nav-h);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -4px 20px rgba(26,45,80,0.10);}
 .bni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;position:relative;padding:8px 0;min-height:48px;}
-.bni .ico{font-size:22px;opacity:.45;transition:all .2s;}
-.bni .lbl{font-size:9px;letter-spacing:0.5px;color:#6b7a92;text-transform:uppercase;transition:color .2s;font-weight:600;}
+.bni .ico{font-size:22px;opacity:.6;transition:all .2s;}
+.bni .lbl{font-size:11px;letter-spacing:0px;color:#1a2332;text-transform:uppercase;transition:all .2s;font-weight:900;}
 .bni.active .ico{opacity:1;filter:drop-shadow(0 0 4px rgba(26,158,110,0.4));}
 .bni.active .lbl{color:var(--gold);}
 .bni.active::after{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;background:var(--gold);border-radius:0 0 4px 4px;}
@@ -71,8 +71,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 /* ── HOME ── */
 .home-hero{padding:22px 18px 18px;background:linear-gradient(160deg,rgba(26,158,110,0.08) 0%,transparent 55%);border-bottom:1px solid var(--border);}
 .home-date{font-size:12px;color:#4a5568;font-weight:600;margin-bottom:4px;}
-.home-mantra{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;line-height:1.3;color:var(--text);margin-top:4px;}
-.home-mantra em{color:var(--gold);font-style:normal;font-weight:800;}
+.home-mantra{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:900;line-height:1.4;color:#c0392b;margin-top:6px;text-transform:uppercase;letter-spacing:0.5px;}
+.home-mantra em{color:#c0392b;font-style:normal;font-weight:900;}
 .home-sub{font-size:13px;color:#4a5568;font-weight:500;line-height:1.6;margin-top:6px;}
 
 /* Highlight cards row */
@@ -474,7 +474,7 @@ canvas{display:block;}
     <!-- Hero -->
     <div class="home-hero">
       <div class="home-date" id="homeDate"></div>
-      <div class="home-mantra">Following your rules is <em>&gt;</em> than P&amp;L</div>
+      <div class="home-mantra">FOLLOWING MY RULES IS MORE IMPORTANT THAN P&amp;L</div>
     </div>
 
     <!-- Highlights -->
@@ -1387,7 +1387,12 @@ function populateTrade(t){
   if(followedRules===false) document.getElementById('ruleNo').classList.add('active');
   if(deviated===false) document.getElementById('deviateNo').classList.add('active');
   if(deviated===true) document.getElementById('deviateYes').classList.add('active');
-  ['before','during','after'].forEach(phase=>{ const mood=currentMoods[phase]; if(!mood) return; const row=document.getElementById('mood'+phase.charAt(0).toUpperCase()+phase.slice(1)); row?.querySelectorAll('.mood-btn').forEach(b=>{ if(b.textContent.trim()===mood) b.classList.add('sel'); }); });
+  ['before','during','after'].forEach(phase=>{
+    const mood=currentMoods[phase]; if(!mood) return;
+    const moods=mood.split(', ').map(m=>m.trim());
+    const row=document.getElementById('mood'+phase.charAt(0).toUpperCase()+phase.slice(1));
+    row?.querySelectorAll('.mood-btn').forEach(b=>{ if(moods.includes(b.textContent.trim())) b.classList.add('sel'); });
+  });
 }
 window.switchPhase=function(i){ document.querySelectorAll('#tradeOverlay .phase-content').forEach((p,j)=>p.classList.toggle('active',j===i)); document.querySelectorAll('.ptab').forEach((t,j)=>t.classList.toggle('active',j===i)); };
 window.selMood=function(btn,phase){ btn.closest('.mood-row').querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); currentMoods[phase]=btn.textContent.trim(); };
@@ -1520,32 +1525,82 @@ window.runAI=async function(){
   const lm={1:'1 day',2:'2-3 days',3:'4-5 days',4:'A week+'};const jr=jData.ratings||ratings||{};
   let txt=`WEEKLY JOURNAL (${jData.weekLabel||'current week'})\nBeliefs: Money=${g('q1_1')} | Family=${g('q1_2')} | Self-worth=${jr.r1||'—'}/10 | Limiting beliefs: ${(jData.beliefs||[]).join('; ')||'none'}\nEmotions: Before rules broken=${g('q2_1')} | After losses=${g('q2_2')} | FOMO=${jr.r2||'—'}/10 | Win effect=${g('q2_4')}\nGoals: Real reason=${g('q3_1')} | Target=${g('q3_2')} | Loss tolerance=${lm[jr.r3]||'—'} | 3yr vision=${g('q3_4')}\nIdentity: Self-describe=${g('q4_1')} | Losing week=${g('q4_2')} | Discipline=${g('q4_3')} | Ideal self=${g('q4_4')}\nCommitments: Focus=${g('q5_1')} | Rule=${g('q5_2')} | Last week review=${g('q5_3')}`;
   if(trades.length){
-    const avg=Math.round(trades.reduce((s,t)=>s+(t.overall||50),0)/trades.length);
-    const tpCount=trades.filter(t=>t.outcome==='tp').length, slCount=trades.filter(t=>t.outcome==='sl').length;
+    // ── Basic stats ──
+    const weekTrades=trades.filter(t=>isThisWeek(t.date));
+    const allTP=trades.filter(t=>t.outcome==='tp'), allSL=trades.filter(t=>t.outcome==='sl');
+    const tpCount=allTP.length, slCount=allSL.length;
     const avgRR=trades.filter(t=>t.rr).reduce((s,t)=>s+(t.rr||0),0)/(trades.filter(t=>t.rr).length||1);
     const winRate=Math.round(tpCount/(tpCount+slCount||1)*100);
-    const moods={};trades.forEach(t=>[t.moodBefore,t.moodDuring,t.moodAfter].forEach(m=>{if(m)moods[m]=(moods[m]||0)+1;}));
-    txt+=`\n\nTRADE LOG (${trades.length} trades) — Avg mind score: ${avg}% | TP: ${tpCount} | SL: ${slCount} | Win rate: ${winRate}% | Avg RR: ${avgRR.toFixed(1)}\nTop moods: ${Object.entries(moods).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([m,c])=>`${m}(${c}x)`).join(', ')}\n`;
-    trades.slice(-12).forEach((t,i)=>{
+    const avg=Math.round(trades.reduce((s,t)=>s+(t.overall||50),0)/trades.length);
+
+    // ── Best win / worst loss ──
+    const wins=trades.filter(t=>t.outcome==='tp'&&t.rr);
+    const losses=trades.filter(t=>t.outcome==='sl'&&t.rr);
+    const bestWin=wins.length?wins.reduce((a,b)=>b.rr>a.rr?b:a):null;
+    const worstLoss=losses.length?losses.reduce((a,b)=>b.rr>a.rr?b:a):null;
+
+    // ── Consecutive wins/losses ──
+    let maxConsecW=0,maxConsecL=0,curW=0,curL=0;
+    [...trades].sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(t=>{
+      if(t.outcome==='tp'){curW++;curL=0;maxConsecW=Math.max(maxConsecW,curW);}
+      else if(t.outcome==='sl'){curL++;curW=0;maxConsecL=Math.max(maxConsecL,curL);}
+    });
+
+    // ── Top moods (all values, comma-joined) ──
+    const moods={};
+    trades.forEach(t=>{
+      [t.moodBefore,t.moodDuring,t.moodAfter].forEach(m=>{
+        if(!m) return;
+        m.split(', ').forEach(single=>{ single=single.trim().replace(/^\S+\s/,''); if(single) moods[single]=(moods[single]||0)+1; });
+      });
+    });
+    const topMoods=Object.entries(moods).sort((a,b)=>b[1]-a[1]).slice(0,5);
+
+    // ── Top habits & mistakes ──
+    const habitCounts={}, mistakeCounts={};
+    trades.forEach(t=>{
+      (t.habits||[]).forEach(h=>{ habitCounts[h]=(habitCounts[h]||0)+1; });
+      (t.mistakes||[]).forEach(m=>{ mistakeCounts[m]=(mistakeCounts[m]||0)+1; });
+    });
+    const top5Habits=Object.entries(habitCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    const top5Mistakes=Object.entries(mistakeCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+
+    // ── This week summary ──
+    const wTP=weekTrades.filter(t=>t.outcome==='tp').length;
+    const wSL=weekTrades.filter(t=>t.outcome==='sl').length;
+    const wRR=weekTrades.filter(t=>t.rr).reduce((s,t)=>s+(t.rr||0),0)/(weekTrades.filter(t=>t.rr).length||1);
+
+    txt+=`\n\nTRADE LOG SUMMARY (all time: ${trades.length} trades)`;
+    txt+=`\nWin Rate: ${winRate}% | TP: ${tpCount} | SL: ${slCount} | Avg RR: ${avgRR.toFixed(2)} | Avg Mind Score: ${avg}%`;
+    txt+=`\nBest Win: ${bestWin?bestWin.pair+' +'+bestWin.rr+'R ('+new Date(bestWin.date).toLocaleDateString('en-GB')+')'  :'n/a'}`;
+    txt+=`\nWorst Loss: ${worstLoss?worstLoss.pair+' -'+worstLoss.rr+'R ('+new Date(worstLoss.date).toLocaleDateString('en-GB')+')':'n/a'}`;
+    txt+=`\nMax Consecutive Wins: ${maxConsecW} | Max Consecutive Losses: ${maxConsecL}`;
+    txt+=`\nThis Week: ${weekTrades.length} trades | ${wTP}W ${wSL}L | Avg RR: ${wRR.toFixed(2)}`;
+    txt+=`\nTop 5 Emotions: ${topMoods.map(([m,c])=>m+'('+c+'x)').join(', ')||'none logged'}`;
+    txt+=`\nTop 5 Good Habits: ${top5Habits.map(([h,c])=>h+'('+c+'x)').join(', ')||'none logged'}`;
+    txt+=`\nTop 5 Mistakes: ${top5Mistakes.map(([m,c])=>m+'('+c+'x)').join(', ')||'none logged'}`;
+    txt+=`\n`;
+
+    trades.slice(-15).forEach((t,i)=>{
       txt+=`\nTrade ${i+1}: ${t.pair} ${t.dir||''} | ${t.outcome?.toUpperCase()||'?'} | Score: ${t.overall}% | Rules: ${t.followedRules===true?'Yes':t.followedRules===false?'No':'N/A'}`;
       if(t.rr) txt+=` | RR: ${t.rr}`;
-      if(t.moodBefore) txt+=` | Before: ${t.moodBefore}(${t.clarityBefore}/10)`;
-      if(t.moodAfter) txt+=` | After: ${t.moodAfter}(${t.reflectionAfter}/10)`;
+      if(t.moodBefore) txt+=` | Before: ${t.moodBefore}`;
+      if(t.moodAfter) txt+=` | After: ${t.moodAfter}`;
       if(t.mistakes&&t.mistakes.length) txt+=`\n  Mistakes: ${t.mistakes.join(', ')}`;
-      if(t.habits&&t.habits.length) txt+=`\n  Good habits: ${t.habits.join(', ')}`;
-      if(t.beforeNote) txt+=`\n  Pre: ${t.beforeNote.substring(0,80)}`;
-      if(t.afterNote) txt+=`\n  Lesson: ${t.afterNote.substring(0,80)}`;
+      if(t.habits&&t.habits.length) txt+=`\n  Habits: ${t.habits.join(', ')}`;
+      if(t.beforeNote) txt+=`\n  Pre: ${t.beforeNote.substring(0,100)}`;
+      if(t.afterNote) txt+=`\n  Lesson: ${t.afterNote.substring(0,100)}`;
     });
     if(trades.length>=4){ const h=Math.floor(trades.length/2),f=trades.slice(0,h).reduce((s,t)=>s+(t.overall||50),0)/h,l=trades.slice(h).reduce((s,t)=>s+(t.overall||50),0)/(trades.length-h); txt+=`\nPsychology trend: First half avg ${Math.round(f)}% → Recent half ${Math.round(l)}% (${l>f?'IMPROVING':'DECLINING'})`; }
   } else txt+='\n\nTRADE LOG: No trades logged yet.';
-  const sys=`You are an expert forex trading psychology coach. Analyse the trader's weekly journal and trade log. Be specific, honest, and actionable.\n\nFORMATTING: Section headers ALL CAPS + colon. Plain text. Numbered lists for actions. Reference their actual words where relevant.\n\nSTRUCTURE:\nOPENING INSIGHT:\nCORE BELIEF PATTERNS:\nEMOTIONAL TRIGGERS & RISK PROFILE:\n${trades.length>=3?'PSYCHOLOGY PROGRESS ANALYSIS:\n':''}IDENTITY & TRADING CEILING:\nGOALS VS REALITY GAP:\nYOUR THREE PRIORITY ACTIONS:\nCLOSING:\n\nLength: minimum 1200 words. Write every section in FULL. Do not cut off any sentence or section. Complete the entire analysis.`;
+  const sys=`You are an expert forex trading psychology coach AND performance analyst. Analyse BOTH the trader's psychology AND their trading track record. Be specific, honest, and actionable. Reference their actual data.\n\nFORMATTING: Section headers ALL CAPS + colon. Plain text only. Numbered lists for action points. No markdown bold or asterisks.\n\nSTRUCTURE (write every section in full, do not skip any):\n\nOPENING INSIGHT:\n(1-2 sentences summarising the most important thing you see across psychology and performance)\n\nTRADE RECORD SUMMARY:\n(Summarise this week's trades and all-time stats. Comment on win rate, RR, consecutive wins/losses, best win, worst loss. Be analytical.)\n\nTOP 5 GOOD BEHAVIORS THIS WEEK:\n(List the top 5 most frequent good habits from the trade log data. For each, comment on its impact on performance.)\n\nTOP 5 BAD BEHAVIORS THIS WEEK:\n(List the top 5 most frequent mistakes from the trade log data. For each, explain the psychological root cause.)\n\nTOP 5 EMOTIONS THIS WEEK:\n(List the top 5 most frequent emotions logged. Analyse what each says about the trader's current psychological state.)\n\nCORE BELIEF PATTERNS:\n(Based on journal entries, identify deep-seated beliefs affecting trading decisions.)\n\nEMOTIONAL TRIGGERS & RISK PROFILE:\n(Connect specific emotions to specific trading behaviours shown in the data.)\n\n${trades.length>=3?'PSYCHOLOGY PROGRESS ANALYSIS:\n(Is the trader improving or declining? Reference specific data points.)\n\n':''}IDENTITY & TRADING CEILING:\n(What self-image patterns are limiting this trader's growth?)\n\nYOUR THREE PRIORITY ACTIONS:\n(The 3 most important things to work on this week, specific and measurable.)\n\nCLOSING:\n(One powerful motivating statement tailored to this trader.)\n\nLength: minimum 1400 words. Complete every section fully. Do not truncate.`;
   try{
     const GEMINI_KEY = localStorage.getItem('tm_gemini_key');
     if(!GEMINI_KEY){ body.innerHTML='<span style="color:var(--red)">No Gemini API key found.\nGo to Settings (⚙️ on home screen) to add your key.</span>'; stat.textContent='Error'; btn.disabled=false; btn.textContent='✦ Try Again'; return; }
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
     const geminiBody = {
       contents: [{ parts: [{ text: sys + '\n\nAnalyse my TraderMind data:\n\n' + txt }] }],
-      generationConfig: { maxOutputTokens: 3000, temperature: 0.7 }
+      generationConfig: { maxOutputTokens: 4000, temperature: 0.7 }
     };
     const res = await fetch(geminiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(geminiBody) });
     if(!res.ok){
@@ -1719,13 +1774,19 @@ window.addOtherMood=function(phase){
   const btn=document.createElement('span');
   btn.className='mood-btn sel';
   btn.textContent='✏️ '+text.trim();
-  btn.onclick=function(){ this.classList.toggle('sel'); if(this.classList.contains('sel')) currentMoods[phase]=this.textContent; };
+  btn.onclick=function(){
+    this.classList.toggle('sel');
+    const r=this.closest('.mood-row');
+    const selected=[...r.querySelectorAll('.mood-btn.sel')].filter(b=>!b.classList.contains('other-mood-btn')).map(b=>b.textContent.trim());
+    currentMoods[phase]=selected.join(', ');
+    if(phase==='before') calcBeforeAI();
+    if(phase==='during') calcDuringAI();
+  };
   const otherBtn=row.querySelector('.other-mood-btn');
   row.insertBefore(btn,otherBtn);
-  // auto-select it
-  document.querySelectorAll('#'+rowId+' .mood-btn').forEach(b=>{ if(b!==btn&&!b.classList.contains('other-mood-btn')) b.classList.remove('sel'); });
   btn.classList.add('sel');
-  currentMoods[phase]=btn.textContent;
+  const selected2=[...row.querySelectorAll('.mood-btn.sel')].filter(b=>!b.classList.contains('other-mood-btn')).map(b=>b.textContent.trim());
+  currentMoods[phase]=selected2.join(', ');
 };
 
 // ── PREP PSYCHOLOGY QUESTIONS ──
