@@ -889,8 +889,12 @@ canvas{display:block;}
   <div class="overlay-card">
     <div class="overlay-hdr"><h3 id="overlayTitle">Log Trade</h3><button class="overlay-close" onclick="closeTradeForm()">✕</button></div>
     <div class="overlay-body">
-      <!-- Auto timestamp -->
-      <div class="timestamp-badge"><span>🕐</span><span id="tradeTimestamp">—</span></div>
+      <!-- Trade Date/Time picker -->
+      <div class="timestamp-badge" style="flex-direction:column;align-items:flex-start;gap:6px;padding:10px 14px;">
+        <div style="display:flex;align-items:center;gap:6px;"><span>📅</span><span style="font-size:11px;color:var(--green);font-weight:700;letter-spacing:0.5px;">TRADE DATE &amp; TIME</span></div>
+        <input type="datetime-local" id="tradeDateInput" style="width:100%;background:transparent;border:none;border-bottom:1px solid var(--gold-dim);border-radius:0;padding:2px 0;font-size:13px;font-weight:600;color:var(--text);font-family:'DM Sans',sans-serif;box-shadow:none;" oninput="updateTimestampDisplay()">
+        <div id="tradeTimestamp" style="font-size:11px;color:var(--muted);font-weight:500;"></div>
+      </div>
       <!-- Pair + Direction only at top -->
       <div class="field-row">
         <div class="field"><label>Currency Pair</label><input type="text" id="tPair" placeholder="EUR/USD, GBP/JPY..."></div>
@@ -1344,7 +1348,7 @@ window.saveTrade = async function(){
     entryType:selectedEntry,
     mistakes:[...selectedMistakes], otherMistakes:document.getElementById('otherMistakes').value.trim(),
     habits:[...selectedHabits], otherHabits:document.getElementById('otherHabits').value.trim(),
-    date:editingTradeId?trades.find(t=>t.id===editingTradeId)?.date||new Date().toISOString():new Date().toISOString()
+    date:getPickerDate(editingTradeId)
   };
   setSyncDot('syncing');
   try{
@@ -1449,7 +1453,7 @@ window.selectCalDay=function(key){ selectedCalDay=selectedCalDay===key?null:key;
 window.openTradeForm=function(tradeId){
   editingTradeId=tradeId||null; resetTradeForm();
   if(tradeId){ const t=trades.find(x=>x.id===tradeId); if(t) populateTrade(t); document.getElementById('overlayTitle').textContent='Edit Trade'; }
-  else { document.getElementById('overlayTitle').textContent='Log New Trade'; document.getElementById('tradeTimestamp').textContent=new Date().toLocaleString('en-GB',{weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}); }
+  else { document.getElementById('overlayTitle').textContent='Log New Trade'; setDatePickerNow(); }
   document.getElementById('tradeOverlay').classList.add('open');
 };
 window.closeTradeForm=function(){ document.getElementById('tradeOverlay').classList.remove('open'); };
@@ -1466,13 +1470,15 @@ function resetTradeForm(){
   document.querySelectorAll('#tradeOverlay .rbtn').forEach(b=>b.classList.remove('active'));
   tradeRatings={}; currentMoods={before:'',during:'',after:''}; followedRules=null; deviated=null;
   ['ruleYes','ruleNo','deviateNo','deviateYes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('active'); });
+  const dpEl=document.getElementById('tradeDateInput'); if(dpEl) dpEl.value='';
   switchPhase(0);
 }
 function populateTrade(t){
   document.getElementById('tPair').value=t.pair||''; document.getElementById('tDir').value=t.dir||''; document.getElementById('tOutcome').value=t.outcome||'';
   document.getElementById('tRR').value=t.rr||''; document.getElementById('tTP').value=t.tp||''; document.getElementById('tSL').value=t.sl||''; document.getElementById('tEntry').value=t.entry||''; document.getElementById('tPips').value=t.pips||'';
   document.getElementById('tBeforeNote').value=t.beforeNote||''; document.getElementById('tDuringNote').value=t.duringNote||''; document.getElementById('tAfterNote').value=t.afterNote||'';
-  document.getElementById('tradeTimestamp').textContent=t.date?new Date(t.date).toLocaleString('en-GB',{weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'—';
+  // Set date picker from trade date
+  if(t.date){ const d=new Date(t.date); const local=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16); document.getElementById('tradeDateInput').value=local; updateTimestampDisplay(); } else { setDatePickerNow(); }
   if(t.clarityBefore){ tradeRatings['rBefore']=t.clarityBefore; document.querySelectorAll('#rBefore .rbtn')[t.clarityBefore-1]?.classList.add('active'); }
   if(t.reflectionAfter){ tradeRatings['rAfter']=t.reflectionAfter; document.querySelectorAll('#rAfter .rbtn')[t.reflectionAfter-1]?.classList.add('active'); }
   currentMoods={before:t.moodBefore||'',during:t.moodDuring||'',after:t.moodAfter||''};
@@ -2082,7 +2088,7 @@ window.savePhase=async function(phase){
     mistakes:[...selectedMistakes], otherMistakes:document.getElementById('otherMistakes')?.value.trim()||'',
     habits:[...selectedHabits], otherHabits:document.getElementById('otherHabits')?.value.trim()||'',
     savedPhase:phase,
-    date:editingTradeId?trades.find(t=>t.id===editingTradeId)?.date||new Date().toISOString():new Date().toISOString()
+    date:getPickerDate(editingTradeId)
   };
   setSyncDot('syncing');
   try{
@@ -2096,6 +2102,38 @@ window.savePhase=async function(phase){
     showToast('✓ ' + phase.charAt(0).toUpperCase()+phase.slice(1) + ' phase saved');
   } catch(e){ setSyncDot('error'); showToast('Save failed: '+e.message.substring(0,40)); }
 };
+
+// ── DATE PICKER HELPERS ──
+function setDatePickerNow(){
+  const now=new Date();
+  const local=new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,16);
+  document.getElementById('tradeDateInput').value=local;
+  updateTimestampDisplay();
+}
+window.updateTimestampDisplay=function(){
+  const val=document.getElementById('tradeDateInput').value;
+  const el=document.getElementById('tradeTimestamp');
+  if(!val||!el) return;
+  const d=new Date(val);
+  const now=new Date(); const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const tradeDay=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  const diffDays=Math.round((today-tradeDay)/(1000*60*60*24));
+  let dayLabel='';
+  if(diffDays===0) dayLabel='Today';
+  else if(diffDays===1) dayLabel='Yesterday';
+  else if(diffDays>1) dayLabel=diffDays+' days ago';
+  else if(diffDays<0) dayLabel='Future date';
+  const timeStr=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  el.textContent=dayLabel+' at '+timeStr;
+  el.style.color=diffDays>0?'var(--orange)':'var(--muted)';
+};
+function getPickerDate(editingId){
+  const val=document.getElementById('tradeDateInput').value;
+  if(val) return new Date(val).toISOString();
+  // fallback: keep existing date if editing, otherwise now
+  if(editingId){ const t=trades.find(x=>x.id===editingId); if(t?.date) return t.date; }
+  return new Date().toISOString();
+}
 
 // ── AI DECISION — BEFORE phase ──
 function calcBeforeAI(){
