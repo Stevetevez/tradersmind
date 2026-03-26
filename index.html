@@ -1081,7 +1081,41 @@ canvas{display:block;}
         </div>
       </div>
       <button class="phase-save-btn" onclick="savePhase('review')">💾 Save — Review</button>
+      <div style="background:rgba(255,59,59,0.08);border:1.5px solid rgba(255,59,59,0.35);border-radius:12px;padding:16px 18px;margin:18px 0 10px;text-align:center;">
+        <p style="font-weight:800;font-size:13px;color:#ff3b3b;letter-spacing:0.5px;line-height:1.75;margin:0;text-transform:uppercase;">
+          TODAY I AM NOT HERE TO MAKE MONEY.<br>
+          I AM HERE TO EXECUTE MY EDGE.<br>
+          MISSING A TRADE IS OKAY.<br>
+          BREAKING RULES IS FAILURE.
+        </p>
+      </div>
       <button class="save-trade-btn" onclick="saveTrade()">✅ Save Complete Trade Log</button>
+      <div style="background:var(--card);border:1px solid var(--gold-dim);border-radius:12px;padding:16px 18px;margin-top:14px;">
+        <p style="font-size:12px;font-weight:700;color:var(--gold);letter-spacing:0.5px;margin:0 0 12px;text-transform:uppercase;">Post-Trade Review</p>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:13px;font-weight:600;color:var(--text);">A. Did I follow my rules?</span>
+            <div style="display:flex;gap:8px;">
+              <button id="rulesYes" onclick="toggleReview('rules','yes')" style="padding:6px 16px;border-radius:20px;border:1.5px solid var(--muted);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;">Yes</button>
+              <button id="rulesNo" onclick="toggleReview('rules','no')" style="padding:6px 16px;border-radius:20px;border:1.5px solid var(--muted);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;">No</button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:13px;font-weight:600;color:var(--text);">B. Did I enter before candle close?</span>
+            <div style="display:flex;gap:8px;">
+              <button id="candleYes" onclick="toggleReview('candle','yes')" style="padding:6px 16px;border-radius:20px;border:1.5px solid var(--muted);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;">Yes</button>
+              <button id="candleNo" onclick="toggleReview('candle','no')" style="padding:6px 16px;border-radius:20px;border:1.5px solid var(--muted);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;">No</button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:13px;font-weight:600;color:var(--text);">C. Was this an A+ setup?</span>
+            <div style="display:flex;gap:8px;">
+              <button id="setupYes" onclick="toggleReview('setup','yes')" style="padding:6px 16px;border-radius:20px;border:1.5px solid var(--muted);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;">Yes</button>
+              <button id="setupNo" onclick="toggleReview('setup','no')" style="padding:6px 16px;border-radius:20px;border:1.5px solid var(--muted);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;">No</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1327,6 +1361,20 @@ function listenTrades(){
   if(unsubTrades) unsubTrades();
   unsubTrades=db.collection('users').doc(currentUser.uid).collection('trades').orderBy('date','asc').onSnapshot(snap=>{ trades=snap.docs.map(d=>({id:d.id,...d.data()})); renderTradeList(); updateHomeHighlights(); setSyncDot('synced'); },err=>setSyncDot('error'));
 }
+const reviewAnswers = { rules: null, candle: null, setup: null };
+window.toggleReview = function(key, val) {
+  reviewAnswers[key] = val;
+  const yesBtn = document.getElementById(key + 'Yes');
+  const noBtn  = document.getElementById(key + 'No');
+  if (!yesBtn || !noBtn) return;
+  const activeStyle = 'background:var(--gold);color:#fff;border-color:var(--gold);';
+  const inactiveStyle = 'background:transparent;color:var(--muted);border-color:var(--muted);';
+  yesBtn.style.cssText = yesBtn.style.cssText.replace(/background:[^;]+;|color:[^;]+;|border-color:[^;]+;/g,'');
+  noBtn.style.cssText  = noBtn.style.cssText.replace(/background:[^;]+;|color:[^;]+;|border-color:[^;]+;/g,'');
+  if (val === 'yes') { yesBtn.style.cssText += activeStyle; noBtn.style.cssText += inactiveStyle; }
+  else               { noBtn.style.cssText  += activeStyle; yesBtn.style.cssText += inactiveStyle; }
+};
+
 window.saveTrade = async function(){
   if(!currentUser) return;
   const pair=document.getElementById('tPair').value.trim();
@@ -1348,7 +1396,10 @@ window.saveTrade = async function(){
     entryType:selectedEntry,
     mistakes:[...selectedMistakes], otherMistakes:document.getElementById('otherMistakes').value.trim(),
     habits:[...selectedHabits], otherHabits:document.getElementById('otherHabits').value.trim(),
-    date:getPickerDate(editingTradeId)
+    date:getPickerDate(editingTradeId),
+    reviewFollowedRules: reviewAnswers.rules,
+    reviewEnteredBeforeClose: reviewAnswers.candle,
+    reviewAPlusSetup: reviewAnswers.setup
   };
   setSyncDot('syncing');
   try{
@@ -1463,6 +1514,10 @@ function resetTradeForm(){
   document.querySelectorAll('.mchip').forEach(c=>c.classList.remove('sel'));
   ['otherMistakes','otherHabits'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   selectedMistakes=new Set(); selectedHabits=new Set(); selectedEntry='';
+  reviewAnswers.rules = null; reviewAnswers.candle = null; reviewAnswers.setup = null;
+  ['rulesYes','rulesNo','candleYes','candleNo','setupYes','setupNo'].forEach(id=>{
+    const el=document.getElementById(id); if(el){ el.style.background='transparent'; el.style.color='var(--muted)'; el.style.borderColor='var(--muted)'; }
+  });
   ['beforeAiResult','duringAiResult'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
   [0,1,2].forEach(j=>{ const el=document.getElementById('ec'+j); if(el) el.classList.remove('sel'); });
   document.querySelectorAll('.pcheck').forEach(c=>{ c.classList.remove('checked'); c.querySelector('.pcheck-box').textContent='☐'; });
