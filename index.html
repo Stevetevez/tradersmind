@@ -889,6 +889,15 @@ canvas{display:block;}
   <div class="overlay-card">
     <div class="overlay-hdr"><h3 id="overlayTitle">Log Trade</h3><button class="overlay-close" onclick="closeTradeForm()">✕</button></div>
     <div class="overlay-body">
+      <!-- Mantra -->
+      <div style="background:rgba(255,59,59,0.08);border:1.5px solid rgba(255,59,59,0.35);border-radius:12px;padding:14px 16px;margin-bottom:14px;text-align:center;">
+        <p style="font-weight:800;font-size:12px;color:#ff3b3b;letter-spacing:0.5px;line-height:1.8;margin:0;text-transform:uppercase;">
+          TODAY I AM NOT HERE TO MAKE MONEY.<br>
+          I AM HERE TO EXECUTE MY EDGE.<br>
+          MISSING A TRADE IS OKAY.<br>
+          BREAKING RULES IS FAILURE.
+        </p>
+      </div>
       <!-- Trade Date/Time picker -->
       <div class="timestamp-badge" style="flex-direction:column;align-items:flex-start;gap:6px;padding:10px 14px;">
         <div style="display:flex;align-items:center;gap:6px;"><span>📅</span><span style="font-size:11px;color:var(--green);font-weight:700;letter-spacing:0.5px;">TRADE DATE &amp; TIME</span></div>
@@ -1028,6 +1037,32 @@ canvas{display:block;}
         <div class="qb"><label class="qlbl">Reflection score (1=Emotional chaos · 10=Fully disciplined)</label><div class="rating-wrap" id="rAfter"><button class="rbtn" onclick="rateT('rAfter',this,1)">1</button><button class="rbtn" onclick="rateT('rAfter',this,2)">2</button><button class="rbtn" onclick="rateT('rAfter',this,3)">3</button><button class="rbtn" onclick="rateT('rAfter',this,4)">4</button><button class="rbtn" onclick="rateT('rAfter',this,5)">5</button><button class="rbtn" onclick="rateT('rAfter',this,6)">6</button><button class="rbtn" onclick="rateT('rAfter',this,7)">7</button><button class="rbtn" onclick="rateT('rAfter',this,8)">8</button><button class="rbtn" onclick="rateT('rAfter',this,9)">9</button><button class="rbtn" onclick="rateT('rAfter',this,10)">10</button></div></div>
         <div class="qb"><label class="qlbl">What did you learn from this trade?</label><textarea id="tAfterNote" placeholder="The lesson, what you'd do differently..."></textarea></div>
         <button class="phase-save-btn" onclick="savePhase('after')">💾 Save — After Trade</button>
+        <div style="background:var(--card);border:1px solid var(--gold-dim);border-radius:12px;padding:16px 18px;margin-top:14px;">
+          <p style="font-size:12px;font-weight:700;color:var(--gold);letter-spacing:0.5px;margin:0 0 12px;text-transform:uppercase;">Post-Trade Review</p>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:13px;font-weight:600;color:var(--text);">A. Did I follow my rules?</span>
+              <div style="display:flex;gap:8px;">
+                <button id="rulesYes2" onclick="toggleReview('rules','yes')" style="padding:6px 16px;border-radius:20px;border:1.5px solid var(--muted);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;">Yes</button>
+                <button id="rulesNo2" onclick="toggleReview('rules','no')" style="padding:6px 16px;border-radius:20px;border:1.5px solid var(--muted);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;">No</button>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:13px;font-weight:600;color:var(--text);">B. Did I enter before candle close?</span>
+              <div style="display:flex;gap:8px;">
+                <button id="candleYes2" onclick="toggleReview('candle','yes')" style="padding:6px 16px;border-radius:20px;border:1.5px solid var(--muted);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;">Yes</button>
+                <button id="candleNo2" onclick="toggleReview('candle','no')" style="padding:6px 16px;border-radius:20px;border:1.5px solid var(--muted);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;">No</button>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:13px;font-weight:600;color:var(--text);">C. Was this an A+ setup?</span>
+              <div style="display:flex;gap:8px;">
+                <button id="setupYes2" onclick="toggleReview('setup','yes')" style="padding:6px 16px;border-radius:20px;border:1.5px solid var(--muted);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;">Yes</button>
+                <button id="setupNo2" onclick="toggleReview('setup','no')" style="padding:6px 16px;border-radius:20px;border:1.5px solid var(--muted);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;">No</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="phase-content" id="ph3">
         <div class="qb">
@@ -1081,15 +1116,7 @@ canvas{display:block;}
         </div>
       </div>
       <button class="phase-save-btn" onclick="savePhase('review')">💾 Save — Review</button>
-      <div style="background:rgba(255,59,59,0.08);border:1.5px solid rgba(255,59,59,0.35);border-radius:12px;padding:16px 18px;margin:18px 0 10px;text-align:center;">
-        <p style="font-weight:800;font-size:13px;color:#ff3b3b;letter-spacing:0.5px;line-height:1.75;margin:0;text-transform:uppercase;">
-          TODAY I AM NOT HERE TO MAKE MONEY.<br>
-          I AM HERE TO EXECUTE MY EDGE.<br>
-          MISSING A TRADE IS OKAY.<br>
-          BREAKING RULES IS FAILURE.
-        </p>
-      </div>
-      <button class="save-trade-btn" onclick="saveTrade()">✅ Save Complete Trade Log</button>
+      <button class="save-trade-btn" onclick="saveTrade()">✅ Save Complete Trade Log
       <div style="background:var(--card);border:1px solid var(--gold-dim);border-radius:12px;padding:16px 18px;margin-top:14px;">
         <p style="font-size:12px;font-weight:700;color:var(--gold);letter-spacing:0.5px;margin:0 0 12px;text-transform:uppercase;">Post-Trade Review</p>
         <div style="display:flex;flex-direction:column;gap:12px;">
@@ -1364,15 +1391,16 @@ function listenTrades(){
 const reviewAnswers = { rules: null, candle: null, setup: null };
 window.toggleReview = function(key, val) {
   reviewAnswers[key] = val;
-  const yesBtn = document.getElementById(key + 'Yes');
-  const noBtn  = document.getElementById(key + 'No');
-  if (!yesBtn || !noBtn) return;
-  const activeStyle = 'background:var(--gold);color:#fff;border-color:var(--gold);';
-  const inactiveStyle = 'background:transparent;color:var(--muted);border-color:var(--muted);';
-  yesBtn.style.cssText = yesBtn.style.cssText.replace(/background:[^;]+;|color:[^;]+;|border-color:[^;]+;/g,'');
-  noBtn.style.cssText  = noBtn.style.cssText.replace(/background:[^;]+;|color:[^;]+;|border-color:[^;]+;/g,'');
-  if (val === 'yes') { yesBtn.style.cssText += activeStyle; noBtn.style.cssText += inactiveStyle; }
-  else               { noBtn.style.cssText  += activeStyle; yesBtn.style.cssText += inactiveStyle; }
+  const ids = [key+'Yes', key+'No', key+'Yes2', key+'No2'];
+  ids.forEach(id => {
+    const el = document.getElementById(id); if(!el) return;
+    el.style.background='transparent'; el.style.color='var(--muted)'; el.style.borderColor='var(--muted)';
+  });
+  const activeIds = val==='yes' ? [key+'Yes', key+'Yes2'] : [key+'No', key+'No2'];
+  activeIds.forEach(id => {
+    const el = document.getElementById(id); if(!el) return;
+    el.style.background='var(--gold)'; el.style.color='#fff'; el.style.borderColor='var(--gold)';
+  });
 };
 
 window.saveTrade = async function(){
@@ -1515,7 +1543,7 @@ function resetTradeForm(){
   ['otherMistakes','otherHabits'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   selectedMistakes=new Set(); selectedHabits=new Set(); selectedEntry='';
   reviewAnswers.rules = null; reviewAnswers.candle = null; reviewAnswers.setup = null;
-  ['rulesYes','rulesNo','candleYes','candleNo','setupYes','setupNo'].forEach(id=>{
+  ['rulesYes','rulesNo','candleYes','candleNo','setupYes','setupNo','rulesYes2','rulesNo2','candleYes2','candleNo2','setupYes2','setupNo2'].forEach(id=>{
     const el=document.getElementById(id); if(el){ el.style.background='transparent'; el.style.color='var(--muted)'; el.style.borderColor='var(--muted)'; }
   });
   ['beforeAiResult','duringAiResult'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
