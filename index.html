@@ -2016,7 +2016,8 @@ THREE ACTIONS THIS WEEK:
     showInsightSnippet(full,snippet.date);
   }catch(e){ console.error('AI error:',e); body.innerHTML=`<span style="color:var(--red)">Analysis failed: ${e.message}</span>`; stat.textContent='Error'; btn.textContent='🧠 Try Again'; btn.disabled=false; }
 };
-function fmtAI(t){\n  if(!t) return '';
+function fmtAI(t){
+  if(!t) return '';
   // Strip any raw HTML tags that leaked through (e.g. "ai-stag">TEXT)
   t = t.replace(/"ai-stag">/gi, '').replace(/<\/?[a-z][^>]*>/gi, '');
   return t
