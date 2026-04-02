@@ -507,6 +507,7 @@ canvas{display:block;}
       <div class="tbar-logo">Trader<em>Mind</em></div>
       <div class="tbar-right">
         <div class="sync-dot" id="syncDot"></div>
+        <div id="homeAcctBadge" onclick="openAccountSwitcher()" style="cursor:pointer;padding:5px 10px;background:var(--card2);border:1px solid var(--gold-dim);border-radius:20px;font-size:11px;font-weight:700;color:var(--gold);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="Switch account">📁 All Accounts</div>
         <div class="tbar-badge" onclick="openSettings()" style="cursor:pointer" title="Settings">⚙️ Settings</div>
         <div class="tbar-avatar" id="userAvatar" onclick="signOutUser()" title="Sign out">👤</div>
       </div>
@@ -750,6 +751,7 @@ canvas{display:block;}
     <!-- ── PERFORMANCE TAB ── -->
     <div class="an-content" id="anContent1">
       <div class="analysis-hero"><h2>Performance<br><em>Dashboard</em></h2><p>Your complete trading statistics — calculated instantly from your trade log.</p></div>
+      <div id="perfAcctBadge" onclick="openAccountSwitcher()" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--card2);border:1px solid var(--gold-dim);border-radius:20px;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:12px;">📁 All Accounts <span style="font-size:10px;opacity:0.7;">▾ tap to filter</span></div>
       <button class="cta-btn" onclick="renderPerformance()" style="margin-bottom:4px;">📊 Calculate Performance</button>
       <div id="perfDashboard" style="display:none;padding:0 0 20px;">
 
@@ -908,6 +910,13 @@ canvas{display:block;}
       <div class="field-row">
         <div class="field"><label>Currency Pair</label><input type="text" id="tPair" placeholder="EUR/USD, GBP/JPY..."></div>
         <div class="field"><label>Direction</label><select id="tDir"><option value="">Select</option><option>BUY</option><option>SELL</option></select></div>
+      </div>
+      <!-- Account selector -->
+      <div class="field" style="margin-bottom:14px;">
+        <label style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:0.5px;text-transform:uppercase;display:block;margin-bottom:6px;">📁 Trading Account</label>
+        <select id="tAccount" style="width:100%;padding:10px 12px;background:var(--card2);border:1px solid var(--gold-dim);border-radius:10px;color:var(--text);font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;">
+          <option value="">— Select account —</option>
+        </select>
       </div>
       <!-- Psychology phases -->
       <div class="phase-tabs">
@@ -1122,6 +1131,18 @@ canvas{display:block;}
 </div>
 
 
+<!-- ACCOUNT SWITCHER OVERLAY -->
+<div class="overlay" id="acctSwitcherOverlay">
+  <div class="overlay-card" style="max-height:80vh;overflow-y:auto;">
+    <div class="overlay-hdr"><h3>Switch Account</h3><button class="overlay-close" onclick="closeAccountSwitcher()">✕</button></div>
+    <div class="overlay-body">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Select an account to filter trades and performance reports. Choose "All Accounts" to see everything.</p>
+      <div id="acctSwitcherList" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <button onclick="closeAccountSwitcher();openSettings();" style="width:100%;margin-top:16px;padding:11px;background:transparent;color:var(--muted);border:1px solid var(--border2);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;">⚙️ Manage Accounts</button>
+    </div>
+  </div>
+</div>
+
 <!-- SETTINGS OVERLAY -->
 <div class="overlay" id="settingsOverlay">
   <div class="overlay-card">
@@ -1144,6 +1165,18 @@ canvas{display:block;}
         <strong style="color:var(--text);display:block;margin-bottom:4px;">🔒 Security note</strong>
         Your key is stored in your browser's localStorage — it stays on your device only. 
         To keep it safe: in Google AI Studio, restrict your key to your Netlify domain only.
+      </div>
+
+      <!-- ACCOUNTS MANAGEMENT -->
+      <div class="qb" style="margin-top:18px;">
+        <label class="qlbl" style="color:var(--text);font-size:13px;font-weight:600;">📁 Trading Accounts</label>
+        <p style="font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:12px;">Add your trading accounts. When logging trades, select which account it belongs to.</p>
+        <div id="acctList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <input type="text" id="newAcctName" placeholder="Account name (e.g. FTMO, Personal)" style="font-size:13px;">
+          <input type="text" id="newAcctBroker" placeholder="Broker (e.g. ICMarkets, Exness)" style="font-size:13px;">
+          <button onclick="addAccount()" style="padding:11px;background:var(--gold);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">+ Add Account</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1168,6 +1201,9 @@ canvas{display:block;}
 // ── STATE ──
 let app, auth, db, currentUser;
 let trades = [];
+let accounts = [];  // [{id, name, broker}]
+let currentAccountId = null; // null = all accounts
+let unsubAccounts = null;
 let jData = {};
 let ratings = {}, tradeRatings = {}, selectedBeliefs = new Set();
 let currentMoods = {before:'',during:'',after:''};
@@ -1253,6 +1289,7 @@ function setupAuth(){
       renderCreedScreen();
       await loadJournal();
       listenTrades();
+      listenAccounts();
     } else {
       currentUser=null;
       document.getElementById('setupScreen').classList.remove('hidden');
@@ -1362,6 +1399,92 @@ function listenTrades(){
   if(unsubTrades) unsubTrades();
   unsubTrades=db.collection('users').doc(currentUser.uid).collection('trades').orderBy('date','asc').onSnapshot(snap=>{ trades=snap.docs.map(d=>({id:d.id,...d.data()})); renderTradeList(); updateHomeHighlights(); setSyncDot('synced'); },err=>setSyncDot('error'));
 }
+function listenAccounts(){
+  if(!currentUser) return;
+  if(unsubAccounts) unsubAccounts();
+  unsubAccounts=db.collection('users').doc(currentUser.uid).collection('accounts').orderBy('createdAt','asc').onSnapshot(snap=>{
+    accounts=snap.docs.map(d=>({id:d.id,...d.data()}));
+    refreshAccountDropdowns();
+    renderSettingsAcctList();
+  },err=>console.error('Accounts error:',err));
+}
+function refreshAccountDropdowns(){
+  // Update trade form select
+  const sel=document.getElementById('tAccount');
+  if(sel){
+    const prev=sel.value;
+    sel.innerHTML='<option value="">— Select account —</option>';
+    accounts.forEach(a=>{ const o=document.createElement('option'); o.value=a.id; o.textContent=a.name+(a.broker?' — '+a.broker:''); sel.appendChild(o); });
+    if(prev) sel.value=prev;
+    else if(currentAccountId) sel.value=currentAccountId;
+  }
+  // Update home badge
+  updateAcctBadge();
+}
+function updateAcctBadge(){
+  const acct=currentAccountId?accounts.find(a=>a.id===currentAccountId):null;
+  const label=acct?(acct.name+(acct.broker?' · '+acct.broker:'')):'All Accounts';
+  const short=label.length>18?label.substring(0,16)+'…':label;
+  ['homeAcctBadge','perfAcctBadge'].forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    if(id==='homeAcctBadge') el.textContent='📁 '+short;
+    else el.innerHTML='📁 '+short+' <span style="font-size:10px;opacity:0.7;">▾ tap to filter</span>';
+    el.style.color=currentAccountId?'var(--green)':'var(--gold)';
+    el.style.borderColor=currentAccountId?'var(--green)':'var(--gold-dim)';
+  });
+}
+window.addAccount=async function(){
+  if(!currentUser) return;
+  const name=document.getElementById('newAcctName').value.trim();
+  const broker=document.getElementById('newAcctBroker').value.trim();
+  if(!name){ showToast('Enter an account name'); return; }
+  await db.collection('users').doc(currentUser.uid).collection('accounts').add({name,broker,createdAt:new Date().toISOString()});
+  document.getElementById('newAcctName').value='';
+  document.getElementById('newAcctBroker').value='';
+  showToast('Account added ✓');
+};
+window.deleteAccount=async function(id){
+  if(!confirm('Delete this account? Trades linked to it will not be deleted.')) return;
+  await db.collection('users').doc(currentUser.uid).collection('accounts').doc(id).delete();
+  if(currentAccountId===id){ currentAccountId=null; updateAcctBadge(); }
+  showToast('Account removed');
+};
+function renderSettingsAcctList(){
+  const el=document.getElementById('acctList'); if(!el) return;
+  if(!accounts.length){ el.innerHTML='<div style="font-size:12px;color:var(--muted);text-align:center;padding:10px 0;">No accounts yet. Add one below.</div>'; return; }
+  el.innerHTML=accounts.map(a=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card2);border-radius:10px;border:1px solid var(--border2);">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);">${a.name}</div>
+        ${a.broker?`<div style="font-size:11px;color:var(--muted);margin-top:2px;">${a.broker}</div>`:''}
+      </div>
+      <button onclick="deleteAccount('${a.id}')" style="padding:5px 10px;background:var(--red-dim);color:var(--red);border:1px solid var(--red-dim);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;">Remove</button>
+    </div>`).join('');
+}
+window.openAccountSwitcher=function(){
+  const list=document.getElementById('acctSwitcherList');
+  const items=[{id:null,name:'All Accounts',broker:'Show all trades'},...accounts];
+  list.innerHTML=items.map(a=>{
+    const active=(a.id===currentAccountId);
+    return `<div onclick="selectAccount('${a.id||''}')" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:${active?'rgba(197,154,76,0.12)':'var(--card2)'};border:1.5px solid ${active?'var(--gold)':'var(--border2)'};border-radius:12px;cursor:pointer;">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:${active?'var(--gold)':'var(--text)'};">${a.id===null?'📁 ':''} ${a.name}</div>
+        ${a.broker?`<div style="font-size:11px;color:var(--muted);margin-top:2px;">${a.broker}</div>`:''}
+      </div>
+      ${active?'<span style="color:var(--gold);font-size:16px;">✓</span>':''}
+    </div>`;
+  }).join('');
+  document.getElementById('acctSwitcherOverlay').classList.add('open');
+};
+window.closeAccountSwitcher=function(){ document.getElementById('acctSwitcherOverlay').classList.remove('open'); };
+window.selectAccount=function(id){
+  currentAccountId=id||null;
+  updateAcctBadge();
+  closeAccountSwitcher();
+  renderTradeList();
+  // If performance dashboard is open, re-render
+  if(document.getElementById('perfDashboard').style.display!=='none') renderPerformance();
+};
 const reviewAnswers = { rules: null, candle: null, setup: null };
 window.toggleReview = function(key, val) {
   reviewAnswers[key] = val;
@@ -1398,7 +1521,9 @@ window.saveTrade = async function(){
     date:getPickerDate(editingTradeId),
     reviewFollowedRules: reviewAnswers.rules,
     reviewEnteredBeforeClose: reviewAnswers.candle,
-    reviewAPlusSetup: reviewAnswers.setup
+    reviewAPlusSetup: reviewAnswers.setup,
+    accountId: document.getElementById('tAccount').value || null,
+    accountLabel: document.getElementById('tAccount').options[document.getElementById('tAccount').selectedIndex]?.text || null
   };
   setSyncDot('syncing');
   try{
@@ -1411,18 +1536,25 @@ window.deleteTrade=async function(id,e){ e.stopPropagation(); if(!confirm('Delet
 
 // ── FILTER ──
 window.setFilter=function(f,btn){ activeFilter=f; document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.getElementById('calendarWrap').style.display=f==='calendar'?'block':'none'; renderTradeList(); };
+function getAccountTrades(tradeList){
+  if(!currentAccountId) return tradeList;
+  return tradeList.filter(t=>t.accountId===currentAccountId);
+}
 function getFilteredTrades(){
-  if(activeFilter==='today') return trades.filter(t=>isToday(t.date));
-  if(activeFilter==='week') return trades.filter(t=>isThisWeek(t.date));
-  if(activeFilter==='month') return trades.filter(t=>isThisMonth(t.date));
-  if(activeFilter==='calendar'&&selectedCalDay){ return trades.filter(t=>fmtDayKey(t.date)===selectedCalDay); }
-  return trades;
+  const base=getAccountTrades(trades);
+  if(activeFilter==='today') return base.filter(t=>isToday(t.date));
+  if(activeFilter==='week') return base.filter(t=>isThisWeek(t.date));
+  if(activeFilter==='month') return base.filter(t=>isThisMonth(t.date));
+  if(activeFilter==='calendar'&&selectedCalDay){ return base.filter(t=>fmtDayKey(t.date)===selectedCalDay); }
+  return base;
 }
 
 // ── TRADE LIST ──
 function renderTradeList(){
   const wrap=document.getElementById('tradeListWrap');
-  document.getElementById('tradeCount').textContent=trades.length+' trade'+(trades.length!==1?'s':'');
+  const acctTrades=getAccountTrades(trades);
+  const acct=currentAccountId?accounts.find(a=>a.id===currentAccountId):null;
+  document.getElementById('tradeCount').textContent=(acct?acct.name+' · ':'')+acctTrades.length+' trade'+(acctTrades.length!==1?'s':'');
   const filtered=getFilteredTrades();
   if(!filtered.length){ wrap.innerHTML=`<div class="tlog-list"><div class="tlog-empty">No trades for this period.<br>Tap "+ Log New Trade" to begin.</div></div>`; return; }
   // Group by day
@@ -1444,6 +1576,7 @@ function renderTradeList(){
           </div>
           <div class="tc-time">${fmtTime(t.date)}</div>
         </div>
+        ${(!currentAccountId && t.accountLabel && t.accountLabel !== '— Select account —')?`<div style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:0.3px;margin-bottom:5px;opacity:0.85;">📁 ${t.accountLabel}</div>`:''}
         <div class="tc-result-row">
           ${t.outcome?`<div class="tc-outcome-pill ${outcomeClass[t.outcome]||'be'}">${outcomeMap[t.outcome]||t.outcome}</div>`:''}
           ${t.rr?`<div class="tc-rr">⚡ ${t.rr}R</div>`:''}
@@ -1513,6 +1646,10 @@ function resetTradeForm(){
   document.querySelectorAll('.mchip').forEach(c=>c.classList.remove('sel'));
   ['otherMistakes','otherHabits'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   selectedMistakes=new Set(); selectedHabits=new Set(); selectedEntry='';
+  // Pre-select current account in trade form
+  const acctSel=document.getElementById('tAccount');
+  if(acctSel && currentAccountId) acctSel.value=currentAccountId;
+  else if(acctSel) acctSel.value='';
   reviewAnswers.rules = null; reviewAnswers.candle = null; reviewAnswers.setup = null;
   ['rulesYes2','rulesNo2','candleYes2','candleNo2','setupYes2','setupNo2'].forEach(id=>{
     const el=document.getElementById(id); if(el){ el.style.background='transparent'; el.style.color='var(--muted)'; el.style.borderColor='var(--muted)'; }
@@ -1542,6 +1679,8 @@ function populateTrade(t){
   document.getElementById('otherMistakes').value=t.otherMistakes||'';
   document.getElementById('otherHabits').value=t.otherHabits||'';
   followedRules=t.followedRules; deviated=t.deviated;
+  // Restore account selection
+  const acctSel=document.getElementById('tAccount'); if(acctSel&&t.accountId) acctSel.value=t.accountId;
   if(followedRules===true) document.getElementById('ruleYes').classList.add('active');
   if(followedRules===false) document.getElementById('ruleNo').classList.add('active');
   if(deviated===false) document.getElementById('deviateNo').classList.add('active');
@@ -1681,11 +1820,12 @@ window.switchAnTab=function(i){
 
 // ── SHARED STATS BUILDER ──
 function buildTradeStats(){
-  const weekTrades=trades.filter(t=>isThisWeek(t.date));
-  const sorted=[...trades].sort((a,b)=>new Date(a.date)-new Date(b.date));
-  const tpAll=trades.filter(t=>t.outcome==='tp'), slAll=trades.filter(t=>t.outcome==='sl');
+  const src=getAccountTrades(trades); // respect current account filter
+  const weekTrades=src.filter(t=>isThisWeek(t.date));
+  const sorted=[...src].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const tpAll=src.filter(t=>t.outcome==='tp'), slAll=src.filter(t=>t.outcome==='sl');
   const tpW=weekTrades.filter(t=>t.outcome==='tp'), slW=weekTrades.filter(t=>t.outcome==='sl');
-  const rrTrades=trades.filter(t=>t.rr&&t.rr>0);
+  const rrTrades=src.filter(t=>t.rr&&t.rr>0);
   const winRR=tpAll.filter(t=>t.rr).reduce((s,t)=>s+(t.rr||0),0);
   const lossRR=slAll.filter(t=>t.rr).reduce((s,t)=>s+(t.rr||0),0);
   const profitFactor=lossRR>0?(winRR/lossRR):winRR>0?999:0;
@@ -1704,28 +1844,34 @@ function buildTradeStats(){
     else if(t.outcome==='sl'){curCL++;curCW=0;maxCL=Math.max(maxCL,curCL);curL2++;curW2=0;}
   });
   const curStreak=curW2>0?curW2+'W':curL2>0?curL2+'L':'—';
-  const wins=trades.filter(t=>t.outcome==='tp'&&t.rr);
-  const losses=trades.filter(t=>t.outcome==='sl'&&t.rr);
+  const wins=src.filter(t=>t.outcome==='tp'&&t.rr);
+  const losses=src.filter(t=>t.outcome==='sl'&&t.rr);
   const bestWin=wins.length?wins.reduce((a,b)=>b.rr>a.rr?b:a):null;
   const worstLoss=losses.length?losses.reduce((a,b)=>b.rr>a.rr?b:a):null;
-  const avgMind=trades.length?Math.round(trades.reduce((s,t)=>s+(t.overall||50),0)/trades.length):0;
-  const ruleTracked=trades.filter(t=>(t.reviewFollowedRules!=null)||(t.followedRules!=null&&t.followedRules!==undefined));
-  const disciplineRate=ruleTracked.length?Math.round(trades.filter(t=>t.reviewFollowedRules==='yes'||t.followedRules===true).length/ruleTracked.length*100):0;
+  const avgMind=src.length?Math.round(src.reduce((s,t)=>s+(t.overall||50),0)/src.length):0;
+  const ruleTracked=src.filter(t=>(t.reviewFollowedRules!=null)||(t.followedRules!=null&&t.followedRules!==undefined));
+  const disciplineRate=ruleTracked.length?Math.round(src.filter(t=>t.reviewFollowedRules==='yes'||t.followedRules===true).length/ruleTracked.length*100):0;
   const moods={};
-  trades.forEach(t=>[t.moodBefore,t.moodDuring,t.moodAfter].forEach(m=>{
+  src.forEach(t=>[t.moodBefore,t.moodDuring,t.moodAfter].forEach(m=>{
     if(!m) return;
     m.split(', ').forEach(s=>{ s=s.trim().replace(/\S+\s/,''); if(s) moods[s]=(moods[s]||0)+1; });
   }));
   const habitC={},mistakeC={};
-  trades.forEach(t=>{ (t.habits||[]).forEach(h=>{ habitC[h]=(habitC[h]||0)+1; }); (t.mistakes||[]).forEach(m=>{ mistakeC[m]=(mistakeC[m]||0)+1; }); });
+  src.forEach(t=>{ (t.habits||[]).forEach(h=>{ habitC[h]=(habitC[h]||0)+1; }); (t.mistakes||[]).forEach(m=>{ mistakeC[m]=(mistakeC[m]||0)+1; }); });
   return {weekTrades,tpAll,slAll,tpW,slW,winRate,winRateW,avgRR,avgRRW,profitFactor,avgWinRR,avgLossRR,expectancy,maxCW,maxCL,curStreak,bestWin,worstLoss,avgMind,disciplineRate,moods,habitC,mistakeC};
 }
 
 // ── PERFORMANCE DASHBOARD (instant — no AI needed) ──
 window.renderPerformance=function(){
-  if(!trades.length){ showToast('No trades logged yet'); return; }
+  const src=getAccountTrades(trades);
+  if(!src.length){ showToast(currentAccountId?'No trades for this account yet':'No trades logged yet'); return; }
+  const acct=currentAccountId?accounts.find(a=>a.id===currentAccountId):null;
+  const acctLabel=acct?(acct.name+(acct.broker?' — '+acct.broker:'')):'All Accounts';
   const s=buildTradeStats();
   document.getElementById('perfDashboard').style.display='block';
+  // Update section heading to show account
+  const perfHero=document.querySelector('#anContent1 .analysis-hero p');
+  if(perfHero) perfHero.textContent='Showing: '+acctLabel+' · '+src.length+' trade'+(src.length!==1?'s':'');
   const card=(val,lbl,sub,colour)=>`<div class="perf-card ${colour}"><div class="perf-val ${colour}">${val}</div><div class="perf-lbl">${lbl}</div>${sub?`<div class="perf-sub">${sub}</div>`:''}</div>`;
   document.getElementById('perfWeekGrid').innerHTML=
     card(s.weekTrades.length,'Trades','This week','blue')+
@@ -2262,6 +2408,7 @@ window.showToast=function(msg){ const t=document.getElementById('toast'); t.text
 window.openSettings = function(){
   const existing = localStorage.getItem('tm_gemini_key');
   if(existing){ document.getElementById('geminiKeyInput').value = existing; document.getElementById('keyStatus').textContent = '✓ Key saved'; document.getElementById('keyStatus').style.color = 'var(--green)'; }
+  renderSettingsAcctList();
   document.getElementById('settingsOverlay').classList.add('open');
 };
 window.closeSettings = function(){ document.getElementById('settingsOverlay').classList.remove('open'); };
