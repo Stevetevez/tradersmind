@@ -3,420 +3,264 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Challenge Account — Discipline Tracker 2026</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#f4f6f8">
+<title>Discipline Tracker 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0d0f14;
-  --surface: #161a23;
-  --surface2: #1e2330;
-  --border: rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.13);
-  --text: #f0f2f5;
-  --text2: #8a90a0;
-  --text3: #4a5068;
-  --gold: #c9a84c;
-  --gold2: #f0c96e;
-  --gold-dim: rgba(201,168,76,0.12);
-  --green: #2dd4a0;
-  --green-dim: rgba(45,212,160,0.12);
-  --red: #f06060;
-  --red-dim: rgba(240,96,96,0.1);
-  --blue: #5b9cf6;
-  --blue-dim: rgba(91,156,246,0.1);
-  --radius: 10px;
-  --radius-sm: 6px;
+  --gold:#1a9e6e;--gold-light:#22c48a;--gold-dim:rgba(26,158,110,0.15);--gold-glow:rgba(26,158,110,0.07);
+  --bg:#f4f6f8;--card:#ffffff;--card2:#f0f3f5;--border:#e2e6ea;--border2:#d4dbe2;
+  --text:#1a2332;--muted:#8a9bb0;--muted2:#c8d4df;
+  --red:#e05252;--red-dim:rgba(224,82,82,0.10);
+  --green:#1a9e6e;--green-dim:rgba(26,158,110,0.10);
+  --blue:#2980b9;--blue-dim:rgba(41,128,185,0.12);
+  --shadow:0 1px 4px rgba(26,45,80,0.07),0 4px 16px rgba(26,45,80,0.04);
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;-webkit-font-smoothing:antialiased;}
 
-/* GRID BG */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* ---- AUTH SCREEN ---- */
+/* ── AUTH ── */
 #auth-screen {
-  position: fixed; inset: 0; z-index: 100;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--bg);
+  position:fixed;inset:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg);
 }
 .auth-card {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 16px;
-  padding: 48px 40px;
-  text-align: center;
-  width: 360px;
+  background:var(--card);border:1px solid var(--border2);border-radius:20px;
+  padding:48px 36px;text-align:center;width:360px;box-shadow:var(--shadow);
 }
 .auth-logo {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  color: var(--gold);
-  text-transform: uppercase;
-  margin-bottom: 8px;
+  font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:400;
+  margin-bottom:4px;color:var(--text);
 }
-.auth-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-.auth-sub {
-  font-size: 14px;
-  color: var(--text2);
-  margin-bottom: 32px;
+.auth-logo em{color:var(--gold);font-style:italic;}
+.auth-sub{font-size:12px;color:var(--muted);margin-bottom:8px;letter-spacing:0.5px;}
+.auth-year{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;
+  color:var(--gold);text-transform:uppercase;margin-bottom:32px;
+  background:var(--gold-glow);border:1px solid var(--gold-dim);
+  display:inline-block;padding:4px 14px;border-radius:20px;
 }
 .google-btn {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  width: 100%; padding: 13px 20px;
-  background: var(--surface2);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:14px 20px;
+  background:var(--card2);border:1px solid var(--border2);border-radius:10px;
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;
+  cursor:pointer;transition:all .2s;
 }
-.google-btn:hover { background: #252b3a; border-color: var(--gold); }
-.google-btn svg { width: 20px; height: 20px; }
+.google-btn:hover{border-color:var(--gold);background:var(--gold-glow);}
+.google-btn svg{width:18px;height:18px;}
 
-/* ---- APP SHELL ---- */
-#app { display: none; position: relative; z-index: 1; }
+/* ── APP ── */
+#app{display:none;}
 
-/* HEADER */
-.header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 20px 28px 16px;
-  border-bottom: 1px solid var(--border);
-  position: sticky; top: 0; z-index: 50;
-  background: rgba(13,15,20,0.92);
-  backdrop-filter: blur(12px);
+/* ── HEADER ── */
+.header{
+  background:var(--card);border-bottom:1px solid var(--border);
+  padding:0 24px;height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:50;
+  box-shadow:0 1px 8px rgba(26,45,80,0.06);
 }
-.header-left { display: flex; align-items: center; gap: 14px; }
-.logo-mark {
-  width: 36px; height: 36px;
-  background: var(--gold-dim);
-  border: 1px solid rgba(201,168,76,0.3);
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'DM Mono', monospace;
-  font-size: 13px;
-  color: var(--gold);
-  font-weight: 500;
+.header-left{display:flex;align-items:center;gap:12px;}
+.header-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;}
+.header-logo em{color:var(--gold);font-style:italic;}
+.header-badge{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:1.5px;
+  color:var(--gold);border:1px solid var(--gold-dim);padding:4px 9px;
+  border-radius:20px;text-transform:uppercase;background:var(--gold-glow);
 }
-.header-title {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  color: var(--text2);
-  text-transform: uppercase;
+.header-right{display:flex;align-items:center;gap:10px;}
+.view-toggle{
+  display:flex;background:var(--card2);border:1px solid var(--border2);
+  border-radius:8px;overflow:hidden;
 }
-.header-year {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1;
+.view-btn{
+  padding:6px 14px;font-family:'IBM Plex Mono',monospace;font-size:10px;
+  letter-spacing:0.08em;color:var(--muted);background:none;border:none;cursor:pointer;
+  transition:all .15s;
 }
-.header-right { display: flex; align-items: center; gap: 12px; }
-.view-toggle {
-  display: flex;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
+.view-btn.active{background:var(--card);color:var(--gold);box-shadow:var(--shadow);}
+.user-avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--gold-dim);border:1px solid var(--gold-dim);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;color:var(--green);font-weight:700;cursor:pointer;
+  overflow:hidden;
 }
-.view-btn {
-  padding: 7px 14px;
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: var(--text2);
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: all 0.15s;
+.user-avatar img{width:100%;height:100%;object-fit:cover;}
+.sign-out-btn{
+  font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:color .15s;
 }
-.view-btn.active { background: var(--surface2); color: var(--gold); }
-.user-avatar {
-  width: 32px; height: 32px; border-radius: 50%;
-  background: var(--gold-dim);
-  border: 1px solid rgba(201,168,76,0.3);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; color: var(--gold); font-weight: 600;
-  cursor: pointer;
-}
-.sign-out-btn {
-  font-size: 12px; color: var(--text3);
-  background: none; border: none; cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  transition: color 0.15s;
-}
-.sign-out-btn:hover { color: var(--red); }
+.sign-out-btn:hover{color:var(--red);}
 
-/* STATS BAR */
-.stats-bar {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 0;
+/* ── STATS BAR ── */
+.stats-bar{
+  display:grid;grid-template-columns:repeat(5,1fr);
+  background:var(--card);border-bottom:2px solid var(--border2);
 }
-.stat-cell {
-  background: var(--bg);
-  padding: 16px 20px;
-  text-align: center;
+.stat-cell{
+  padding:14px 16px;text-align:center;border-right:1px solid var(--border);
 }
-.stat-val {
-  font-family: 'DM Mono', monospace;
-  font-size: 22px;
-  font-weight: 500;
-  color: var(--text);
-  line-height: 1;
-  margin-bottom: 4px;
+.stat-cell:last-child{border-right:none;}
+.stat-val{
+  font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;
+  color:var(--text);line-height:1;margin-bottom:3px;
 }
-.stat-val.gold { color: var(--gold); }
-.stat-val.green { color: var(--green); }
-.stat-val.red { color: var(--red); }
-.stat-lbl {
-  font-size: 10px;
-  color: var(--text3);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-family: 'DM Mono', monospace;
+.stat-val.green{color:var(--green);}
+.stat-val.red{color:var(--red);}
+.stat-lbl{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1px;
 }
 
-/* MAIN */
-.main { padding: 24px 28px; }
+/* ── MAIN ── */
+.main{padding:24px;}
 
-/* MONTH SECTION */
-.month-section { margin-bottom: 28px; }
-.month-head {
-  display: flex; align-items: center; gap: 12px;
-  margin-bottom: 12px;
+/* ── MONTH SECTION ── */
+.month-section{margin-bottom:28px;}
+.month-head{
+  display:flex;align-items:center;gap:12px;margin-bottom:10px;
 }
-.month-name {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--gold);
+.month-name{
+  font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;
+  color:var(--text);white-space:nowrap;
 }
-.month-line {
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-.month-score {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--text3);
+.month-name em{color:var(--gold);font-style:italic;}
+.month-line{flex:1;height:1px;background:var(--border2);}
+.month-score{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;
+  color:var(--muted);white-space:nowrap;
 }
 
-/* WEEKDAY HEADERS */
-.week-labels {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 4px;
-  margin-bottom: 4px;
+/* WEEKDAY LABELS */
+.week-labels{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:4px;
 }
-.week-lbl {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  color: var(--text3);
-  text-align: center;
-  text-transform: uppercase;
+.week-lbl{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:1px;
+  color:var(--muted2);text-align:center;text-transform:uppercase;
 }
 
 /* DAY GRID */
-.days-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 4px;
+.days-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;}
+.day-cell{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:8px 7px 7px;min-height:74px;display:flex;flex-direction:column;gap:5px;
+  transition:border-color .15s,box-shadow .15s;position:relative;
+  box-shadow:0 1px 3px rgba(26,45,80,0.04);
 }
-.day-cell {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 8px 7px 7px;
-  min-height: 76px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  transition: border-color 0.15s;
-  position: relative;
+.day-cell:hover{border-color:var(--border2);box-shadow:var(--shadow);}
+.day-cell.today{border-color:var(--gold);border-width:1.5px;}
+.day-cell.today .day-num{color:var(--green);}
+.day-cell.all-good{
+  border-color:rgba(26,158,110,0.35);
+  background:linear-gradient(160deg,rgba(26,158,110,0.05) 0%,var(--card) 100%);
 }
-.day-cell:hover { border-color: var(--border2); }
-.day-cell.today { border-color: var(--gold); }
-.day-cell.today .day-num { color: var(--gold); }
-.day-cell.all-good { border-color: rgba(45,212,160,0.25); background: rgba(45,212,160,0.04); }
-.day-cell.has-fail { border-color: rgba(240,96,96,0.2); background: rgba(240,96,96,0.03); }
-.day-num {
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  color: var(--text2);
-  font-weight: 500;
+.day-cell.has-fail{
+  border-color:rgba(224,82,82,0.25);
+  background:linear-gradient(160deg,rgba(224,82,82,0.04) 0%,var(--card) 100%);
 }
-.checks-col { display: flex; flex-direction: column; gap: 4px; }
-.check-row {
-  display: flex; align-items: center; gap: 5px;
-  cursor: pointer;
-  user-select: none;
+.day-num{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);font-weight:500;
 }
-.check-dot {
-  width: 16px; height: 16px;
-  border-radius: 50%;
-  border: 1.5px solid var(--border2);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.15s;
-  font-size: 9px;
+.today-pip{
+  position:absolute;top:6px;right:6px;
+  width:5px;height:5px;border-radius:50%;background:var(--green);
 }
-.check-dot.done { background: var(--green); border-color: var(--green); }
-.check-dot.fail { background: var(--red); border-color: var(--red); }
-.check-dot svg { width: 9px; height: 9px; }
-.check-txt {
-  font-size: 9px;
-  color: var(--text3);
-  line-height: 1.2;
-  font-family: 'DM Mono', monospace;
-  letter-spacing: 0.02em;
+.checks-col{display:flex;flex-direction:column;gap:4px;}
+.check-row{
+  display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;
 }
-.today-pip {
-  position: absolute;
-  top: 5px; right: 5px;
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--gold);
+.check-dot{
+  width:15px;height:15px;border-radius:50%;
+  border:1.5px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all .15s;
+}
+.check-dot.done{background:var(--green);border-color:var(--green);}
+.check-dot.fail{background:var(--red);border-color:var(--red);}
+.check-dot svg{width:8px;height:8px;}
+.check-txt{
+  font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);
+  letter-spacing:0.02em;line-height:1.2;
 }
 
-/* LIST VIEW */
-.list-view { display: none; }
-.list-month { margin-bottom: 24px; }
-.list-month-head {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  color: var(--gold);
-  text-transform: uppercase;
-  padding: 10px 0 8px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 2px;
-  display: flex; justify-content: space-between; align-items: center;
+/* ── LIST VIEW ── */
+#list-view{display:none;}
+.list-month{margin-bottom:20px;}
+.list-month-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0 8px;border-bottom:2px solid var(--border2);margin-bottom:2px;
 }
-.list-row {
-  display: grid;
-  grid-template-columns: 80px 1fr 1fr 60px;
-  align-items: center;
-  padding: 9px 0;
-  border-bottom: 1px solid var(--border);
-  gap: 12px;
+.list-month-name{
+  font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;
 }
-.list-row:hover { background: rgba(255,255,255,0.01); }
-.list-date {
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  color: var(--text2);
+.list-month-name em{color:var(--gold);font-style:italic;}
+.list-month-score{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);}
+.list-row{
+  display:grid;grid-template-columns:90px 1fr 1fr 70px;
+  align-items:center;padding:9px 0;border-bottom:1px solid var(--border);gap:12px;
+  transition:background .1s;
 }
-.list-date.today-date { color: var(--gold); }
-.list-check {
-  display: flex; align-items: center; gap: 7px;
-  cursor: pointer; user-select: none;
+.list-row:hover{background:var(--card2);border-radius:6px;padding-left:6px;padding-right:6px;}
+.list-date{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);font-weight:400;
 }
-.list-dot {
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  border: 1.5px solid var(--border2);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.15s;
+.list-date.today-date{color:var(--green);font-weight:500;}
+.list-check{
+  display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;
 }
-.list-dot.done { background: var(--green); border-color: var(--green); }
-.list-dot.fail { background: var(--red); border-color: var(--red); }
-.list-dot svg { width: 10px; height: 10px; }
-.list-check-lbl {
-  font-size: 12px;
-  color: var(--text2);
+.list-dot{
+  width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;
 }
-.list-badge {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  padding: 2px 7px;
-  border-radius: 20px;
-  text-align: center;
+.list-dot.done{background:var(--green);border-color:var(--green);}
+.list-dot.fail{background:var(--red);border-color:var(--red);}
+.list-dot svg{width:10px;height:10px;}
+.list-check-lbl{font-size:12px;color:var(--text);font-weight:500;}
+.list-badge{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;
+  padding:3px 8px;border-radius:20px;text-align:center;
 }
-.list-badge.perfect { background: var(--green-dim); color: var(--green); }
-.list-badge.fail { background: var(--red-dim); color: var(--red); }
-.list-badge.partial { background: var(--gold-dim); color: var(--gold); }
-.list-badge.empty { color: var(--text3); }
+.list-badge.perfect{background:var(--green-dim);color:var(--green);border:1px solid var(--gold-dim);}
+.list-badge.fail{background:var(--red-dim);color:var(--red);}
+.list-badge.partial{background:var(--gold-glow);color:var(--gold);border:1px solid var(--gold-dim);}
+.list-badge.empty{color:var(--muted2);}
 
-/* LOADING */
-#loading {
-  position: fixed; inset: 0; z-index: 200;
-  background: var(--bg);
-  display: flex; align-items: center; justify-content: center;
-  flex-direction: column; gap: 12px;
+/* ── LOADING ── */
+#loading{
+  position:fixed;inset:0;z-index:200;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;
 }
-.load-logo {
-  font-family: 'DM Mono', monospace;
-  font-size: 13px;
-  letter-spacing: 0.2em;
-  color: var(--gold);
+.load-logo{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;color:var(--text);}
+.load-logo em{color:var(--gold);font-style:italic;}
+.load-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
+.load-dots{display:flex;gap:6px;}
+.load-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--green);
+  animation:pulse 1.2s ease-in-out infinite;
 }
-.load-dots { display: flex; gap: 6px; }
-.load-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--gold);
-  animation: pulse 1.2s ease-in-out infinite;
-}
-.load-dot:nth-child(2) { animation-delay: 0.2s; }
-.load-dot:nth-child(3) { animation-delay: 0.4s; }
-@keyframes pulse {
-  0%,100% { opacity: 0.2; transform: scale(0.8); }
-  50% { opacity: 1; transform: scale(1); }
-}
+.load-dot:nth-child(2){animation-delay:.2s;}
+.load-dot:nth-child(3){animation-delay:.4s;}
+@keyframes pulse{0%,100%{opacity:.2;transform:scale(.8);}50%{opacity:1;transform:scale(1);}}
 
-/* TOAST */
-.toast {
-  position: fixed; bottom: 24px; right: 24px; z-index: 999;
-  background: var(--surface2);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  padding: 10px 16px;
-  font-size: 13px; color: var(--text2);
-  opacity: 0; transform: translateY(8px);
-  transition: all 0.25s;
-  pointer-events: none;
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.05em;
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:999;
+  background:var(--text);border-radius:8px;padding:10px 16px;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;
+  color:#fff;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;
 }
-.toast.show { opacity: 1; transform: translateY(0); }
+.toast.show{opacity:1;transform:translateY(0);}
 </style>
 </head>
 <body>
 
 <div id="loading">
-  <div class="load-logo">DISCIPLINE TRACKER</div>
+  <div class="load-logo">Trader<em>Mind</em></div>
+  <div class="load-sub">Discipline Tracker</div>
   <div class="load-dots">
     <div class="load-dot"></div>
     <div class="load-dot"></div>
@@ -426,9 +270,9 @@ body::before {
 
 <div id="auth-screen" style="display:none">
   <div class="auth-card">
-    <div class="auth-logo">Challenge Account</div>
-    <div class="auth-title">Discipline Tracker</div>
-    <div class="auth-sub">2026 — Track every trading day</div>
+    <div class="auth-logo">Trader<em>Mind</em></div>
+    <div class="auth-sub">Challenge Account</div>
+    <div class="auth-year">Discipline Tracker 2026</div>
     <button class="google-btn" onclick="signInWithGoogle()">
       <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Sign in with Google
@@ -439,11 +283,8 @@ body::before {
 <div id="app">
   <div class="header">
     <div class="header-left">
-      <div class="logo-mark">CA</div>
-      <div>
-        <div class="header-title">Challenge Account</div>
-        <div class="header-year">Discipline Tracker 2026</div>
-      </div>
+      <div class="header-logo">Trader<em>Mind</em></div>
+      <div class="header-badge">Discipline 2026</div>
     </div>
     <div class="header-right">
       <div class="view-toggle">
@@ -456,26 +297,40 @@ body::before {
   </div>
 
   <div class="stats-bar">
-    <div class="stat-cell"><div class="stat-val gold" id="s-total">—</div><div class="stat-lbl">Trading Days</div></div>
-    <div class="stat-cell"><div class="stat-val green" id="s-perfect">—</div><div class="stat-lbl">Perfect Days</div></div>
-    <div class="stat-cell"><div class="stat-val" id="s-rate">—</div><div class="stat-lbl">Discipline %</div></div>
-    <div class="stat-cell"><div class="stat-val" id="s-streak">—</div><div class="stat-lbl">Best Streak</div></div>
-    <div class="stat-cell"><div class="stat-val red" id="s-fails">—</div><div class="stat-lbl">Failed Days</div></div>
+    <div class="stat-cell">
+      <div class="stat-val" id="s-total">—</div>
+      <div class="stat-lbl">Days Marked</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-val green" id="s-perfect">—</div>
+      <div class="stat-lbl">Perfect Days</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-val" id="s-rate">—</div>
+      <div class="stat-lbl">Discipline %</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-val" id="s-streak">—</div>
+      <div class="stat-lbl">Best Streak</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-val red" id="s-fails">—</div>
+      <div class="stat-lbl">Failed Days</div>
+    </div>
   </div>
 
   <div class="main">
     <div id="calendar-view"></div>
-    <div id="list-view" class="list-view"></div>
+    <div id="list-view"></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<!-- Firebase -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut as fbSignOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ── PASTE YOUR FIREBASE CONFIG HERE ──────────────────────────
 const firebaseConfig = {
@@ -494,31 +349,22 @@ const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
 const CHECKS = [
-  { id: 'rules', label: 'Rules' },
-  { id: 'trades', label: '≤2 trades' }
+  { id: 'rules', label: 'Rules followed' },
+  { id: 'trades', label: '≤2 trades/day' }
 ];
-
 const WEEKDAYS = ['Mon','Tue','Wed','Thu','Fri'];
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 let state = {};
 let currentUser = null;
 let currentView = 'calendar';
 
-// Build full year of weekdays (Mon–Fri) for 2026
 function buildTradingDays() {
   const days = [];
-  const start = new Date(2026, 0, 1);
-  const end = new Date(2026, 11, 31);
-  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+  for (let d = new Date(2026,0,1); d <= new Date(2026,11,31); d.setDate(d.getDate()+1)) {
     const dow = d.getDay();
     if (dow >= 1 && dow <= 5) {
-      days.push({
-        year: d.getFullYear(),
-        month: d.getMonth(),
-        date: d.getDate(),
-        dow: dow,
-        key: `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
-      });
+      days.push({ year:d.getFullYear(), month:d.getMonth(), date:d.getDate(), dow, key:`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}` });
     }
   }
   return days;
@@ -526,41 +372,30 @@ function buildTradingDays() {
 
 const allDays = buildTradingDays();
 
-// Group by month
 function groupByMonth(days) {
   const months = {};
   days.forEach(d => {
     const mk = `${d.year}-${d.month}`;
-    if (!months[mk]) months[mk] = { year: d.year, month: d.month, days: [] };
+    if (!months[mk]) months[mk] = { year:d.year, month:d.month, days:[] };
     months[mk].days.push(d);
   });
   return Object.values(months);
 }
-
-const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 function todayKey() {
   const t = new Date();
   return `${t.getFullYear()}-${t.getMonth()}-${t.getDate()}`;
 }
 
-// ── FIRESTORE ────────────────────────────────────────────────
 async function loadState() {
-  const ref = doc(db, 'discipline2026', currentUser.uid);
-  const snap = await getDoc(ref);
-  if (snap.exists()) {
-    state = snap.data().days || {};
-  } else {
-    state = {};
-  }
+  const snap = await getDoc(doc(db,'discipline2026',currentUser.uid));
+  state = snap.exists() ? (snap.data().days || {}) : {};
 }
 
 async function saveState() {
-  const ref = doc(db, 'discipline2026', currentUser.uid);
-  await setDoc(ref, { days: state, updatedAt: new Date().toISOString() }, { merge: true });
+  await setDoc(doc(db,'discipline2026',currentUser.uid), { days:state, updatedAt:new Date().toISOString() }, { merge:true });
 }
 
-// ── CYCLE CHECK ──────────────────────────────────────────────
 async function cycleCheck(key, checkId) {
   if (!state[key]) state[key] = {};
   const cur = state[key][checkId];
@@ -569,86 +404,77 @@ async function cycleCheck(key, checkId) {
   else delete state[key][checkId];
   renderAll();
   await saveState();
-  showToast(state[key]?.[checkId] === 'done' ? '✓ Marked' : state[key]?.[checkId] === 'fail' ? '✗ Marked' : 'Cleared');
+  const v = state[key]?.[checkId];
+  showToast(v === 'done' ? '✓ Disciplined' : v === 'fail' ? '✗ Failed' : 'Cleared');
 }
 
-// ── STATS ────────────────────────────────────────────────────
 function computeStats() {
-  let total = 0, perfect = 0, fails = 0, streak = 0, best = 0, cur = 0;
-  const tk = todayKey();
+  let total=0, perfect=0, fails=0, best=0, cur=0;
   allDays.forEach(d => {
     const s = state[d.key];
-    if (!s || Object.keys(s).length === 0) return;
+    if (!s || !Object.keys(s).length) return;
     total++;
-    const allDone = CHECKS.every(c => s[c.id] === 'done');
-    const anyFail = CHECKS.some(c => s[c.id] === 'fail');
-    if (allDone) { perfect++; cur++; best = Math.max(best, cur); }
-    else { if (anyFail) fails++; cur = 0; }
+    const allDone = CHECKS.every(c => s[c.id]==='done');
+    const anyFail = CHECKS.some(c => s[c.id]==='fail');
+    if (allDone) { perfect++; cur++; best=Math.max(best,cur); }
+    else { if(anyFail) fails++; cur=0; }
   });
-  return { total, perfect, fails, streak: best, rate: total ? Math.round(perfect / total * 100) : 0 };
+  return { total, perfect, fails, streak:best, rate:total?Math.round(perfect/total*100):0 };
 }
 
 function renderStats() {
   const s = computeStats();
   document.getElementById('s-total').textContent = s.total;
   document.getElementById('s-perfect').textContent = s.perfect;
-  document.getElementById('s-rate').textContent = s.rate + '%';
+  document.getElementById('s-rate').textContent = s.rate+'%';
   document.getElementById('s-streak').textContent = s.streak;
   document.getElementById('s-fails').textContent = s.fails;
 }
 
-// ── DOT SVG ─────────────────────────────────────────────────
-function checkSVG(st) {
-  if (st === 'done') return `<svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-  if (st === 'fail') return `<svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="2" y1="2" x2="8" y2="8" stroke="white" stroke-width="1.8" stroke-linecap="round"/><line x1="8" y1="2" x2="2" y2="8" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+function dotSVG(st) {
+  if (st==='done') return `<svg viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if (st==='fail') return `<svg viewBox="0 0 10 10" fill="none"><line x1="2" y1="2" x2="8" y2="8" stroke="white" stroke-width="1.8" stroke-linecap="round"/><line x1="8" y1="2" x2="2" y2="8" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>`;
   return '';
 }
 
-// ── CALENDAR VIEW ────────────────────────────────────────────
 function renderCalendar() {
-  const months = groupByMonth(allDays);
   const tk = todayKey();
   let html = '';
-  months.forEach(mo => {
-    const moState = mo.days.map(d => state[d.key] || {});
-    const marked = mo.days.filter((d, i) => Object.keys(moState[i]).length > 0);
-    const perfect = marked.filter((d, _) => CHECKS.every(c => (state[d.key]||{})[c.id] === 'done'));
-    const scoreStr = marked.length > 0 ? `${perfect.length}/${marked.length} perfect` : '';
+  groupByMonth(allDays).forEach(mo => {
+    const marked = mo.days.filter(d => state[d.key] && Object.keys(state[d.key]).length);
+    const perfect = marked.filter(d => CHECKS.every(c => (state[d.key]||{})[c.id]==='done'));
+    const scoreStr = marked.length ? `${perfect.length}/${marked.length} perfect` : '';
 
     html += `<div class="month-section">
       <div class="month-head">
-        <div class="month-name">${monthNames[mo.month]} ${mo.year}</div>
+        <div class="month-name">${MONTH_NAMES[mo.month].slice(0,3)} <em>${MONTH_NAMES[mo.month].slice(3)}</em> ${mo.year}</div>
         <div class="month-line"></div>
         <div class="month-score">${scoreStr}</div>
       </div>
-      <div class="week-labels">${WEEKDAYS.map(w => `<div class="week-lbl">${w}</div>`).join('')}</div>
+      <div class="week-labels">${WEEKDAYS.map(w=>`<div class="week-lbl">${w}</div>`).join('')}</div>
       <div class="days-grid">`;
 
-    // Offset: first day's dow (Mon=1) → pad empties
-    const firstDow = mo.days[0].dow; // 1=Mon ... 5=Fri
-    for (let i = 1; i < firstDow; i++) {
-      html += `<div></div>`;
-    }
+    for (let i=1; i<mo.days[0].dow; i++) html += `<div></div>`;
 
     mo.days.forEach(d => {
-      const s = state[d.key] || {};
-      const isToday = d.key === tk;
-      const allDone = CHECKS.every(c => s[c.id] === 'done');
-      const anyFail = CHECKS.some(c => s[c.id] === 'fail');
+      const s = state[d.key]||{};
+      const isToday = d.key===tk;
+      const allDone = CHECKS.every(c => s[c.id]==='done');
+      const anyFail = CHECKS.some(c => s[c.id]==='fail');
       let cls = 'day-cell';
-      if (isToday) cls += ' today';
-      else if (allDone) cls += ' all-good';
-      else if (anyFail) cls += ' has-fail';
+      if(isToday) cls+=' today';
+      else if(allDone) cls+=' all-good';
+      else if(anyFail) cls+=' has-fail';
 
       html += `<div class="${cls}">
         <div class="day-num">${String(d.date).padStart(2,'0')}</div>
-        ${isToday ? '<div class="today-pip"></div>' : ''}
+        ${isToday?'<div class="today-pip"></div>':''}
         <div class="checks-col">`;
 
       CHECKS.forEach(c => {
         const st = s[c.id];
-        html += `<div class="check-row" onclick="window._cycleCheck('${d.key}','${c.id}')">
-          <div class="check-dot${st ? ' '+st : ''}">${checkSVG(st)}</div>
+        html += `<div class="check-row" onclick="window._cycle('${d.key}','${c.id}')">
+          <div class="check-dot${st?' '+st:''}">${dotSVG(st)}</div>
           <div class="check-txt">${c.label}</div>
         </div>`;
       });
@@ -662,41 +488,44 @@ function renderCalendar() {
   document.getElementById('calendar-view').innerHTML = html;
 }
 
-// ── LIST VIEW ────────────────────────────────────────────────
 function renderList() {
-  const months = groupByMonth(allDays);
   const tk = todayKey();
   let html = '';
-  months.forEach(mo => {
+  groupByMonth(allDays).forEach(mo => {
+    const marked = mo.days.filter(d => state[d.key] && Object.keys(state[d.key]).length);
+    const perfect = marked.filter(d => CHECKS.every(c => (state[d.key]||{})[c.id]==='done'));
+    const scoreStr = marked.length ? `${perfect.length}/${marked.length}` : '';
+
     html += `<div class="list-month">
       <div class="list-month-head">
-        <span>${monthNames[mo.month]} ${mo.year}</span>
+        <div class="list-month-name">${MONTH_NAMES[mo.month].slice(0,3)}<em>${MONTH_NAMES[mo.month].slice(3)}</em> ${mo.year}</div>
+        <div class="list-month-score">${scoreStr ? scoreStr+' perfect' : ''}</div>
       </div>`;
 
     mo.days.forEach(d => {
-      const s = state[d.key] || {};
-      const isToday = d.key === tk;
-      const allDone = CHECKS.every(c => s[c.id] === 'done');
-      const anyFail = CHECKS.some(c => s[c.id] === 'fail');
+      const s = state[d.key]||{};
+      const isToday = d.key===tk;
+      const allDone = CHECKS.every(c => s[c.id]==='done');
+      const anyFail = CHECKS.some(c => s[c.id]==='fail');
       const anyMarked = CHECKS.some(c => s[c.id]);
       const dateLabel = `${WEEKDAYS[d.dow-1]} ${String(d.date).padStart(2,'0')}`;
 
       let badge = '';
-      if (anyMarked) {
-        if (allDone) badge = `<span class="list-badge perfect">Perfect</span>`;
-        else if (anyFail) badge = `<span class="list-badge fail">Failed</span>`;
+      if(anyMarked) {
+        if(allDone) badge = `<span class="list-badge perfect">Perfect</span>`;
+        else if(anyFail) badge = `<span class="list-badge fail">Failed</span>`;
         else badge = `<span class="list-badge partial">Partial</span>`;
       } else {
         badge = `<span class="list-badge empty">—</span>`;
       }
 
       html += `<div class="list-row">
-        <div class="list-date${isToday ? ' today-date' : ''}">${dateLabel}</div>`;
+        <div class="list-date${isToday?' today-date':''}">${dateLabel}</div>`;
 
       CHECKS.forEach(c => {
         const st = s[c.id];
-        html += `<div class="list-check" onclick="window._cycleCheck('${d.key}','${c.id}')">
-          <div class="list-dot${st ? ' '+st : ''}">${checkSVG(st)}</div>
+        html += `<div class="list-check" onclick="window._cycle('${d.key}','${c.id}')">
+          <div class="list-dot${st?' '+st:''}">${dotSVG(st)}</div>
           <div class="list-check-lbl">${c.label}</div>
         </div>`;
       });
@@ -710,43 +539,36 @@ function renderList() {
   document.getElementById('list-view').innerHTML = html;
 }
 
-// ── RENDER ALL ───────────────────────────────────────────────
 function renderAll() {
   renderStats();
-  if (currentView === 'calendar') renderCalendar();
+  if (currentView==='calendar') renderCalendar();
   else renderList();
 }
 
-// ── VIEW SWITCH ──────────────────────────────────────────────
 window.switchView = function(v) {
   currentView = v;
-  document.getElementById('btn-cal').classList.toggle('active', v === 'calendar');
-  document.getElementById('btn-list').classList.toggle('active', v === 'list');
-  document.getElementById('calendar-view').style.display = v === 'calendar' ? 'block' : 'none';
-  document.getElementById('list-view').style.display = v === 'list' ? 'block' : 'none';
+  document.getElementById('btn-cal').classList.toggle('active', v==='calendar');
+  document.getElementById('btn-list').classList.toggle('active', v==='list');
+  document.getElementById('calendar-view').style.display = v==='calendar'?'block':'none';
+  document.getElementById('list-view').style.display = v==='list'?'block':'none';
   renderAll();
-}
+};
 
-// ── GLOBAL CYCLE ─────────────────────────────────────────────
-window._cycleCheck = (key, checkId) => cycleCheck(key, checkId);
+window._cycle = (key, checkId) => cycleCheck(key, checkId);
 
-// ── TOAST ────────────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 1800);
+  setTimeout(()=>t.classList.remove('show'), 1800);
 }
 
-// ── AUTH ─────────────────────────────────────────────────────
 window.signInWithGoogle = async () => {
   try { await signInWithPopup(auth, provider); }
   catch(e) { console.error(e); }
 };
 
-window.signOut = async () => {
-  await fbSignOut(auth);
-};
+window.signOut = async () => { await fbSignOut(auth); };
 
 onAuthStateChanged(auth, async user => {
   document.getElementById('loading').style.display = 'none';
@@ -755,10 +577,14 @@ onAuthStateChanged(auth, async user => {
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     const initials = user.displayName ? user.displayName.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase() : 'U';
-    document.getElementById('user-avatar').textContent = initials;
+    const av = document.getElementById('user-avatar');
+    if (user.photoURL) {
+      av.innerHTML = `<img src="${user.photoURL}" alt="">`;
+    } else {
+      av.textContent = initials;
+    }
     await loadState();
     renderAll();
-    // Default: show calendar view
     document.getElementById('calendar-view').style.display = 'block';
     document.getElementById('list-view').style.display = 'none';
   } else {
