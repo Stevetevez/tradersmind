@@ -112,6 +112,17 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
 .list-badge.partial{background:var(--green-glow);color:var(--green);border:1.5px solid rgba(26,158,110,0.2);}
 .list-badge.empty{color:var(--muted2);font-weight:600;}
 
+/* ── COLLAPSIBLE MONTHS ── */
+.month-head{cursor:pointer;user-select:none;}
+.month-head:hover .month-name{color:var(--green);}
+.month-toggle{width:24px;height:24px;border-radius:6px;background:var(--card2);border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.month-toggle svg{transition:transform .25s;color:var(--muted);}
+.month-collapsed .month-toggle svg{transform:rotate(-90deg);}
+.month-collapsed .month-toggle{background:var(--green-dim);border-color:rgba(26,158,110,0.3);}
+.month-body{overflow:hidden;transition:opacity .2s;}
+.month-collapsed .month-body{display:none;}
+.month-collapsed .month-name{color:var(--muted);}
+
 /* ── LOADING ── */
 #loading{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
 .load-logo{font-size:28px;font-weight:900;color:var(--text);letter-spacing:-0.5px;}
@@ -228,6 +239,7 @@ const MONTH_NAMES = ['January','February','March','April','May','June','July','A
 let state = {};
 let currentUser = null;
 let currentView = 'calendar';
+let collapsedMonths = new Set(JSON.parse(localStorage.getItem('dt_collapsed') || '[]'));
 
 function buildTradingDays() {
   const days = [];
@@ -278,6 +290,13 @@ async function cycleCheck(key, checkId) {
   showToast(v === 'done' ? '✓ Disciplined' : v === 'fail' ? '✗ Failed' : 'Cleared');
 }
 
+function toggleMonth(mk) {
+  if (collapsedMonths.has(mk)) collapsedMonths.delete(mk);
+  else collapsedMonths.add(mk);
+  localStorage.setItem('dt_collapsed', JSON.stringify([...collapsedMonths]));
+  renderAll();
+}
+
 function computeStats() {
   let total=0, perfect=0, fails=0, best=0, cur=0;
   allDays.forEach(d => {
@@ -311,19 +330,24 @@ function renderCalendar() {
   const tk = todayKey();
   let html = '';
   groupByMonth(allDays).forEach(mo => {
+    const mk = `${mo.year}-${mo.month}`;
+    const isCollapsed = collapsedMonths.has(mk);
     const marked = mo.days.filter(d => state[d.key] && Object.keys(state[d.key]).length);
     const perfect = marked.filter(d => CHECKS.every(c => (state[d.key]||{})[c.id]==='done'));
     const scoreStr = marked.length ? `${perfect.length}/${marked.length} perfect` : '';
     const mName = MONTH_NAMES[mo.month].toUpperCase();
+    const chevron = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,4 6,8 10,4"/></svg>`;
 
-    html += `<div class="month-section">
-      <div class="month-head">
+    html += `<div class="month-section${isCollapsed?' month-collapsed':''}">
+      <div class="month-head" onclick="window._toggleMonth('${mk}')">
         <div class="month-name">${mName} <span>${mo.year}</span></div>
         <div class="month-line"></div>
         <div class="month-score">${scoreStr}</div>
+        <div class="month-toggle">${chevron}</div>
       </div>
-      <div class="week-labels">${WEEKDAYS.map(w=>`<div class="week-lbl">${w}</div>`).join('')}</div>
-      <div class="days-grid">`;
+      <div class="month-body">
+        <div class="week-labels">${WEEKDAYS.map(w=>`<div class="week-lbl">${w}</div>`).join('')}</div>
+        <div class="days-grid">`;
 
     for (let i=1; i<mo.days[0].dow; i++) html += `<div></div>`;
 
@@ -344,7 +368,7 @@ function renderCalendar() {
 
       CHECKS.forEach(c => {
         const st = s[c.id];
-        html += `<div class="check-row" onclick="window._cycle('${d.key}','${c.id}')">
+        html += `<div class="check-row" onclick="event.stopPropagation();window._cycle('${d.key}','${c.id}')">
           <div class="check-dot${st?' '+st:''}">${dotSVG(st)}</div>
           <div class="check-txt">${c.label}</div>
         </div>`;
@@ -353,7 +377,7 @@ function renderCalendar() {
       html += `</div></div>`;
     });
 
-    html += `</div></div>`;
+    html += `</div></div></div>`;
   });
 
   document.getElementById('calendar-view').innerHTML = html;
@@ -368,11 +392,19 @@ function renderList() {
     const scoreStr = marked.length ? `${perfect.length}/${marked.length} perfect` : '';
     const mName = MONTH_NAMES[mo.month].toUpperCase();
 
-    html += `<div class="list-month">
-      <div class="list-month-head">
+    const mk = `${mo.year}-${mo.month}`;
+    const isCollapsed = collapsedMonths.has(mk);
+    const chevron = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,4 6,8 10,4"/></svg>`;
+
+    html += `<div class="list-month${isCollapsed?' month-collapsed':''}">
+      <div class="list-month-head month-head" onclick="window._toggleMonth('${mk}')">
         <div class="list-month-name">${mName} <span>${mo.year}</span></div>
-        <div class="list-month-score">${scoreStr}</div>
-      </div>`;
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="list-month-score">${scoreStr}</div>
+          <div class="month-toggle">${chevron}</div>
+        </div>
+      </div>
+      <div class="month-body">`;
 
     mo.days.forEach(d => {
       const s = state[d.key]||{};
@@ -405,7 +437,7 @@ function renderList() {
       html += `${badge}</div>`;
     });
 
-    html += `</div>`;
+    html += `</div></div>`;
   });
 
   document.getElementById('list-view').innerHTML = html;
@@ -427,6 +459,7 @@ window.switchView = function(v) {
 };
 
 window._cycle = (key, checkId) => cycleCheck(key, checkId);
+window._toggleMonth = (mk) => toggleMonth(mk);
 
 function showToast(msg) {
   const t = document.getElementById('toast');
