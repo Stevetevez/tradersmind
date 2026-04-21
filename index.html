@@ -407,6 +407,21 @@ canvas{display:block;}
 .other-mood-btn{background:var(--card2);border:1px dashed var(--border2);color:var(--muted);font-style:italic;}
 
 
+/* ── MULTI-ACCOUNT PICKER ── */
+.acct-pill-wrap{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px;}
+.acct-pill{padding:8px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--border2);background:var(--card2);color:var(--muted);transition:all .15s;user-select:none;}
+.acct-pill:active{transform:scale(.95);}
+.acct-pill.sel{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);}
+.acct-pill-hint{font-size:10px;color:var(--muted);margin-top:5px;font-weight:500;}
+.multi-acct-badge{display:inline-block;margin-top:6px;padding:4px 10px;background:var(--gold-dim);border:1px solid var(--gold-dim);border-radius:8px;font-size:11px;font-weight:700;color:var(--gold);}
+
+/* ── ACCOUNT FILTER BAR ── */
+.acct-filter-bar{display:flex;gap:6px;padding:10px 18px 2px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border);}
+.acct-filter-bar::-webkit-scrollbar{display:none;}
+.acct-fbtn{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid var(--border2);background:var(--card);color:var(--muted);transition:all .15s;white-space:nowrap;}
+.acct-fbtn:active{transform:scale(.95);}
+.acct-fbtn.active{background:var(--gold);color:#fff;border-color:var(--gold);}
+
 /* ── PHASE SAVE BUTTON ── */
 .phase-save-btn{width:100%;padding:13px;background:var(--card2);color:var(--green);border:1.5px solid var(--green);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:14px;margin-bottom:4px;transition:all .2s;letter-spacing:0.5px;}
 .phase-save-btn:active{transform:scale(.97);background:var(--green-dim);}
@@ -689,6 +704,10 @@ canvas{display:block;}
     <div class="tlog-topbar">
       <button class="tlog-fab" onclick="openTradeForm()">+ Log New Trade</button>
     </div>
+    <!-- Account filter bar -->
+    <div class="acct-filter-bar" id="acctFilterBar">
+      <div class="acct-fbtn active" onclick="selectAccount('')">📁 All</div>
+    </div>
     <!-- Filters -->
     <div class="filter-bar">
       <div class="fbtn active" onclick="setFilter('all',this)">All</div>
@@ -911,12 +930,14 @@ canvas{display:block;}
         <div class="field"><label>Currency Pair</label><input type="text" id="tPair" placeholder="EUR/USD, GBP/JPY..."></div>
         <div class="field"><label>Direction</label><select id="tDir"><option value="">Select</option><option>BUY</option><option>SELL</option></select></div>
       </div>
-      <!-- Account selector -->
+      <!-- Account multi-selector -->
       <div class="field" style="margin-bottom:14px;">
-        <label style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:0.5px;text-transform:uppercase;display:block;margin-bottom:6px;">📁 Trading Account</label>
-        <select id="tAccount" style="width:100%;padding:10px 12px;background:var(--card2);border:1px solid var(--gold-dim);border-radius:10px;color:var(--text);font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;">
-          <option value="">— Select account —</option>
-        </select>
+        <label style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:0.5px;text-transform:uppercase;display:block;margin-bottom:6px;">📁 Trading Account(s)</label>
+        <div class="acct-pill-wrap" id="tAccountPills">
+          <div style="font-size:12px;color:var(--muted);font-style:italic;">No accounts added yet — go to Settings</div>
+        </div>
+        <div class="acct-pill-hint">Tap to select. Selecting multiple accounts will log this trade separately for each.</div>
+        <div id="multiAcctBadge" style="display:none;" class="multi-acct-badge"></div>
       </div>
       <!-- Psychology phases -->
       <div class="phase-tabs">
@@ -1214,6 +1235,7 @@ let currentWeekOffset = 0;
 let activeFilter = 'all';
 let calYear = new Date().getFullYear(), calMonth = new Date().getMonth();
 let selectedCalDay = null, lastAiInsight = '', lastAiDate = '';
+let selectedAccountsForTrade = new Set(); // multi-account trade logging
 
 // ── WEEK HELPERS ──
 function getWeekStart(offset = 0) {
@@ -1409,17 +1431,70 @@ function listenAccounts(){
   },err=>console.error('Accounts error:',err));
 }
 function refreshAccountDropdowns(){
-  // Update trade form select
-  const sel=document.getElementById('tAccount');
-  if(sel){
-    const prev=sel.value;
-    sel.innerHTML='<option value="">— Select account —</option>';
-    accounts.forEach(a=>{ const o=document.createElement('option'); o.value=a.id; o.textContent=a.name+(a.broker?' — '+a.broker:''); sel.appendChild(o); });
-    if(prev) sel.value=prev;
-    else if(currentAccountId) sel.value=currentAccountId;
+  // Render multi-select pills in trade form
+  const pillWrap = document.getElementById('tAccountPills');
+  if(pillWrap){
+    if(!accounts.length){
+      pillWrap.innerHTML='<div style="font-size:12px;color:var(--muted);font-style:italic;">No accounts added yet — go to Settings</div>';
+    } else {
+      pillWrap.innerHTML = accounts.map(a=>`
+        <div class="acct-pill${selectedAccountsForTrade.has(a.id)?' sel':''}"
+             onclick="toggleTradePill('${a.id}')"
+             data-acct-id="${a.id}">
+          ${a.name}${a.broker?' <span style="font-weight:500;opacity:0.7">· '+a.broker+'</span>':''}
+        </div>`).join('');
+    }
+    updateMultiAcctBadge();
   }
+  // Pre-select current account filter if set
+  if(currentAccountId && selectedAccountsForTrade.size===0){
+    selectedAccountsForTrade.add(currentAccountId);
+    refreshPillStates();
+  }
+  // Render account filter bar in trade log
+  renderAcctFilterBar();
   // Update home badge
   updateAcctBadge();
+}
+
+function refreshPillStates(){
+  document.querySelectorAll('.acct-pill[data-acct-id]').forEach(pill=>{
+    const id=pill.dataset.acctId;
+    pill.classList.toggle('sel', selectedAccountsForTrade.has(id));
+  });
+  updateMultiAcctBadge();
+}
+
+function updateMultiAcctBadge(){
+  const badge=document.getElementById('multiAcctBadge');
+  if(!badge) return;
+  const n=selectedAccountsForTrade.size;
+  if(n===0){ badge.style.display='none'; return; }
+  if(n===1){
+    const a=accounts.find(x=>selectedAccountsForTrade.has(x.id));
+    badge.textContent=a?`✓ Logging to: ${a.name}`:'✓ 1 account selected';
+  } else {
+    badge.textContent=`✓ Logging to ${n} accounts — ${n} trade records will be created`;
+  }
+  badge.style.display='inline-block';
+}
+
+window.toggleTradePill=function(id){
+  if(selectedAccountsForTrade.has(id)) selectedAccountsForTrade.delete(id);
+  else selectedAccountsForTrade.add(id);
+  refreshPillStates();
+};
+
+function renderAcctFilterBar(){
+  const bar=document.getElementById('acctFilterBar');
+  if(!bar) return;
+  const allActive=!currentAccountId;
+  let html=`<div class="acct-fbtn${allActive?' active':''}" onclick="selectAccount('')">📁 All</div>`;
+  accounts.forEach(a=>{
+    const active=currentAccountId===a.id;
+    html+=`<div class="acct-fbtn${active?' active':''}" onclick="selectAccount('${a.id}')">${a.name}</div>`;
+  });
+  bar.innerHTML=html;
 }
 function updateAcctBadge(){
   const acct=currentAccountId?accounts.find(a=>a.id===currentAccountId):null;
@@ -1503,8 +1578,9 @@ window.saveTrade = async function(){
   if(!pair){ showToast('Please enter a currency pair'); return; }
   const clarityBefore=tradeRatings['rBefore']||5, reflectionAfter=tradeRatings['rAfter']||5;
   const overall=Math.round((clarityBefore+reflectionAfter)/2*10);
+  const baseOutcome=document.getElementById('tOutcome')?.value||document.getElementById('tOutcome2')?.value||'';
   const trade={
-    pair, dir:document.getElementById('tDir').value, outcome:document.getElementById('tOutcome')?.value||document.getElementById('tOutcome2')?.value||'',
+    pair, dir:document.getElementById('tDir').value, outcome:baseOutcome,
     rr:parseFloat(document.getElementById('tRR').value)||null,
     tp:parseFloat(document.getElementById('tTP').value)||null,
     sl:parseFloat(document.getElementById('tSL').value)||null,
@@ -1522,13 +1598,37 @@ window.saveTrade = async function(){
     reviewFollowedRules: reviewAnswers.rules,
     reviewEnteredBeforeClose: reviewAnswers.candle,
     reviewAPlusSetup: reviewAnswers.setup,
-    accountId: document.getElementById('tAccount').value || null,
-    accountLabel: document.getElementById('tAccount').options[document.getElementById('tAccount').selectedIndex]?.text || null
   };
   setSyncDot('syncing');
   try{
-    if(editingTradeId){ await db.collection('users').doc(currentUser.uid).collection('trades').doc(editingTradeId).update(trade); showToast('Trade updated ✓'); }
-    else{ await db.collection('users').doc(currentUser.uid).collection('trades').add(trade); showToast('Trade saved ✓'); }
+    if(editingTradeId){
+      // Editing: just update the single record, preserve its accountId
+      const existingTrade=trades.find(t=>t.id===editingTradeId);
+      const accountId=existingTrade?.accountId||null;
+      const accountLabel=accountId?accounts.find(a=>a.id===accountId)?.name||null:null;
+      await db.collection('users').doc(currentUser.uid).collection('trades').doc(editingTradeId).update({...trade,accountId,accountLabel});
+      showToast('Trade updated ✓');
+    } else {
+      // New trade: save one record per selected account
+      const acctIds=[...selectedAccountsForTrade];
+      if(acctIds.length===0){
+        // No account selected — save without account
+        await db.collection('users').doc(currentUser.uid).collection('trades').add({...trade,accountId:null,accountLabel:null});
+        showToast('Trade saved ✓');
+      } else if(acctIds.length===1){
+        const a=accounts.find(x=>x.id===acctIds[0]);
+        await db.collection('users').doc(currentUser.uid).collection('trades').add({...trade,accountId:acctIds[0],accountLabel:a?.name||null});
+        showToast('Trade saved ✓');
+      } else {
+        // Multiple accounts — save one record per account
+        const promises=acctIds.map(id=>{
+          const a=accounts.find(x=>x.id===id);
+          return db.collection('users').doc(currentUser.uid).collection('trades').add({...trade,accountId:id,accountLabel:a?.name||null});
+        });
+        await Promise.all(promises);
+        showToast(`Trade logged to ${acctIds.length} accounts ✓`);
+      }
+    }
     closeTradeForm();
   }catch(e){ setSyncDot('error'); showToast('Save failed: '+e.message.substring(0,50)); console.error('Save error:',e); }
 };
@@ -1646,10 +1746,10 @@ function resetTradeForm(){
   document.querySelectorAll('.mchip').forEach(c=>c.classList.remove('sel'));
   ['otherMistakes','otherHabits'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   selectedMistakes=new Set(); selectedHabits=new Set(); selectedEntry='';
-  // Pre-select current account in trade form
-  const acctSel=document.getElementById('tAccount');
-  if(acctSel && currentAccountId) acctSel.value=currentAccountId;
-  else if(acctSel) acctSel.value='';
+  // Reset account pills
+  selectedAccountsForTrade = new Set();
+  if(currentAccountId) selectedAccountsForTrade.add(currentAccountId);
+  refreshPillStates();
   reviewAnswers.rules = null; reviewAnswers.candle = null; reviewAnswers.setup = null;
   ['rulesYes2','rulesNo2','candleYes2','candleNo2','setupYes2','setupNo2'].forEach(id=>{
     const el=document.getElementById(id); if(el){ el.style.background='transparent'; el.style.color='var(--muted)'; el.style.borderColor='var(--muted)'; }
@@ -1679,8 +1779,9 @@ function populateTrade(t){
   document.getElementById('otherMistakes').value=t.otherMistakes||'';
   document.getElementById('otherHabits').value=t.otherHabits||'';
   followedRules=t.followedRules; deviated=t.deviated;
-  // Restore account selection
-  const acctSel=document.getElementById('tAccount'); if(acctSel&&t.accountId) acctSel.value=t.accountId;
+  // Restore account pill selection for editing (single account only)
+  selectedAccountsForTrade = new Set();
+  if(t.accountId){ selectedAccountsForTrade.add(t.accountId); refreshPillStates(); }
   if(followedRules===true) document.getElementById('ruleYes').classList.add('active');
   if(followedRules===false) document.getElementById('ruleNo').classList.add('active');
   if(deviated===false) document.getElementById('deviateNo').classList.add('active');
