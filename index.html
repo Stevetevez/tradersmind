@@ -1446,11 +1446,6 @@ function refreshAccountDropdowns(){
     }
     updateMultiAcctBadge();
   }
-  // Pre-select current account filter if set
-  if(currentAccountId && selectedAccountsForTrade.size===0){
-    selectedAccountsForTrade.add(currentAccountId);
-    refreshPillStates();
-  }
   // Render account filter bar in trade log
   renderAcctFilterBar();
   // Update home badge
@@ -1556,6 +1551,7 @@ window.selectAccount=function(id){
   currentAccountId=id||null;
   updateAcctBadge();
   closeAccountSwitcher();
+  renderAcctFilterBar();
   renderTradeList();
   // If performance dashboard is open, re-render
   if(document.getElementById('perfDashboard').style.display!=='none') renderPerformance();
@@ -1610,22 +1606,21 @@ window.saveTrade = async function(){
       showToast('Trade updated ✓');
     } else {
       // New trade: save one record per selected account
-      const acctIds=[...selectedAccountsForTrade];
+      const acctIds=[...selectedAccountsForTrade].filter(id=>id&&accounts.find(x=>x.id===id));
       if(acctIds.length===0){
         // No account selected — save without account
         await db.collection('users').doc(currentUser.uid).collection('trades').add({...trade,accountId:null,accountLabel:null});
         showToast('Trade saved ✓');
       } else if(acctIds.length===1){
         const a=accounts.find(x=>x.id===acctIds[0]);
-        await db.collection('users').doc(currentUser.uid).collection('trades').add({...trade,accountId:acctIds[0],accountLabel:a?.name||null});
-        showToast('Trade saved ✓');
+        await db.collection('users').doc(currentUser.uid).collection('trades').add({...trade,accountId:acctIds[0],accountLabel:a?a.name:null});
+        showToast('Trade saved to '+( a?a.name:'account')+' ✓');
       } else {
-        // Multiple accounts — save one record per account
-        const promises=acctIds.map(id=>{
+        // Multiple accounts — save one record per account sequentially to avoid race conditions
+        for(const id of acctIds){
           const a=accounts.find(x=>x.id===id);
-          return db.collection('users').doc(currentUser.uid).collection('trades').add({...trade,accountId:id,accountLabel:a?.name||null});
-        });
-        await Promise.all(promises);
+          await db.collection('users').doc(currentUser.uid).collection('trades').add({...trade,accountId:id,accountLabel:a?a.name:null});
+        }
         showToast(`Trade logged to ${acctIds.length} accounts ✓`);
       }
     }
@@ -1676,7 +1671,7 @@ function renderTradeList(){
           </div>
           <div class="tc-time">${fmtTime(t.date)}</div>
         </div>
-        ${(!currentAccountId && t.accountLabel && t.accountLabel !== '— Select account —')?`<div style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:0.3px;margin-bottom:5px;opacity:0.85;">📁 ${t.accountLabel}</div>`:''}
+        ${(t.accountLabel && t.accountLabel !== '— Select account —')?`<div style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;background:var(--gold-dim);border:1px solid var(--gold-dim);border-radius:20px;font-size:10px;font-weight:700;color:var(--gold);margin-bottom:6px;">📁 ${t.accountLabel}</div>`:''}
         <div class="tc-result-row">
           ${t.outcome?`<div class="tc-outcome-pill ${outcomeClass[t.outcome]||'be'}">${outcomeMap[t.outcome]||t.outcome}</div>`:''}
           ${t.rr?`<div class="tc-rr">⚡ ${t.rr}R</div>`:''}
@@ -1746,9 +1741,8 @@ function resetTradeForm(){
   document.querySelectorAll('.mchip').forEach(c=>c.classList.remove('sel'));
   ['otherMistakes','otherHabits'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   selectedMistakes=new Set(); selectedHabits=new Set(); selectedEntry='';
-  // Reset account pills
+  // Reset account pills — clear selection, user must tap to choose
   selectedAccountsForTrade = new Set();
-  if(currentAccountId) selectedAccountsForTrade.add(currentAccountId);
   refreshPillStates();
   reviewAnswers.rules = null; reviewAnswers.candle = null; reviewAnswers.setup = null;
   ['rulesYes2','rulesNo2','candleYes2','candleNo2','setupYes2','setupNo2'].forEach(id=>{
