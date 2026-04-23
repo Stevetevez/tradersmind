@@ -1446,6 +1446,11 @@ function refreshAccountDropdowns(){
     }
     updateMultiAcctBadge();
   }
+  // Pre-select current account filter if set
+  if(currentAccountId && selectedAccountsForTrade.size===0){
+    selectedAccountsForTrade.add(currentAccountId);
+    refreshPillStates();
+  }
   // Render account filter bar in trade log
   renderAcctFilterBar();
   // Update home badge
@@ -1553,7 +1558,6 @@ window.selectAccount=function(id){
   closeAccountSwitcher();
   renderAcctFilterBar();
   renderTradeList();
-  // If performance dashboard is open, re-render
   if(document.getElementById('perfDashboard').style.display!=='none') renderPerformance();
 };
 const reviewAnswers = { rules: null, candle: null, setup: null };
@@ -1597,33 +1601,66 @@ window.saveTrade = async function(){
   };
   setSyncDot('syncing');
   try{
-    if(editingTradeId){
-      // Editing: just update the single record, preserve its accountId
+    const acctIds=[...selectedAccountsForTrade].filter(id=>accounts.find(x=>x.id===id));
+
+    if(editingTradeId && !acctIds.length){
+      // Editing existing trade, no account change — just update
       const existingTrade=trades.find(t=>t.id===editingTradeId);
-      const accountId=existingTrade?.accountId||null;
-      const accountLabel=accountId?accounts.find(a=>a.id===accountId)?.name||null:null;
-      await db.collection('users').doc(currentUser.uid).collection('trades').doc(editingTradeId).update({...trade,accountId,accountLabel});
+      await db.collection('users').doc(currentUser.uid).collection('trades').doc(editingTradeId).update({
+        ...trade,
+        accountId:existingTrade?.accountId||null,
+        accountLabel:existingTrade?.accountLabel||null
+      });
       showToast('Trade updated ✓');
-    } else {
-      // New trade: save one record per selected account
-      const acctIds=[...selectedAccountsForTrade].filter(id=>id&&accounts.find(x=>x.id===id));
-      if(acctIds.length===0){
-        // No account selected — save without account
-        await db.collection('users').doc(currentUser.uid).collection('trades').add({...trade,accountId:null,accountLabel:null});
-        showToast('Trade saved ✓');
-      } else if(acctIds.length===1){
-        const a=accounts.find(x=>x.id===acctIds[0]);
-        await db.collection('users').doc(currentUser.uid).collection('trades').add({...trade,accountId:acctIds[0],accountLabel:a?a.name:null});
-        showToast('Trade saved to '+( a?a.name:'account')+' ✓');
-      } else {
-        // Multiple accounts — save one record per account sequentially to avoid race conditions
-        for(const id of acctIds){
-          const a=accounts.find(x=>x.id===id);
-          await db.collection('users').doc(currentUser.uid).collection('trades').add({...trade,accountId:id,accountLabel:a?a.name:null});
-        }
-        showToast(`Trade logged to ${acctIds.length} accounts ✓`);
+
+    } else if(editingTradeId && acctIds.length===1){
+      // Editing with one account selected — update the doc with that account
+      const a=accounts.find(x=>x.id===acctIds[0]);
+      await db.collection('users').doc(currentUser.uid).collection('trades').doc(editingTradeId).update({
+        ...trade, accountId:acctIds[0], accountLabel:a?a.name:null
+      });
+      showToast('Trade saved to '+( a?a.name:'account')+' ✓');
+
+    } else if(editingTradeId && acctIds.length>1){
+      // Editing but multiple accounts selected — update existing doc for first account,
+      // create new docs for remaining accounts
+      const [firstId,...restIds]=acctIds;
+      const firstAcct=accounts.find(x=>x.id===firstId);
+      await db.collection('users').doc(currentUser.uid).collection('trades').doc(editingTradeId).update({
+        ...trade, accountId:firstId, accountLabel:firstAcct?firstAcct.name:null
+      });
+      for(const id of restIds){
+        const a=accounts.find(x=>x.id===id);
+        await db.collection('users').doc(currentUser.uid).collection('trades').add({
+          ...trade, accountId:id, accountLabel:a?a.name:null
+        });
       }
+      showToast(`Trade logged to ${acctIds.length} accounts ✓`);
+
+    } else if(!editingTradeId && acctIds.length===0){
+      // New trade, no account selected
+      await db.collection('users').doc(currentUser.uid).collection('trades').add({...trade,accountId:null,accountLabel:null});
+      showToast('Trade saved ✓');
+
+    } else if(!editingTradeId && acctIds.length===1){
+      // New trade, one account
+      const a=accounts.find(x=>x.id===acctIds[0]);
+      await db.collection('users').doc(currentUser.uid).collection('trades').add({
+        ...trade, accountId:acctIds[0], accountLabel:a?a.name:null
+      });
+      showToast('Trade saved to '+(a?a.name:'account')+' ✓');
+
+    } else {
+      // New trade, multiple accounts — one record per account
+      for(const id of acctIds){
+        const a=accounts.find(x=>x.id===id);
+        await db.collection('users').doc(currentUser.uid).collection('trades').add({
+          ...trade, accountId:id, accountLabel:a?a.name:null
+        });
+      }
+      showToast(`Trade logged to ${acctIds.length} accounts ✓`);
     }
+
     closeTradeForm();
   }catch(e){ setSyncDot('error'); showToast('Save failed: '+e.message.substring(0,50)); console.error('Save error:',e); }
 };
@@ -1671,7 +1708,7 @@ function renderTradeList(){
           </div>
           <div class="tc-time">${fmtTime(t.date)}</div>
         </div>
-        ${(t.accountLabel && t.accountLabel !== '— Select account —')?`<div style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;background:var(--gold-dim);border:1px solid var(--gold-dim);border-radius:20px;font-size:10px;font-weight:700;color:var(--gold);margin-bottom:6px;">📁 ${t.accountLabel}</div>`:''}
+        ${(t.accountLabel && t.accountLabel !== '— Select account —')?`<div style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:var(--gold-dim);border:1px solid var(--gold-dim);border-radius:20px;font-size:11px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:0.3px;">📁 ${t.accountLabel}</div>`:''}
         <div class="tc-result-row">
           ${t.outcome?`<div class="tc-outcome-pill ${outcomeClass[t.outcome]||'be'}">${outcomeMap[t.outcome]||t.outcome}</div>`:''}
           ${t.rr?`<div class="tc-rr">⚡ ${t.rr}R</div>`:''}
@@ -1741,8 +1778,9 @@ function resetTradeForm(){
   document.querySelectorAll('.mchip').forEach(c=>c.classList.remove('sel'));
   ['otherMistakes','otherHabits'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   selectedMistakes=new Set(); selectedHabits=new Set(); selectedEntry='';
-  // Reset account pills — clear selection, user must tap to choose
+  // Reset account pills
   selectedAccountsForTrade = new Set();
+  if(currentAccountId) selectedAccountsForTrade.add(currentAccountId);
   refreshPillStates();
   reviewAnswers.rules = null; reviewAnswers.candle = null; reviewAnswers.setup = null;
   ['rulesYes2','rulesNo2','candleYes2','candleNo2','setupYes2','setupNo2'].forEach(id=>{
@@ -2369,6 +2407,9 @@ window.savePhase=async function(phase){
   // Build partial trade object from what's filled so far
   const clarityBefore=tradeRatings['rBefore']||5, reflectionAfter=tradeRatings['rAfter']||5;
   const overall=Math.round((clarityBefore+reflectionAfter)/2*10);
+  // Get first selected account for phase saves (single-account context)
+  const phaseAcctId=[...selectedAccountsForTrade][0]||null;
+  const phaseAcct=phaseAcctId?accounts.find(a=>a.id===phaseAcctId):null;
   const trade={
     pair, dir:document.getElementById('tDir').value,
     outcome:document.getElementById('tOutcome').value||document.getElementById('tOutcome2')?.value||'',
@@ -2386,7 +2427,9 @@ window.savePhase=async function(phase){
     mistakes:[...selectedMistakes], otherMistakes:document.getElementById('otherMistakes')?.value.trim()||'',
     habits:[...selectedHabits], otherHabits:document.getElementById('otherHabits')?.value.trim()||'',
     savedPhase:phase,
-    date:getPickerDate(editingTradeId)
+    date:getPickerDate(editingTradeId),
+    accountId:phaseAcctId,
+    accountLabel:phaseAcct?phaseAcct.name:null
   };
   setSyncDot('syncing');
   try{
