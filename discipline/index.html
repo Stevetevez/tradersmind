@@ -123,6 +123,21 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'In
 .month-collapsed .month-body{display:none;}
 .month-collapsed .month-name{color:var(--muted);}
 
+/* ── DAY COMMENT ── */
+.day-comment-btn{display:flex;align-items:center;gap:4px;margin-top:4px;padding:3px 0;cursor:pointer;border:none;background:none;width:100%;}
+.day-comment-btn svg{width:10px;height:10px;color:var(--muted2);flex-shrink:0;}
+.day-comment-preview{font-size:9px;color:var(--muted2);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;line-height:1.3;}
+.day-comment-preview.has-text{color:var(--muted);}
+.day-comment-area{width:100%;min-height:44px;font-size:10px;font-family:'Inter',sans-serif;font-weight:500;color:var(--text);background:var(--card2);border:1.5px solid var(--border2);border-radius:6px;padding:5px 6px;resize:none;margin-top:4px;line-height:1.4;outline:none;transition:border-color .15s;}
+.day-comment-area:focus{border-color:var(--green);}
+.day-comment-area::placeholder{color:var(--muted2);}
+
+/* ── LIST COMMENT ── */
+.list-comment-row{padding:6px 8px 10px;border-bottom:1px solid var(--border);}
+.list-comment-area{width:100%;font-size:12px;font-family:'Inter',sans-serif;font-weight:500;color:var(--text);background:var(--card2);border:1.5px solid var(--border2);border-radius:8px;padding:8px 10px;resize:none;line-height:1.5;outline:none;transition:border-color .15s;min-height:38px;}
+.list-comment-area:focus{border-color:var(--green);}
+.list-comment-area::placeholder{color:var(--muted2);}
+
 /* ── LOADING ── */
 #loading{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
 .load-logo{font-size:28px;font-weight:900;color:var(--text);letter-spacing:-0.5px;}
@@ -374,7 +389,19 @@ function renderCalendar() {
         </div>`;
       });
 
-      html += `</div></div>`;
+      const comment = s.comment || '';
+      const preview = comment ? comment.substring(0,40)+(comment.length>40?'…':'') : 'Add note...';
+      html += `</div>
+        <button class="day-comment-btn" onclick="event.stopPropagation();window._toggleComment('${d.key}')" title="Add comment">
+          <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 1h8M1 4h6M1 7h4"/></svg>
+          <span class="day-comment-preview${comment?' has-text':''}" data-key="${d.key}">${preview}</span>
+        </button>
+        <textarea class="day-comment-area" data-key="${d.key}" placeholder="Write a note..." style="display:none"
+          onblur="window._saveComment('${d.key}',this)"
+          onclick="event.stopPropagation()"
+          onkeydown="if(event.key==='Escape')this.blur()"
+        >${comment}</textarea>
+      </div>`;
     });
 
     html += `</div></div></div>`;
@@ -434,7 +461,16 @@ function renderList() {
         </div>`;
       });
 
-      html += `${badge}</div>`;
+      const comment = s.comment || '';
+      html += `${badge}</div>
+      <div class="list-comment-row">
+        <textarea class="list-comment-area" data-key="${d.key}" placeholder="Add a note for ${dateLabel}..."
+          onblur="window._saveComment('${d.key}',this)"
+          onkeydown="if(event.key==='Escape')this.blur()"
+          rows="1"
+          oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
+        >${comment}</textarea>
+      </div>`;
     });
 
     html += `</div></div>`;
@@ -443,7 +479,33 @@ function renderList() {
   document.getElementById('list-view').innerHTML = html;
 }
 
-function renderAll() {
+async function saveComment(key, value) {
+  if (!state[key]) state[key] = {};
+  if (value.trim()) state[key].comment = value.trim();
+  else delete state[key].comment;
+  await saveState();
+  // Update preview snippet without full re-render
+  const preview = document.querySelector(`.day-comment-preview[data-key="${key}"]`);
+  if (preview) {
+    const txt = value.trim();
+    preview.textContent = txt ? txt.substring(0,40)+(txt.length>40?'…':'') : 'Add note...';
+    preview.classList.toggle('has-text', !!txt);
+  }
+  const listPreview = document.querySelector(`.list-comment-area[data-key="${key}"]`);
+  if (listPreview) listPreview.value = value;
+}
+
+window._saveComment = (key, el) => saveComment(key, el.value);
+
+window._toggleComment = function(key) {
+  const area = document.querySelector(`.day-comment-area[data-key="${key}"]`);
+  if (!area) return;
+  const hidden = area.style.display === 'none' || area.style.display === '';
+  area.style.display = hidden ? 'block' : 'none';
+  if (hidden) { area.focus(); area.selectionStart = area.value.length; }
+};
+
+
   renderStats();
   if (currentView==='calendar') renderCalendar();
   else renderList();
